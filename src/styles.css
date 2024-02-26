@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --text-color: #4d4d4d;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+}
+
+main {
+  flex: auto;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--highlight-color);
+}
+
+#gh-link {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0;
+  color: var(--font-medium);
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  height: 38px;
+}
+
+#gh-logo {
+  width: 35px;
+  height: 35px;
+  margin: 0 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+#gh-link:hover #gh-logo {
+  transform: rotate(360deg) scale(1.2);
+}
+
+html {
+  visibility: visible;
+  opacity: 1;
+}
