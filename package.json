@@ -4,6 +4,8 @@
   "description": "A template repository, to be used for web projects.",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
+    "watch": "jest --watch",
     "start": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "gh-deploy": "git subtree push --prefix dist origin gh-pages"

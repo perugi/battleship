@@ -4,6 +4,12 @@
         "es2021": true
     },
     "overrides": [
+        {
+            "files": ["src/**/*.test.js"],
+            "env": {
+                "jest": true
+            }
+        }
     ],
     "parserOptions": {
         "ecmaVersion": "latest",
