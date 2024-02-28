@@ -1,5 +1,4 @@
 import Gameboard from './Gameboard';
-import Ship from './Ship';
 
 test('create an empty board', () => {
   const gameboard = Gameboard(10);
