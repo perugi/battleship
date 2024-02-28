@@ -2,9 +2,12 @@ import Gameboard from './Gameboard';
 
 test('create an empty board', () => {
   const gameboard = Gameboard(10);
+  const ships = gameboard.getShips();
+  const shotsReceived = gameboard.getShotsReceived();
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
-      expect(gameboard.getShips()[i][j]).toBe(null);
+      expect(ships[i][j]).toBe(null);
+      expect(shotsReceived[i][j]).toBe(false);
     }
   }
   expect(gameboard.getDimension()).toBe(10);
@@ -25,13 +28,14 @@ test('create a board with a single ship', () => {
   gameboard.placeShip(1, 0, 0, 'v');
   // In this test, we also test that all the other coordinates stay null.
   // This is not re-tested in the following tests.
-  expect(gameboard.getShips()[0][0].getLength()).toBe(1);
+  const ships = gameboard.getShips();
+  expect(ships[0][0].getLength()).toBe(1);
   for (let i = 1; i < 5; i++) {
-    expect(gameboard.getShips()[0][i]).toBe(null);
+    expect(ships[0][i]).toBe(null);
   }
   for (let i = 0; i < 5; i++) {
     for (let j = 1; j < 5; j++) {
-      expect(gameboard.getShips()[i][j]).toBe(null);
+      expect(ships[i][j]).toBe(null);
     }
   }
 });
@@ -40,9 +44,10 @@ test('create a board with multiple ships', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
-  expect(gameboard.getShips()[0][0].getLength()).toBe(1);
-  expect(gameboard.getShips()[1][0].getLength()).toBe(2);
-  expect(gameboard.getShips()[1][0]).toBe(gameboard.getShips()[2][0]);
+  const ships = gameboard.getShips();
+  expect(ships[0][0].getLength()).toBe(1);
+  expect(ships[1][0].getLength()).toBe(2);
+  expect(ships[1][0]).toBe(ships[2][0]);
 });
 
 test('placing a ship out of bounds throws an error', () => {
@@ -94,8 +99,9 @@ test('remove a ship', () => {
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
   gameboard.removeShip(1, 0, 0, 'v');
-  expect(gameboard.getShips()[0][0]).toBe(null);
-  expect(gameboard.getShips()[1][0].getLength()).toBe(2);
+  const ships = gameboard.getShips();
+  expect(ships[0][0]).toBe(null);
+  expect(ships[1][0].getLength()).toBe(2);
 });
 
 test('remove a large ship, place another one in its previous spot', () => {
