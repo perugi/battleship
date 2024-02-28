@@ -8,7 +8,7 @@ const Gameboard = (dimension) => {
 
   const getDimension = () => dimension;
 
-  const getShipCoordinates = () => placedShipsCoords;
+  const getShips = () => placedShips;
 
   const calculateShipCoordinates = (shipLength, x, y, dir) => {
     const shipCoordinates = [];
@@ -73,7 +73,7 @@ const Gameboard = (dimension) => {
 
   return {
     getDimension,
-    getShipCoordinates,
+    getShips,
     placeShip,
     removeShip,
   };

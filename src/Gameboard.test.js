@@ -2,7 +2,7 @@ import Gameboard from './Gameboard';
 
 test('create an empty board', () => {
   const gameboard = Gameboard(10);
-  expect(gameboard.getShipCoordinates().length).toBe(0);
+  expect(Object.keys(gameboard.getShips()).length).toBe(0);
   expect(gameboard.getDimension()).toBe(10);
 });
 
@@ -19,18 +19,20 @@ test('creating a board with dimension less than 1 throws an error', () => {
 test('create a board with a single ship', () => {
   const gameboard = Gameboard(5);
   gameboard.placeShip(1, 0, 0, 'v');
-  expect(gameboard.getShipCoordinates()).toEqual([[0, 0]]);
+  expect(Object.keys(gameboard.getShips())).toEqual(['0 0 v']);
+  expect(
+    Object.values(gameboard.getShips()).map((ship) => ship.getLength())
+  ).toEqual([1]);
 });
 
 test('create a board with multiple ships', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
-  expect(gameboard.getShipCoordinates()).toEqual([
-    [0, 0],
-    [1, 0],
-    [2, 0],
-  ]);
+  expect(Object.keys(gameboard.getShips())).toEqual(['0 0 v', '1 0 h']);
+  expect(
+    Object.values(gameboard.getShips()).map((ship) => ship.getLength())
+  ).toEqual([1, 2]);
 });
 
 test('placing a ship out of bounds throws an error', () => {
@@ -95,18 +97,17 @@ test('remove a ship', () => {
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
   gameboard.removeShip(1, 0, 0, 'v');
-  expect(gameboard.getShipCoordinates()).toEqual([
-    [1, 0],
-    [2, 0],
-  ]);
+  expect(Object.keys(gameboard.getShips())).toEqual(['1 0 h']);
 });
 
-test('remove a large ship', () => {
+test('remove a large ship, place another one in its previous spot', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
   gameboard.removeShip(2, 1, 0, 'h');
-  expect(gameboard.getShipCoordinates()).toEqual([[0, 0]]);
+  expect(Object.keys(gameboard.getShips())).toEqual(['0 0 v']);
+  gameboard.placeShip(2, 1, 0, 'h');
+  expect(Object.keys(gameboard.getShips())).toEqual(['0 0 v', '1 0 h']);
 });
 
 test('removing an unexistent ship throws an error', () => {
@@ -116,9 +117,4 @@ test('removing an unexistent ship throws an error', () => {
   }).toThrow('Ship not found');
 });
 
-// test('hit a ship with an attack', () => {
-//   const gameboard = Gameboard(10);
-//   gameboard.placeShip(1, 0, 0, 'v');
-//   gameboard.hit(1, 0, 0, 'v');
-//   expect(gameboard.getShip(1, 0, 0, 'v').isSunk()).toBe(true);
-// })
+test.skip('hit a ship with an attack', () => {});
