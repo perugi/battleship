@@ -3,10 +3,9 @@ import Ship from './Ship';
 const Gameboard = (dimension) => {
   if (dimension < 1)
     throw new Error('Gameboard dimension must be greater than 0');
-  const placedShips = {};
-  const placedShipsCoords = new Array(dimension)
+  const placedShips = new Array(dimension)
     .fill(false)
-    .map(() => new Array(dimension).fill(false));
+    .map(() => new Array(dimension).fill(null));
   const shotsReceived = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(false));
@@ -52,39 +51,37 @@ const Gameboard = (dimension) => {
       dir
     );
     newShipCoords.forEach(([x, y]) => {
-      if (placedShipsCoords[y][x])
+      if (placedShips[x][y])
         throw new Error('Placed ship collides with an existing ship');
     });
 
     const ship = Ship(shipLength);
-    placedShips[`${originX} ${originY} ${dir}`] = ship;
     newShipCoords.forEach(([x, y]) => {
-      placedShipsCoords[y][x] = true;
+      placedShips[x][y] = ship;
     });
   };
 
   const removeShip = (shipLength, originX, originY, dir) => {
-    const ship = placedShips[`${originX} ${originY} ${dir}`];
-    if (!ship) throw new Error('Ship not found');
-
     calculateShipCoordinates(shipLength, originX, originY, dir).forEach(
       ([x, y]) => {
-        placedShipsCoords[y][x] = false;
+        placedShips[x][y] = null;
       }
     );
-    delete placedShips[`${originX} ${originY} ${dir}`];
   };
 
   const receiveAttack = (x, y) => {
     if (x < 0 || x >= dimension || y < 0 || y >= dimension)
       throw new Error('Coordinates out of bounds');
-    if (shotsReceived[y][x]) throw new Error('Coordinates already hit');
+    if (shotsReceived[x][y]) throw new Error('Coordinates already hit');
 
-    const ship = placedShips[`${x} ${y} v`];
+    const ship = placedShips[x][y];
     if (ship) ship.hit();
 
-    shotsReceived[y][x] = true;
+    shotsReceived[x][y] = true;
   };
+
+  const allSunk = () =>
+    Object.values(placedShips).every((ship) => ship.isSunk());
 
   return {
     getDimension,
@@ -92,6 +89,7 @@ const Gameboard = (dimension) => {
     placeShip,
     removeShip,
     receiveAttack,
+    allSunk,
   };
 };
 
