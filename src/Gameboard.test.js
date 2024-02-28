@@ -120,6 +120,16 @@ test('make an attack and hit a ship', () => {
   expect(gameboard.getShips()[0][0].isSunk()).toBe(true);
 });
 
+test('sink a large ship', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeShip(2, 0, 0, 'h');
+  expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
+  gameboard.receiveAttack(0, 0);
+  expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
+  gameboard.receiveAttack(1, 0);
+  expect(gameboard.getShips()[0][0].isSunk()).toBe(true);
+});
+
 test('make an attack and miss', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
