@@ -162,13 +162,15 @@ test('attack is out of bounds throws an error', () => {
   }).toThrow('Coordinates out of bounds');
 });
 
-test.skip('return allSunk as true when all ships are sunk', () => {
+test('return allSunk as true when all ships are sunk', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
-  gameboard.placeShip(1, 1, 0, 'h');
+  gameboard.placeShip(2, 1, 0, 'h');
   expect(gameboard.allSunk()).toBe(false);
   gameboard.receiveAttack(0, 0);
   expect(gameboard.allSunk()).toBe(false);
   gameboard.receiveAttack(1, 0);
+  expect(gameboard.allSunk()).toBe(false);
+  gameboard.receiveAttack(2, 0);
   expect(gameboard.allSunk()).toBe(true);
 });

@@ -81,7 +81,9 @@ const Gameboard = (dimension) => {
   };
 
   const allSunk = () =>
-    Object.values(placedShips).every((ship) => ship.isSunk());
+    placedShips.every((col) =>
+      col.every((el) => el === null || el.isSunk() === true)
+    );
 
   return {
     getDimension,
