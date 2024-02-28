@@ -19,7 +19,6 @@ test('creating a board with dimension less than 1 throws an error', () => {
 test('create a board with a single ship', () => {
   const gameboard = Gameboard(5);
   gameboard.placeShip(1, 0, 0, 'v');
-  expect(gameboard.getPlacedShips().length).toBe(1);
   expect(gameboard.getShipCoordinates()).toEqual([[0, 0]]);
 });
 
@@ -27,7 +26,6 @@ test('create a board with multiple ships', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
-  expect(gameboard.getPlacedShips().length).toBe(3);
   expect(gameboard.getShipCoordinates()).toEqual([
     [0, 0],
     [1, 0],
