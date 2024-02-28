@@ -7,6 +7,9 @@ const Gameboard = (dimension) => {
   const placedShipsCoords = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(false));
+  const shotsReceived = new Array(dimension)
+    .fill(false)
+    .map(() => new Array(dimension).fill(false));
 
   const getDimension = () => dimension;
 
@@ -78,11 +81,19 @@ const Gameboard = (dimension) => {
     delete placedShips[`${originX} ${originY} ${dir}`];
   };
 
+  const receiveAttack = (x, y) => {
+    // TODO Check if the coordinates are valid (out of bounds or already hit)
+
+    const ship = placedShips[`${x} ${y} v`];
+    if (ship) ship.hit();
+  };
+
   return {
     getDimension,
     getShips,
     placeShip,
     removeShip,
+    receiveAttack,
   };
 };
 

@@ -117,4 +117,14 @@ test('removing an unexistent ship throws an error', () => {
   }).toThrow('Ship not found');
 });
 
-test.skip('hit a ship with an attack', () => {});
+test('make an attack and hit a ship', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeShip(1, 0, 0, 'v');
+  expect(gameboard.getShips()['0 0 v'].isSunk()).toBe(false);
+  gameboard.receiveAttack(0, 0);
+  expect(gameboard.getShips()['0 0 v'].isSunk()).toBe(true);
+});
+
+test.skip('make an attack and miss', () => {});
+
+test.skip('attacking the same coordinate twice throws an error', () => {});
