@@ -93,8 +93,20 @@ test('placing a ship with an invalid direction throws an error', () => {
 test('remove a ship', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
+  gameboard.placeShip(2, 1, 0, 'h');
   gameboard.removeShip(1, 0, 0, 'v');
-  expect(gameboard.getShips().length).toBe(0);
+  expect(gameboard.getShipCoordinates()).toEqual([
+    [1, 0],
+    [2, 0],
+  ]);
+});
+
+test('remove a large ship', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeShip(1, 0, 0, 'v');
+  gameboard.placeShip(2, 1, 0, 'h');
+  gameboard.removeShip(2, 1, 0, 'h');
+  expect(gameboard.getShipCoordinates()).toEqual([[0, 0]]);
 });
 
 test('removing an unexistent ship throws an error', () => {
