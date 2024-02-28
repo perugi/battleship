@@ -67,19 +67,6 @@ test('placing a ship with an invalid length throws an error', () => {
   expect(() => {
     gameboard.placeShip(-1, 0, 0, 'v');
   }).toThrow('Ship length must be greater than 0');
-  expect(() => {
-    gameboard.placeShip('a', 0, 0, 'v');
-  }).toThrow('Ship length must be an integer');
-});
-
-test('placing a ship with an invalid coordinate throws an error', () => {
-  const gameboard = Gameboard(10);
-  expect(() => {
-    gameboard.placeShip(1, '0', 0, 'v');
-  }).toThrow('X coordinate must be an integer');
-  expect(() => {
-    gameboard.placeShip(1, 0, '0', 'v');
-  }).toThrow('Y coordinate must be an integer');
 });
 
 test('placing a ship with an invalid direction throws an error', () => {
@@ -125,6 +112,34 @@ test('make an attack and hit a ship', () => {
   expect(gameboard.getShips()['0 0 v'].isSunk()).toBe(true);
 });
 
-test.skip('make an attack and miss', () => {});
+test('make an attack and miss', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeShip(1, 0, 0, 'v');
+  expect(gameboard.getShips()['0 0 v'].isSunk()).toBe(false);
+  gameboard.receiveAttack(1, 0);
+  expect(gameboard.getShips()['0 0 v'].isSunk()).toBe(false);
+});
 
-test.skip('attacking the same coordinate twice throws an error', () => {});
+test('attacking the same coordinate twice throws an error', () => {
+  const gameboard = Gameboard(10);
+  gameboard.receiveAttack(0, 0);
+  expect(() => {
+    gameboard.receiveAttack(0, 0);
+  }).toThrow('Coordinates already hit');
+});
+
+test('attack is out of bounds throws an error', () => {
+  const gameboard = Gameboard(10);
+  expect(() => {
+    gameboard.receiveAttack(10, 0);
+  }).toThrow('Coordinates out of bounds');
+  expect(() => {
+    gameboard.receiveAttack(0, 10);
+  }).toThrow('Coordinates out of bounds');
+  expect(() => {
+    gameboard.receiveAttack(-1, 0);
+  }).toThrow('Coordinates out of bounds');
+  expect(() => {
+    gameboard.receiveAttack(0, -1);
+  }).toThrow('Coordinates out of bounds');
+});
