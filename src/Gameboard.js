@@ -76,10 +76,15 @@ const Gameboard = (dimension) => {
       throw new Error('Coordinates out of bounds');
     if (shotsReceived[x][y]) throw new Error('Coordinates already hit');
 
-    const ship = placedShips[x][y];
-    if (ship) ship.hit();
-
     shotsReceived[x][y] = true;
+
+    const ship = placedShips[x][y];
+    if (ship) {
+      ship.hit();
+      return true;
+    }
+
+    return false;
   };
 
   const allSunk = () =>

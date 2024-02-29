@@ -4,6 +4,7 @@ const DIMENSION = 10;
 
 const Player = (name, isAi) => {
   const gameboard = new Gameboard(DIMENSION);
+
   let opponent = null;
 
   const getName = () => name;

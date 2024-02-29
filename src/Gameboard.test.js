@@ -122,7 +122,7 @@ test('make an attack and hit a ship', () => {
   gameboard.placeShip(1, 0, 0, 'v');
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[0][0]).toBe(false);
-  gameboard.receiveAttack(0, 0);
+  expect(gameboard.receiveAttack(0, 0)).toBe(true);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(true);
   expect(gameboard.getShotsReceived()[0][0]).toBe(true);
 });
@@ -133,11 +133,11 @@ test('sink a large ship', () => {
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[0][0]).toBe(false);
   expect(gameboard.getShotsReceived()[1][0]).toBe(false);
-  gameboard.receiveAttack(0, 0);
+  expect(gameboard.receiveAttack(0, 0)).toBe(true);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[0][0]).toBe(true);
   expect(gameboard.getShotsReceived()[1][0]).toBe(false);
-  gameboard.receiveAttack(1, 0);
+  expect(gameboard.receiveAttack(1, 0)).toBe(true);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(true);
   expect(gameboard.getShotsReceived()[0][0]).toBe(true);
   expect(gameboard.getShotsReceived()[1][0]).toBe(true);
@@ -148,7 +148,7 @@ test('make an attack and miss', () => {
   gameboard.placeShip(1, 0, 0, 'v');
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[1][0]).toBe(false);
-  gameboard.receiveAttack(1, 0);
+  expect(gameboard.receiveAttack(1, 0)).toBe(false);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[1][0]).toBe(true);
 });
