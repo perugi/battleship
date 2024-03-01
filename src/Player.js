@@ -7,10 +7,6 @@ const Player = (name, isAi) => {
 
   let opponent = null;
 
-  const getName = () => name;
-
-  const getIsAi = () => isAi;
-
   const setOpponent = (newOpponent) => {
     opponent = newOpponent;
   };
@@ -47,8 +43,8 @@ const Player = (name, isAi) => {
 
   return {
     gameboard,
-    getName,
-    getIsAi,
+    getName: () => name,
+    getIsAi: () => isAi,
     setOpponent,
     getOpponent,
     shoot,

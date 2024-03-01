@@ -10,12 +10,6 @@ const Gameboard = (dimension) => {
     .fill(false)
     .map(() => new Array(dimension).fill(false));
 
-  const getDimension = () => dimension;
-
-  const getShips = () => placedShips;
-
-  const getShotsReceived = () => shotsReceived;
-
   const calculateShipCoordinates = (shipLength, x, y, dir) => {
     const shipCoordinates = [];
     for (let i = 0; i < shipLength; i++) {
@@ -93,13 +87,13 @@ const Gameboard = (dimension) => {
     );
 
   return {
-    getDimension,
-    getShips,
+    getDimension: () => dimension,
+    getShips: () => placedShips,
+    getShotsReceived: () => shotsReceived,
     placeShip,
     removeShip,
     receiveAttack,
     allSunk,
-    getShotsReceived,
   };
 };
 
