@@ -11,12 +11,10 @@ const Player = (name, isAi) => {
     opponent = newOpponent;
   };
 
-  const getOpponent = () => opponent;
-
   const shoot = (x, y) => {
     if (!opponent) throw new Error('No opponent set');
 
-    opponent.gameboard.receiveAttack(x, y);
+    return opponent.gameboard.receiveAttack(x, y);
   };
 
   const shootAuto = () => {
@@ -42,11 +40,12 @@ const Player = (name, isAi) => {
   };
 
   return {
+    // TODO only expose the gameboard methods which should be used by the GameController, not everything.
     gameboard,
     getName: () => name,
     getIsAi: () => isAi,
     setOpponent,
-    getOpponent,
+    getOpponent: () => opponent,
     shoot,
     shootAuto,
   };

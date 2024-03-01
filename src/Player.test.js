@@ -60,6 +60,15 @@ test('AI player can automatically attack', () => {
   expect(countHitsOnBoard(player.gameboard.getShotsReceived())).toBe(1);
 });
 
+test('hitting an opponent ship returns true, missing returns false', () => {
+  const computer = Player('Computer', true);
+  const player = Player('Player', false);
+  player.setOpponent(computer);
+  computer.gameboard.placeShip(1, 0, 0, 'h');
+  expect(player.shoot(0, 0)).toBe(true);
+  expect(player.shoot(1, 0)).toBe(false);
+});
+
 test('when human shoots, if no opponents is set, exception is thrown', () => {
   const player = Player('Player', false);
   expect(() => {
