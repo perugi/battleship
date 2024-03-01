@@ -14,14 +14,14 @@ const Player = (name, isAi) => {
   const shoot = (x, y) => {
     if (!opponent) throw new Error('No opponent set');
 
-    return opponent.gameboard.receiveAttack(x, y);
+    return opponent.receiveAttack(x, y);
   };
 
   const shootAuto = () => {
     if (!opponent) throw new Error('No opponent set');
 
     const emptySpaces = [];
-    const opponentShotsReceived = opponent.gameboard.getShotsReceived();
+    const opponentShotsReceived = opponent.getShotsReceived();
     for (let i = 0; i < DIMENSION; i++) {
       for (let j = 0; j < DIMENSION; j++) {
         if (opponentShotsReceived[i][j] === false) {
@@ -40,8 +40,12 @@ const Player = (name, isAi) => {
   };
 
   return {
-    // TODO only expose the gameboard methods which should be used by the GameController, not everything.
-    gameboard,
+    getShotsReceived: () => gameboard.getShotsReceived(),
+    getShips: () => gameboard.getShips(),
+    placeShip: (...args) => gameboard.placeShip(...args),
+    removeShip: (...args) => gameboard.removeShip(...args),
+    receiveAttack: (...args) => gameboard.receiveAttack(...args),
+    allSunk: () => gameboard.allSunk(),
     getName: () => name,
     getIsAi: () => isAi,
     setOpponent,
