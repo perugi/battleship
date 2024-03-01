@@ -14,7 +14,7 @@ test('Ship isSunk', () => {
   expect(ship.isSunk()).toBe(false);
   ship.hit();
   expect(ship.isSunk()).toBe(true);
-})
+});
 
 test('Hit sunken ship', () => {
   const ship = Ship(1);
@@ -22,10 +22,10 @@ test('Hit sunken ship', () => {
   expect(() => {
     ship.hit();
   }).toThrow();
-})
+});
 
 test('Ship zero length', () => {
   expect(() => {
     Ship(0);
   }).toThrow();
-})
+});

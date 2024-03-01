@@ -3,23 +3,23 @@ const Ship = (length) => {
     throw new Error('Ship length must be greater than 0');
   }
   let hits = 0;
-  let isSunken = false;
+  let isSunk = false;
 
   const hit = () => {
-    if (isSunken) {
+    if (isSunk) {
       throw new Error('Ship is already sunken');
     }
 
     hits += 1;
 
     if (hits === length) {
-      isSunken = true;
+      isSunk = true;
     }
   };
 
   return {
     getLength: () => length,
-    isSunk: () => isSunken,
+    isSunk: () => isSunk,
     hit,
   };
 };
