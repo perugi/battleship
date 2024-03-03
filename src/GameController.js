@@ -1,6 +1,6 @@
 import Player from './Player';
 
-const GameController = () => {
+const GameController = (events) => {
   const players = [];
   let activePlayer = null;
   let winner = null;
@@ -21,6 +21,10 @@ const GameController = () => {
     players[1].placeShip(2, 1, 0, 'h');
   };
 
+  const newGameEvent = (data) => {
+    newGame(data.playerName);
+  };
+
   const shoot = (x, y) => {
     if (!activePlayer) throw new Error('No active player');
 
@@ -34,17 +38,37 @@ const GameController = () => {
 
     if (!shipHit) {
       activePlayer = activePlayer.getOpponent();
+
+      if (events) {
+        events.emit('playerChanged', {
+          activePlayer,
+        });
+      }
     }
 
     if (activePlayer.getOpponent().allSunk()) {
-      // TODO once PUBSUB is implemented, this should call the win event.
       winner = activePlayer;
       activePlayer = null;
+
+      if (events) {
+        events.emit('gameOver', {
+          winner,
+        });
+      }
       return true;
     }
 
     return false;
   };
+
+  const shootEvent = (data) => {
+    shoot(data.x, data.y);
+  };
+
+  if (events) {
+    events.on('newGame', newGameEvent);
+    events.on('shoot', shootEvent);
+  }
 
   return {
     newGame,
