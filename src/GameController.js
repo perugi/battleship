@@ -45,27 +45,29 @@ const GameController = (events) => {
 
     if (!shipHit) {
       activePlayer = activePlayer.getOpponent();
-
-      if (events) {
-        events.emit('playerChanged', {
-          activePlayer,
-        });
-      }
     }
 
     if (activePlayer.getOpponent().allSunk()) {
       winner = activePlayer;
       activePlayer = null;
-
-      if (events) {
-        events.emit('gameOver', {
-          winner,
-        });
-      }
-      return true;
     }
 
-    return false;
+    if (events) {
+      events.emit('shotReceived', {
+        shot: { x, y },
+        shipHit,
+        player1: players[0],
+        player2: players[1],
+        activePlayer,
+        ships1: players[0].getShips(),
+        ships2: players[1].getShips(),
+        shotsReceived1: players[0].getShotsReceived(),
+        shotsReceived2: players[1].getShotsReceived(),
+        winner,
+      });
+    }
+
+    return winner !== null;
   };
 
   const shootEvent = (data) => {
