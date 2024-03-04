@@ -19,6 +19,13 @@ const GameController = (events) => {
     players[0].placeShip(2, 1, 0, 'h');
     players[1].placeShip(1, 0, 0, 'v');
     players[1].placeShip(2, 1, 0, 'h');
+
+    if (events) {
+      events.emit('gameStarted', {
+        player1: players[0],
+        player2: players[1],
+      });
+    }
   };
 
   const newGameEvent = (data) => {

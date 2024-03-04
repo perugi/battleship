@@ -17,6 +17,18 @@ test('make a shot after receiving a shoot event', () => {
   expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
 });
 
+test('when the game start, a gameStarted event is emitted', () => {
+  const events = Events();
+  const gameController = GameController(events);
+  const fn = jest.fn();
+  events.on('gameStarted', fn);
+  events.emit('newGame', { playerName: 'Player 1' });
+  expect(fn).toHaveBeenCalledWith({
+    player1: gameController.getPlayers()[0],
+    player2: gameController.getPlayers()[1],
+  });
+});
+
 test('when the active player changes, a playerChanged event is emitted', () => {
   const events = Events();
   const gameController = GameController(events);
