@@ -46,8 +46,8 @@ test('create a board with multiple ships', () => {
   gameboard.placeShip(2, 1, 0, 'h');
   const ships = gameboard.getShips();
   expect(ships[0][0].getLength()).toBe(1);
-  expect(ships[1][0].getLength()).toBe(2);
-  expect(ships[1][0]).toBe(ships[2][0]);
+  expect(ships[0][1].getLength()).toBe(2);
+  expect(ships[0][1]).toBe(ships[0][2]);
 });
 
 test('placing a ship out of bounds throws an error', () => {
@@ -101,20 +101,20 @@ test('remove a ship', () => {
   gameboard.removeShip(1, 0, 0, 'v');
   const ships = gameboard.getShips();
   expect(ships[0][0]).toBe(null);
-  expect(ships[1][0].getLength()).toBe(2);
+  expect(ships[0][1].getLength()).toBe(2);
 });
 
 test('remove a large ship, place another one in its previous spot', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   gameboard.placeShip(2, 1, 0, 'h');
-  expect(gameboard.getShips()[1][0].getLength()).toBe(2);
-  expect(gameboard.getShips()[2][0].getLength()).toBe(2);
+  expect(gameboard.getShips()[0][1].getLength()).toBe(2);
+  expect(gameboard.getShips()[0][2].getLength()).toBe(2);
   gameboard.removeShip(2, 1, 0, 'h');
-  expect(gameboard.getShips()[1][0]).toBe(null);
-  expect(gameboard.getShips()[2][0]).toBe(null);
+  expect(gameboard.getShips()[0][1]).toBe(null);
+  expect(gameboard.getShips()[0][2]).toBe(null);
   gameboard.placeShip(2, 1, 0, 'h');
-  expect(gameboard.getShips()[1][0].getLength()).toBe(2);
+  expect(gameboard.getShips()[0][1].getLength()).toBe(2);
 });
 
 test('make an attack and hit a ship', () => {
@@ -132,25 +132,25 @@ test('sink a large ship', () => {
   gameboard.placeShip(2, 0, 0, 'h');
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[0][0]).toBe(false);
-  expect(gameboard.getShotsReceived()[1][0]).toBe(false);
+  expect(gameboard.getShotsReceived()[0][1]).toBe(false);
   expect(gameboard.receiveAttack(0, 0)).toBe(true);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
   expect(gameboard.getShotsReceived()[0][0]).toBe(true);
-  expect(gameboard.getShotsReceived()[1][0]).toBe(false);
+  expect(gameboard.getShotsReceived()[0][1]).toBe(false);
   expect(gameboard.receiveAttack(1, 0)).toBe(true);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(true);
   expect(gameboard.getShotsReceived()[0][0]).toBe(true);
-  expect(gameboard.getShotsReceived()[1][0]).toBe(true);
+  expect(gameboard.getShotsReceived()[0][1]).toBe(true);
 });
 
 test('make an attack and miss', () => {
   const gameboard = Gameboard(10);
   gameboard.placeShip(1, 0, 0, 'v');
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
-  expect(gameboard.getShotsReceived()[1][0]).toBe(false);
+  expect(gameboard.getShotsReceived()[0][1]).toBe(false);
   expect(gameboard.receiveAttack(1, 0)).toBe(false);
   expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
-  expect(gameboard.getShotsReceived()[1][0]).toBe(true);
+  expect(gameboard.getShotsReceived()[0][1]).toBe(true);
 });
 
 test('attacking the same coordinate twice throws an error', () => {

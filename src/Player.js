@@ -24,7 +24,7 @@ const Player = (name, isAi) => {
     const opponentShotsReceived = opponent.getShotsReceived();
     for (let i = 0; i < DIMENSION; i++) {
       for (let j = 0; j < DIMENSION; j++) {
-        if (opponentShotsReceived[i][j] === false) {
+        if (opponentShotsReceived[j][i] === false) {
           emptySpaces.push([i, j]);
         }
       }
@@ -47,9 +47,9 @@ const Player = (name, isAi) => {
     const shotsReceived = gameboard.getShotsReceived();
     const ships = gameboard.getShips();
 
-    for (let j = 0; j < DIMENSION; j++) {
+    for (let i = 0; i < DIMENSION; i++) {
       string += '  ';
-      for (let i = 0; i < DIMENSION; i++) {
+      for (let j = 0; j < DIMENSION; j++) {
         if (ships[i][j] && !shotsReceived[i][j]) {
           string += ' O ';
         } else if (ships[i][j] && shotsReceived[i][j]) {

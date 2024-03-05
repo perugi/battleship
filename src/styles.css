@@ -17,6 +17,24 @@ main {
   flex: auto;
 }
 
+#player-gameboard,
+#opponent-gameboard {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+
+  .cell {
+    border: 1px solid var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ship {
+    background-color: gray;
+  }
+}
+
 footer {
   display: flex;
   justify-content: center;

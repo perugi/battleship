@@ -53,14 +53,14 @@ const Gameboard = (dimension) => {
 
     const ship = Ship(shipLength);
     newShipCoords.forEach(([x, y]) => {
-      placedShips[x][y] = ship;
+      placedShips[y][x] = ship;
     });
   };
 
   const removeShip = (shipLength, originX, originY, dir) => {
     calculateShipCoordinates(shipLength, originX, originY, dir).forEach(
       ([x, y]) => {
-        placedShips[x][y] = null;
+        placedShips[y][x] = null;
       }
     );
   };
@@ -68,11 +68,11 @@ const Gameboard = (dimension) => {
   const receiveAttack = (x, y) => {
     if (x < 0 || x >= dimension || y < 0 || y >= dimension)
       throw new Error('Coordinates out of bounds');
-    if (shotsReceived[x][y]) throw new Error('Coordinates already hit');
+    if (shotsReceived[y][x]) throw new Error('Coordinates already hit');
 
-    shotsReceived[x][y] = true;
+    shotsReceived[y][x] = true;
 
-    const ship = placedShips[x][y];
+    const ship = placedShips[y][x];
     if (ship) {
       ship.hit();
       return true;
@@ -82,8 +82,8 @@ const Gameboard = (dimension) => {
   };
 
   const allSunk = () =>
-    placedShips.every((col) =>
-      col.every((el) => el === null || el.isSunk() === true)
+    placedShips.every((row) =>
+      row.every((el) => el === null || el.isSunk() === true)
     );
 
   return {
