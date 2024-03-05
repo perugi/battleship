@@ -9,33 +9,14 @@ test('start a new game after receiving a newGame event', () => {
   expect(gameController.getPlayers()[0].getName()).toBe('Player 1');
 });
 
-test('make a shot after receiving a shoot event', () => {
-  const events = Events();
-  const gameController = GameController(events);
-  const fn = jest.fn();
-  events.on('gameStateChange', fn);
-  events.emit('newGame', { playerName: 'Player 1' });
-  events.emit('shoot', { x: 0, y: 0 });
-  expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
-  expect(fn).toHaveBeenCalledWith({
-    gameState: 'gameInProgress',
-    shot: { x: 0, y: 0 },
-    shipHit: true,
-    player1: gameController.getPlayers()[0],
-    player2: gameController.getPlayers()[1],
-    activePlayer: gameController.getPlayers()[0],
-    winner: null,
-  });
-});
-
-test('when the game start, a gameStarted event is emitted', () => {
+test('start the game after receiving the newGame event', () => {
   const events = Events();
   const gameController = GameController(events);
   const fn = jest.fn();
   events.on('gameStateChange', fn);
   events.emit('newGame', { playerName: 'Player 1' });
   expect(fn).toHaveBeenCalledWith({
-    gameState: 'gameInProgress',
+    gameState: 'gameStarted',
     shot: null,
     shipHit: null,
     player1: gameController.getPlayers()[0],
@@ -45,7 +26,26 @@ test('when the game start, a gameStarted event is emitted', () => {
   });
 });
 
-test('when the active player changes, this is reflected in the shotReceived event', () => {
+test('when a shot hits, this is reflected in the gameStateChange event', () => {
+  const events = Events();
+  const gameController = GameController(events);
+  const fn = jest.fn();
+  events.on('gameStateChange', fn);
+  events.emit('newGame', { playerName: 'Player 1' });
+  events.emit('shoot', { x: 0, y: 0 });
+  expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
+  expect(fn).toHaveBeenCalledWith({
+    gameState: 'shotReceived',
+    shot: { x: 0, y: 0 },
+    shipHit: true,
+    player1: gameController.getPlayers()[0],
+    player2: gameController.getPlayers()[1],
+    activePlayer: gameController.getPlayers()[0],
+    winner: null,
+  });
+});
+
+test('when a shot misses, this is reflected in the gameStateChange event', () => {
   const events = Events();
   const gameController = GameController(events);
   const fn = jest.fn();
@@ -53,7 +53,7 @@ test('when the active player changes, this is reflected in the shotReceived even
   events.emit('newGame', { playerName: 'Player 1' });
   events.emit('shoot', { x: 0, y: 1 });
   expect(fn).toHaveBeenCalledWith({
-    gameState: 'gameInProgress',
+    gameState: 'shotReceived',
     shot: { x: 0, y: 1 },
     shipHit: false,
     player1: gameController.getPlayers()[0],
@@ -63,7 +63,7 @@ test('when the active player changes, this is reflected in the shotReceived even
   });
 });
 
-test('when the game is over, this is reflected in the shotReceived event', () => {
+test('when the game is over, this is reflected in the gameStateChange event', () => {
   const events = Events();
   const gameController = GameController(events);
   const fn = jest.fn();

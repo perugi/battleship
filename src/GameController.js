@@ -35,7 +35,7 @@ const GameController = (events) => {
     players[1].placeShip(1, 0, 0, 'v');
     players[1].placeShip(2, 1, 0, 'h');
 
-    gameState = 'gameInProgress';
+    gameState = 'gameStarted';
     updateGameState(null, null);
   };
 
@@ -45,6 +45,8 @@ const GameController = (events) => {
 
   const shoot = (x, y) => {
     if (!activePlayer) throw new Error('No active player');
+
+    gameState = 'shotReceived';
 
     let shipHit;
 
