@@ -1,6 +1,5 @@
 const UserInterface = (events) => {
   const renderStartScreen = () => {
-    console.log('UI');
     document.querySelector('#content').innerHTML = `
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />

@@ -11,8 +11,8 @@ import ConsoleLogger from './ConsoleLogger';
 Utilities.renderGHLogo();
 
 const events = Events();
-const gameController = GameController(events);
-const userInterface = UserInterface(events);
 ConsoleLogger(events);
+GameController(events);
+const userInterface = UserInterface(events);
 
 userInterface.renderStartScreen();

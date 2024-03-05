@@ -4,6 +4,21 @@ const GameController = (events) => {
   const players = [];
   let activePlayer = null;
   let winner = null;
+  let gameState = 'notStarted';
+
+  const updateGameState = (shot, shipHit) => {
+    if (events) {
+      events.emit('gameStateChange', {
+        gameState,
+        shot,
+        shipHit,
+        player1: players[0],
+        player2: players[1],
+        activePlayer,
+        winner,
+      });
+    }
+  };
 
   const newGame = (playerName) => {
     winner = null;
@@ -20,12 +35,8 @@ const GameController = (events) => {
     players[1].placeShip(1, 0, 0, 'v');
     players[1].placeShip(2, 1, 0, 'h');
 
-    if (events) {
-      events.emit('gameStarted', {
-        player1: players[0],
-        player2: players[1],
-      });
-    }
+    gameState = 'gameInProgress';
+    updateGameState(null, null);
   };
 
   const newGameEvent = (data) => {
@@ -48,24 +59,12 @@ const GameController = (events) => {
     }
 
     if (activePlayer.getOpponent().allSunk()) {
+      gameState = 'gameOver';
       winner = activePlayer;
       activePlayer = null;
     }
 
-    if (events) {
-      events.emit('shotReceived', {
-        shot: { x, y },
-        shipHit,
-        player1: players[0],
-        player2: players[1],
-        activePlayer,
-        ships1: players[0].getShips(),
-        ships2: players[1].getShips(),
-        shotsReceived1: players[0].getShotsReceived(),
-        shotsReceived2: players[1].getShotsReceived(),
-        winner,
-      });
-    }
+    updateGameState({ x, y }, shipHit);
 
     return winner !== null;
   };
