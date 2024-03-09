@@ -29,9 +29,29 @@ main {
     justify-content: center;
     align-items: center;
   }
+}
 
+#player-gameboard {
   .ship {
     background-color: gray;
+  }
+
+  .empty {
+    background-color: lightblue;
+  }
+
+  .hit {
+    background-color: rgb(219, 119, 119);
+  }
+}
+
+#opponent-gameboard {
+  .empty {
+    background-color: lightblue;
+  }
+
+  .hit {
+    background-color: rgb(219, 119, 119);
   }
 }
 

@@ -8,8 +8,13 @@ const ConsoleLogger = (events) => {
   events.on('gameStateChange', (data) => {
     let log = '--- Game State Change ---\n';
     log += `Game State: ${data.gameState}\n`;
-    log += `Shot: ${JSON.stringify(data.shot) ?? 'null'}\n`;
-    log += `Ship Hit: ${data.shipHit ?? 'null'}\n`;
+    log += `Shot: ${
+      data.shot
+        ? `${data.shot.shootingPlayer.getName()} | [${data.shot.x}, ${
+            data.shot.y
+          }] | ${data.shot.shipHit ? 'hit' : 'miss'}}`
+        : 'null'
+    }\n`;
     log += `Player 1: ${data.player1.toString()}\n`;
     log += `Player 2: ${data.player2.toString()}\n`;
     log += `Active Player: ${

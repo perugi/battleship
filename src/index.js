@@ -13,6 +13,4 @@ Utilities.renderGHLogo();
 const events = Events();
 ConsoleLogger(events);
 GameController(events);
-const userInterface = UserInterface(events);
-
-userInterface.renderStartScreen();
+UserInterface(events);
