@@ -14,7 +14,7 @@ const Player = (name, isAi) => {
   const shoot = (x, y) => {
     if (!opponent) throw new Error('No opponent set');
 
-    return opponent.receiveAttack(x, y);
+    return [opponent.receiveAttack(x, y), x, y];
   };
 
   const shootAuto = () => {
@@ -33,10 +33,10 @@ const Player = (name, isAi) => {
     if (emptySpaces.length > 0) {
       const randomEmptySpace =
         emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
-      shoot(randomEmptySpace[0], randomEmptySpace[1]);
-    } else {
-      throw new Error('No empty spaces left');
+      return shoot(randomEmptySpace[0], randomEmptySpace[1]);
     }
+
+    throw new Error('No empty spaces left');
   };
 
   const toString = () => {
