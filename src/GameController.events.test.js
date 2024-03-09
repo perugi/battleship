@@ -114,3 +114,19 @@ test('when the game is over, this is reflected in the gameStateChange event', ()
     winner: gameController.getPlayers()[0],
   });
 });
+
+test('AI plays after the player misses', () => {
+  const events = Events();
+  const gameController = GameController(events);
+  const fn = jest.fn();
+  events.emit('newGame', {
+    player1Name: 'Player 1',
+    player1IsAi: false,
+    player2Name: 'Player 2',
+    player2IsAi: true,
+  });
+  events.on('gameStateChange', fn);
+  events.emit('shoot', { x: 5, y: 5 });
+  expect(fn.mock.calls.length).toBeGreaterThan(1);
+  expect(gameController.getActivePlayer()).toBe(gameController.getPlayers()[0]);
+});
