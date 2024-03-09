@@ -1,17 +1,17 @@
 import Player from './Player';
+import GameState from './GameState';
 
 const GameController = (events) => {
   const players = [];
   let activePlayer = null;
   let winner = null;
-  let gameState = 'notStarted';
+  let gameState = GameState.notStarted;
 
-  const updateGameState = (shot, shipHit) => {
+  const updateGameState = (shot) => {
     if (events) {
       events.emit('gameStateChange', {
         gameState,
-        shot,
-        shipHit,
+        shot: shot ?? null,
         player1: players[0],
         player2: players[1],
         activePlayer,
@@ -20,10 +20,10 @@ const GameController = (events) => {
     }
   };
 
-  const newGame = (playerName) => {
+  const newGame = (player1Name, player1IsAi, player2Name, player2IsAi) => {
     winner = null;
-    players.push(Player(playerName, false));
-    players.push(Player('Computer', true));
+    players.push(Player(player1Name, player1IsAi));
+    players.push(Player(player2Name, player2IsAi));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
     [activePlayer] = players;
@@ -35,44 +35,91 @@ const GameController = (events) => {
     players[1].placeShip(1, 0, 0, 'v');
     players[1].placeShip(2, 1, 0, 'h');
 
-    gameState = 'gameStarted';
-    updateGameState(null, null);
+    gameState = GameState.gameStarted;
+    updateGameState();
   };
 
   const newGameEvent = (data) => {
-    newGame(data.playerName);
+    newGame(
+      data.player1Name,
+      data.player1IsAi,
+      data.player2Name,
+      data.player2IsAi
+    );
   };
 
   const shoot = (x, y) => {
-    if (!activePlayer) throw new Error('No active player');
-
-    gameState = 'shotReceived';
-
+    const shootingPlayer = activePlayer;
     let shipHit;
+    let hitX;
+    let hitY;
 
     if (activePlayer.getIsAi()) {
-      shipHit = activePlayer.shootAuto();
+      [shipHit, hitX, hitY] = activePlayer.shootAuto();
     } else {
-      shipHit = activePlayer.shoot(x, y);
+      [shipHit, hitX, hitY] = activePlayer.shoot(x, y);
     }
 
     if (!shipHit) {
       activePlayer = activePlayer.getOpponent();
     }
 
+    updateGameState({
+      shootingPlayer,
+      shipHit,
+      x: hitX,
+      y: hitY,
+    });
+  };
+
+  const checkIfGameOver = () => {
     if (activePlayer.getOpponent().allSunk()) {
-      gameState = 'gameOver';
+      gameState = GameState.gameOver;
       winner = activePlayer;
       activePlayer = null;
+
+      updateGameState();
+
+      return true;
+    }
+    return false;
+  };
+
+  const playRound = (x, y) => {
+    /* 
+    A round represents a single human player action (shot).
+    This has different consequence in single player and multiplayer:
+      - In a single player game against a computer, a round represents a player shot and,
+      if it is a miss, all computer shots until the computer misses. If the first player shot
+      is a hit, the round is over and the next shot represents a new round.
+      - In a multiplayer game, a round is always a single shot, either a hit or a miss.
+    If at any stage the game is over, the round terminates and the function returns true;
+    */
+
+    if (gameState === GameState.notStarted || gameState === GameState.gameOver)
+      throw new Error('Game not active');
+
+    gameState = GameState.shotReceived;
+
+    shoot(x, y);
+
+    if (checkIfGameOver()) {
+      return true;
     }
 
-    updateGameState({ x, y }, shipHit);
+    while (activePlayer.getIsAi()) {
+      shoot();
 
-    return winner !== null;
+      if (checkIfGameOver()) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const shootEvent = (data) => {
-    shoot(data.x, data.y);
+    playRound(data.x, data.y);
   };
 
   if (events) {
@@ -82,7 +129,7 @@ const GameController = (events) => {
 
   return {
     newGame,
-    shoot,
+    playRound,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,
     getWinner: () => winner,
