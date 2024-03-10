@@ -31,6 +31,7 @@ const UserInterface = (events) => {
 
   const renderGameboards = (data) => {
     document.querySelector('#content').innerHTML = `
+        <div><span id="next-player">${data.activePlayer.getName()}</span>'s turn</div>
         <div>
           <h1> Player Board [${data.player1.getName()}] </h1>
           <div id="player-gameboard"></div>
@@ -89,6 +90,9 @@ const UserInterface = (events) => {
 
     console.log(cellElement);
     cellElement.classList.add('was-shot-at');
+
+    const nextPlayer = document.querySelector('#next-player');
+    nextPlayer.textContent = data.activePlayer.getName();
   };
 
   const renderEndScreen = (data) => {};

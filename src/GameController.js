@@ -48,14 +48,14 @@ const GameController = (events) => {
     );
   };
 
-  const shoot = (x, y) => {
+  const shoot = async (x, y) => {
     const shootingPlayer = activePlayer;
     let shipHit;
     let hitX;
     let hitY;
 
     if (activePlayer.getIsAi()) {
-      [shipHit, hitX, hitY] = activePlayer.shootAuto();
+      [shipHit, hitX, hitY] = await activePlayer.shootAuto();
     } else {
       [shipHit, hitX, hitY] = activePlayer.shoot(x, y);
     }
@@ -85,7 +85,7 @@ const GameController = (events) => {
     return false;
   };
 
-  const playRound = (x, y) => {
+  const playRound = async (x, y) => {
     /* 
     A round represents a single human player action (shot).
     This has different consequence in single player and multiplayer:
@@ -101,14 +101,14 @@ const GameController = (events) => {
 
     gameState = GameState.shotReceived;
 
-    shoot(x, y);
+    await shoot(x, y);
 
     if (checkIfGameOver()) {
       return true;
     }
 
     while (activePlayer.getIsAi()) {
-      shoot();
+      await shoot();
 
       if (checkIfGameOver()) {
         return true;
@@ -118,8 +118,8 @@ const GameController = (events) => {
     return false;
   };
 
-  const shootEvent = (data) => {
-    playRound(data.x, data.y);
+  const shootEvent = async (data) => {
+    await playRound(data.x, data.y);
   };
 
   if (events) {
