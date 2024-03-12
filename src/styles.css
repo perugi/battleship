@@ -55,6 +55,26 @@ main {
   }
 }
 
+#game-over-modal {
+  display: none;
+  z-index: 2;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(0, 0, 0, 0.3);
+  align-items: center;
+  justify-content: center;
+}
+
+#game-over-modal > .modal-content {
+  z-index: 3;
+  background-color: rgb(255, 255, 255);
+  padding: 16px;
+  width: 450px;
+}
+
 footer {
   display: flex;
   justify-content: center;

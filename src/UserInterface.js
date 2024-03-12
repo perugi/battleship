@@ -95,7 +95,13 @@ const UserInterface = (events) => {
     nextPlayer.textContent = data.activePlayer.getName();
   };
 
-  const renderEndScreen = (data) => {};
+  const renderEndScreen = (data) => {
+    const gameOverModal = document.querySelector('#game-over-modal');
+    const winnerName = document.querySelector('#winner-name');
+
+    winnerName.textContent = data.winner.getName();
+    gameOverModal.style.display = 'flex';
+  };
 
   const renderPauseScreen = () => {};
 
@@ -111,12 +117,20 @@ const UserInterface = (events) => {
     }
   };
 
+  const createEventListeners = () => {
+    const toGameSetup = document.querySelector('#to-game-setup');
+
+    toGameSetup.addEventListener('click', () => {
+      const gameOverModal = document.querySelector('#game-over-modal');
+
+      gameOverModal.style.display = 'none';
+      renderStartScreen();
+    });
+  };
+
+  createEventListeners();
   events.on('gameStateChange', handleGameStateChange);
   renderStartScreen();
-
-  return {
-    renderStartScreen,
-  };
 };
 
 export default UserInterface;
