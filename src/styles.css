@@ -55,7 +55,8 @@ main {
   }
 }
 
-#game-over-modal {
+#game-over-modal,
+#pause-modal {
   display: none;
   z-index: 2;
   position: fixed;
@@ -68,7 +69,8 @@ main {
   justify-content: center;
 }
 
-#game-over-modal > .modal-content {
+#game-over-modal > .modal-content,
+#pause-modal > .modal-content {
   z-index: 3;
   background-color: rgb(255, 255, 255);
   padding: 16px;

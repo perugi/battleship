@@ -29,6 +29,11 @@ const UserInterface = (events) => {
     });
   };
 
+  const renderPauseScreen = () => {
+    const pauseModal = document.querySelector('#pause-modal');
+    pauseModal.style.display = 'flex';
+  };
+
   const renderGameboards = (data) => {
     document.querySelector('#content').innerHTML = `
         <div><span id="next-player">${data.activePlayer.getName()}</span>'s turn</div>
@@ -39,6 +44,7 @@ const UserInterface = (events) => {
         <div>
           <h1> Opponents Board [${data.player2.getName()}] </h1>
         <div id="opponent-gameboard"></div>
+        <button id="pause-game">Pause Game</button>
     `;
 
     const playerGameboard = document.querySelector('#player-gameboard');
@@ -67,6 +73,9 @@ const UserInterface = (events) => {
         opponentGameboard.appendChild(cellElement);
       });
     });
+
+    const pauseButton = document.querySelector('#pause-game');
+    pauseButton.addEventListener('click', renderPauseScreen);
   };
 
   const renderShot = (data) => {
@@ -103,8 +112,6 @@ const UserInterface = (events) => {
     gameOverModal.style.display = 'flex';
   };
 
-  const renderPauseScreen = () => {};
-
   const handleGameStateChange = (data) => {
     if (data.gameState === GameState.notStarted) {
       renderStartScreen();
@@ -118,15 +125,32 @@ const UserInterface = (events) => {
   };
 
   const createEventListeners = () => {
-    const toGameSetup = document.querySelector('#to-game-setup');
+    const gameOverToGameSetupButton = document.querySelector(
+      '#game-over-to-game-setup'
+    );
 
-    toGameSetup.addEventListener('click', () => {
-      const gameOverModal = document.querySelector('#game-over-modal');
+    gameOverToGameSetupButton.addEventListener('click', () => {
+      const modal = document.querySelector('#game-over-modal');
+      modal.style.display = 'none';
+      renderStartScreen();
+    });
 
-      gameOverModal.style.display = 'none';
+    const pausedToGameSetupButton = document.querySelector(
+      '#pause-to-game-setup'
+    );
+
+    pausedToGameSetupButton.addEventListener('click', () => {
+      const modal = document.querySelector('#pause-modal');
+      modal.style.display = 'none';
       renderStartScreen();
     });
   };
+
+  const continueButton = document.querySelector('.continue.modal-button');
+  continueButton.addEventListener('click', () => {
+    const pauseModal = document.querySelector('#pause-modal');
+    pauseModal.style.display = 'none';
+  });
 
   createEventListeners();
   events.on('gameStateChange', handleGameStateChange);
