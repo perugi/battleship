@@ -1,12 +1,28 @@
 import GameState from './GameState';
 
 const UserInterface = (events) => {
+  const createBlankGameboard = (gameboardDiv) => {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const cellElement = document.createElement('div');
+        cellElement.classList.add('cell');
+        cellElement.setAttribute('data-row', i);
+        cellElement.setAttribute('data-col', j);
+        gameboardDiv.appendChild(cellElement);
+      }
+    }
+  };
+
   const renderStartScreen = () => {
     document.querySelector('#content').innerHTML = `
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />
+        <div id="player-gameboard"></div>
         <button id="start-game">Start Game</button>
     `;
+
+    const playerGameboardDiv = document.querySelector('#player-gameboard');
+    createBlankGameboard(playerGameboardDiv);
 
     const startGameButton = document.querySelector('#start-game');
     startGameButton.addEventListener('click', () => {
