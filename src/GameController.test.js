@@ -17,52 +17,58 @@ test('start a new game, creating the players and assigning the active player', (
   expect(gameController.getActivePlayer()).toBe(gameController.getPlayers()[0]);
 });
 
-test('make a shot and hit the opponents ship', () => {
+test('make a shot and hit the opponents ship', async () => {
   const gameController = GameController();
   gameController.newGame('Player 1', false, 'Player 2', false);
   expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
   expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(false);
 
-  gameController.playRound(0, 0);
+  await gameController.playRound(0, 0);
   expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
   expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
 
   expect(gameController.getActivePlayer()).toBe(gameController.getPlayers()[0]);
 });
 
-test('make a shot and miss the opponents ship', () => {
+test('make a shot and miss the opponents ship', async () => {
   const gameController = GameController();
   gameController.newGame('Player 1', false, 'Player 2', false);
-  gameController.playRound(9, 9);
+  await gameController.playRound(9, 9);
   expect(gameController.getActivePlayer()).toBe(gameController.getPlayers()[1]);
 });
 
-test('make a shot with no active player set', () => {
+test('make a shot with no active player set', async () => {
+  expect.assertions(1);
   const gameController = GameController();
-  expect(() => {
-    gameController.playRound(0, 0);
-  }).toThrow('Game not active');
+  try {
+    await gameController.playRound(0, 0);
+  } catch (error) {
+    expect(error.message).toBe('Game not active');
+  }
 });
 
-test('sinking all the ships wins the game', () => {
+test('sinking all the ships wins the game', async () => {
   const gameController = GameController();
   gameController.newGame('Player 1', false, 'Player 2', false);
   expect(gameController.getWinner()).toBe(null);
-  expect(gameController.playRound(0, 0)).toBe(false);
+  expect(await gameController.playRound(0, 0)).toBe(false);
   expect(gameController.getWinner()).toBe(null);
-  expect(gameController.playRound(1, 0)).toBe(false);
+  expect(await gameController.playRound(1, 0)).toBe(false);
   expect(gameController.getWinner()).toBe(null);
-  expect(gameController.playRound(2, 0)).toBe(true);
+  expect(await gameController.playRound(2, 0)).toBe(true);
   expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
 });
 
-test('after winning the game, no more shots can be made', () => {
+test('after winning the game, no more shots can be made', async () => {
+  expect.assertions(1);
   const gameController = GameController();
   gameController.newGame('Player 1', false, 'Player 2', false);
-  gameController.playRound(0, 0);
-  gameController.playRound(1, 0);
-  gameController.playRound(2, 0);
-  expect(() => {
-    gameController.playRound(3, 0);
-  }).toThrow('Game not active');
+  await gameController.playRound(0, 0);
+  await gameController.playRound(1, 0);
+  await gameController.playRound(2, 0);
+  try {
+    await gameController.playRound(3, 0);
+  } catch (error) {
+    expect(error.message).toBe('Game not active');
+  }
 });
