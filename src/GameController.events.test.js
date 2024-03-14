@@ -2,7 +2,7 @@ import Events from '@perugi/events';
 import GameController from './GameController';
 import GameState from './GameState';
 
-describe.skip('test of GameController API using events', () => {
+describe('test of GameController API using events', () => {
   test('start a new game after receiving a newGame event', () => {
     const events = Events();
     const gameController = GameController(events);
@@ -92,7 +92,12 @@ describe.skip('test of GameController API using events', () => {
     });
   });
 
-  test('when the game is over, this is reflected in the gameStateChange event', () => {
+  const delay = (ms) =>
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+
+  test('when the game is over, this is reflected in the gameStateChange event', async () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -104,8 +109,11 @@ describe.skip('test of GameController API using events', () => {
       player2IsAi: false,
     });
     events.emit('shoot', { x: 0, y: 0 });
+    await delay(0);
     events.emit('shoot', { x: 1, y: 0 });
+    await delay(0);
     events.emit('shoot', { x: 2, y: 0 });
+    await delay(0);
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,
       shot: null,
@@ -116,7 +124,7 @@ describe.skip('test of GameController API using events', () => {
     });
   });
 
-  test('AI plays after the player misses', () => {
+  test('AI plays after the player misses', async () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -128,6 +136,7 @@ describe.skip('test of GameController API using events', () => {
     });
     events.on('gameStateChange', fn);
     events.emit('shoot', { x: 5, y: 5 });
+    await delay(1100);
     expect(fn.mock.calls.length).toBeGreaterThan(1);
     expect(gameController.getActivePlayer()).toBe(
       gameController.getPlayers()[0]
