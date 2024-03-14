@@ -2,7 +2,7 @@ import Player from './Player';
 import GameState from './GameState';
 
 const GameController = (events) => {
-  const players = [];
+  let players = [];
   let activePlayer = null;
   let winner = null;
   let gameState = GameState.notStarted;
@@ -22,6 +22,7 @@ const GameController = (events) => {
 
   const newGame = (player1Name, player1IsAi, player2Name, player2IsAi) => {
     winner = null;
+    players = [];
     players.push(Player(player1Name, player1IsAi));
     players.push(Player(player2Name, player2IsAi));
     players[0].setOpponent(players[1]);

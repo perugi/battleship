@@ -72,3 +72,9 @@ test('after winning the game, no more shots can be made', async () => {
     expect(error.message).toBe('Game not active');
   }
 });
+
+test('starting a new game clears the board', () => {
+  const gameController = GameController();
+  gameController.newGame('Player 1', false, 'Player 2', false);
+  gameController.newGame('Player 1', false, 'Player 2', false);
+});
