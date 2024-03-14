@@ -81,6 +81,7 @@ const Player = (name, isAi) => {
     getShips: () => gameboard.getShips(),
     placeShip: (...args) => gameboard.placeShip(...args),
     removeShip: (...args) => gameboard.removeShip(...args),
+    placeRandomShips: (...args) => gameboard.placeRandomShips(...args),
     receiveAttack: (...args) => gameboard.receiveAttack(...args),
     allSunk: () => gameboard.allSunk(),
     getName: () => name,

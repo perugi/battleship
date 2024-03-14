@@ -189,3 +189,34 @@ test('return allSunk as true when all ships are sunk', () => {
   gameboard.receiveAttack(2, 0);
   expect(gameboard.allSunk()).toBe(true);
 });
+
+const countShipCells = (gameboard) =>
+  gameboard
+    .getShips()
+    .reduce(
+      (totalSum, row) =>
+        totalSum + row.reduce((rowSum, cell) => rowSum + (cell ? 1 : 0), 0),
+      0
+    );
+
+const countShips = (gameboard) => {
+  const uniqueShips = new Set();
+
+  gameboard.getShips().forEach((row) => {
+    row.forEach((cell) => {
+      if (cell) {
+        uniqueShips.add(cell);
+      }
+    });
+  });
+
+  return uniqueShips.size;
+};
+
+test.skip('it is possible to randomly place ships', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeRandomShips([1, 2, 3, 4, 5]);
+  // console.log(gameboard.getShips());
+  expect(countShips(gameboard)).toBe(5);
+  expect(countShipCells(gameboard)).toBe(1 + 2 + 3 + 4 + 5);
+});

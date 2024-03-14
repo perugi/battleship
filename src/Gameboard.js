@@ -65,6 +65,25 @@ const Gameboard = (dimension) => {
     );
   };
 
+  const placeRandomShips = (shipLengths) => {
+    shipLengths.forEach((shipLength) => {
+      let placed = false;
+      while (!placed) {
+        const x = Math.floor(Math.random() * dimension);
+        const y = Math.floor(Math.random() * dimension);
+        const dir = Math.random() < 0.5 ? 'h' : 'v';
+        try {
+          console.log(shipLength, x, y, dir);
+          placeShip(shipLength, x, y, dir);
+          placed = true;
+        } catch (e) {
+          // If a collision or out of bounds occurs, do nothing and try to place
+          // the ship again in the next iteration of the loop.
+        }
+      }
+    });
+  };
+
   const receiveAttack = (x, y) => {
     if (x < 0 || x >= dimension || y < 0 || y >= dimension)
       throw new Error('Coordinates out of bounds');
@@ -92,6 +111,7 @@ const Gameboard = (dimension) => {
     getShotsReceived: () => shotsReceived,
     placeShip,
     removeShip,
+    placeRandomShips,
     receiveAttack,
     allSunk,
   };

@@ -5,7 +5,9 @@ const GameController = (events) => {
   let players = [];
   let activePlayer = null;
   let winner = null;
-  let gameState = GameState.notStarted;
+  let gameState = GameState.gameSetup;
+
+  const SHIP_LENGTHS = [5, 4, 3, 3, 2];
 
   const updateGameState = (shot) => {
     if (events) {
@@ -19,6 +21,17 @@ const GameController = (events) => {
       });
     }
   };
+
+  // const placeRandomShips = (player) => {
+  //   if (gameState !== GameState.notStarted) return;
+
+  //   player.placeRandomShips(SHIP_LENGTHS);
+  //   updateGameState();
+  // };
+
+  // const placeRandomShipsEvent = (data) => {
+  //   placeRandomShips(data.player);
+  // };
 
   const newGame = (player1Name, player1IsAi, player2Name, player2IsAi) => {
     winner = null;
@@ -80,6 +93,7 @@ const GameController = (events) => {
       activePlayer = null;
 
       updateGameState();
+      gameState = GameState.gameSetup;
 
       return true;
     }
@@ -97,7 +111,7 @@ const GameController = (events) => {
     If at any stage the game is over, the round terminates and the function returns true;
     */
 
-    if (gameState === GameState.notStarted || gameState === GameState.gameOver)
+    if (gameState === GameState.gameSetup || gameState === GameState.gameOver)
       throw new Error('Game not active');
 
     gameState = GameState.shotReceived;
@@ -126,14 +140,20 @@ const GameController = (events) => {
   if (events) {
     events.on('newGame', newGameEvent);
     events.on('shoot', shootEvent);
+    // events.on('createPlayers', createPlayersEvent);
+    // events.on('placeRandomShips', placeRandomShipsEvent);
   }
 
   return {
+    // placeRandomShips,
+    // placeShip,
+    // removeShip
     newGame,
     playRound,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,
     getWinner: () => winner,
+    getGameState: () => gameState,
   };
 };
 

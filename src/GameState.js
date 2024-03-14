@@ -1,5 +1,6 @@
 const GameState = {
-  notStarted: 'notStarted',
+  gameSetup: 'gameSetup',
+  placingShips: 'placingShips',
   gameStarted: 'gameStarted',
   shotReceived: 'shotReceived',
   gameOver: 'gameOver',
