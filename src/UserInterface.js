@@ -1,16 +1,20 @@
 import GameState from './GameState';
+import Player from './Player';
 
 const UserInterface = (events) => {
-  const createBlankGameboard = (gameboardDiv) => {
-    for (let i = 0; i < 10; i++) {
-      for (let j = 0; j < 10; j++) {
+  const renderGameboard = (player, gameboardDiv, showShips) => {
+    player.getShips().forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
         const cellElement = document.createElement('div');
         cellElement.classList.add('cell');
-        cellElement.setAttribute('data-row', i);
-        cellElement.setAttribute('data-col', j);
+        cellElement.setAttribute('data-row', rowIndex);
+        cellElement.setAttribute('data-col', colIndex);
+        if (showShips && cell) {
+          cellElement.classList.add('ship');
+        }
         gameboardDiv.appendChild(cellElement);
-      }
-    }
+      });
+    });
   };
 
   const renderStartScreen = () => {
@@ -22,7 +26,7 @@ const UserInterface = (events) => {
     `;
 
     const playerGameboardDiv = document.querySelector('#player-gameboard');
-    createBlankGameboard(playerGameboardDiv);
+    renderGameboard(Player(), playerGameboardDiv, false);
 
     const startGameButton = document.querySelector('#start-game');
     startGameButton.addEventListener('click', () => {
@@ -66,28 +70,11 @@ const UserInterface = (events) => {
     const playerGameboard = document.querySelector('#player-gameboard');
     const opponentGameboard = document.querySelector('#opponent-gameboard');
 
-    data.player1.getShips().forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        const cellElement = document.createElement('div');
-        cellElement.classList.add('cell');
-        cellElement.setAttribute('data-row', rowIndex);
-        cellElement.setAttribute('data-col', colIndex);
-        if (cell) {
-          cellElement.classList.add('ship');
-        }
-        playerGameboard.appendChild(cellElement);
-      });
-    });
+    renderGameboard(data.player1, playerGameboard, true);
 
-    data.player2.getShips().forEach((row, rowIndex) => {
-      row.forEach((_, colIndex) => {
-        const cellElement = document.createElement('div');
-        cellElement.classList.add('cell');
-        cellElement.setAttribute('data-row', rowIndex);
-        cellElement.setAttribute('data-col', colIndex);
-        cellElement.addEventListener('click', shoot);
-        opponentGameboard.appendChild(cellElement);
-      });
+    renderGameboard(data.player2, opponentGameboard, false);
+    [...opponentGameboard.children].forEach((cell) => {
+      cell.addEventListener('click', shoot);
     });
 
     const pauseButton = document.querySelector('#pause-game');
