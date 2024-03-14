@@ -156,12 +156,12 @@ test('human player can manually attack', () => {
   expect(computer.getShotsReceived()[0][0]).toBe(true);
 });
 
-test('AI player can automatically attack', () => {
+test('AI player can automatically attack', async () => {
   const computer = Player('Computer', true);
   const player = Player('Player', false);
   computer.setOpponent(player);
   expect(countHitsOnBoard(player.getShotsReceived())).toBe(0);
-  computer.shootAuto();
+  await computer.shootAuto(0);
   expect(countHitsOnBoard(player.getShotsReceived())).toBe(1);
 });
 
@@ -181,22 +181,28 @@ test('when human shoots, if no opponents is set, exception is thrown', () => {
   }).toThrow('No opponent set');
 });
 
-test('when AI shoots, if no opponents is set, exception is thrown', () => {
+test('when AI shoots, if no opponents is set, exception is thrown', async () => {
+  expect.assertions(1);
   const player = Player('Player', true);
-  expect(() => {
-    player.shootAuto();
-  }).toThrow('No opponent set');
+  try {
+    await player.shootAuto(0);
+  } catch (error) {
+    expect(error.message).toBe('No opponent set');
+  }
 });
 
-test('When AI cannot find an empty space to shoot, exception is thrown', () => {
+test('When AI cannot find an empty space to shoot, exception is thrown', async () => {
+  //   expect.assertions(2);
   const computer = Player('Computer', true);
   const player = Player('Player', false);
   computer.setOpponent(player);
   for (let i = 0; i < 100; i++) {
-    computer.shootAuto();
+    await computer.shootAuto(0);
   }
   expect(countHitsOnBoard(player.getShotsReceived())).toBe(100);
-  expect(() => {
-    computer.shootAuto();
-  }).toThrow('No empty spaces left');
+  try {
+    await computer.shootAuto(0);
+  } catch (error) {
+    expect(error.message).toBe('No empty spaces left');
+  }
 });

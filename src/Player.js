@@ -22,7 +22,7 @@ const Player = (name, isAi) => {
     return [opponent.receiveAttack(x, y), x, y];
   };
 
-  const shootAuto = async () => {
+  const shootAuto = async (delayTime = 1000) => {
     if (!opponent) throw new Error('No opponent set');
 
     const emptySpaces = [];
@@ -39,7 +39,7 @@ const Player = (name, isAi) => {
       const randomEmptySpace =
         emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
 
-      await delay(1000);
+      await delay(delayTime);
 
       return shoot(randomEmptySpace[0], randomEmptySpace[1]);
     }
