@@ -3,15 +3,31 @@ import Player from './Player';
 
 const UserInterface = (events) => {
   const renderGameboard = (player, gameboardDiv, showShips) => {
+    gameboardDiv.innerHTML = '';
+
     player.getShips().forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
+      row.forEach((ship, colIndex) => {
         const cellElement = document.createElement('div');
         cellElement.classList.add('cell');
         cellElement.setAttribute('data-row', rowIndex);
         cellElement.setAttribute('data-col', colIndex);
-        if (showShips && cell) {
+
+        if (showShips && ship) {
           cellElement.classList.add('ship');
         }
+
+        if (player.getShotsReceived()[rowIndex][colIndex]) {
+          if (ship) {
+            cellElement.classList.add('hit');
+          } else {
+            cellElement.classList.add('miss');
+          }
+        }
+
+        if (ship && ship.isSunk()) {
+          cellElement.classList.add('sunk');
+        }
+
         gameboardDiv.appendChild(cellElement);
       });
     });
@@ -41,7 +57,11 @@ const UserInterface = (events) => {
   };
 
   const shoot = (event) => {
-    if (event.target.classList.contains('was-shot-at')) return;
+    if (
+      event.target.classList.contains('miss') ||
+      event.target.classList.contains('hit')
+    )
+      return;
 
     events.emit('shoot', {
       x: event.target.getAttribute('data-col'),
@@ -83,25 +103,25 @@ const UserInterface = (events) => {
 
   const renderShot = (data) => {
     // TODO show whose turn it is on the screen (based on data.activePlayer)
+    console.log('shotReceived');
 
-    console.log(data.shot.shootingPlayer.getOpponent());
-    const gameboardId =
-      data.shot.shootingPlayer.getOpponent() === data.player1
-        ? 'player'
-        : 'opponent';
-
-    const cellElement = document.querySelector(
-      `#${gameboardId}-gameboard [data-row="${data.shot.y}"][data-col="${data.shot.x}"]`
+    const gameboardDiv = document.querySelector(
+      `#${
+        data.shot.shootingPlayer === data.player1 ? 'opponent' : 'player'
+      }-gameboard`
     );
 
-    if (data.shot.shipHit) {
-      cellElement.classList.add('hit');
-    } else {
-      cellElement.classList.add('empty');
-    }
+    console.log(gameboardDiv);
 
-    console.log(cellElement);
-    cellElement.classList.add('was-shot-at');
+    if (data.shot.shootingPlayer === data.player1) {
+      renderGameboard(data.player2, gameboardDiv, false);
+
+      [...gameboardDiv.children].forEach((cell) => {
+        cell.addEventListener('click', shoot);
+      });
+    } else {
+      renderGameboard(data.player1, gameboardDiv, true);
+    }
 
     const nextPlayer = document.querySelector('#next-player');
     nextPlayer.textContent = data.activePlayer.getName();

@@ -31,27 +31,22 @@ main {
   }
 }
 
-#player-gameboard {
+#player-gameboard,
+#opponent-gameboard {
   .ship {
     background-color: gray;
   }
 
-  .empty {
+  .miss {
     background-color: lightblue;
   }
 
   .hit {
     background-color: rgb(219, 119, 119);
   }
-}
 
-#opponent-gameboard {
-  .empty {
-    background-color: lightblue;
-  }
-
-  .hit {
-    background-color: rgb(219, 119, 119);
+  .sunk {
+    background-color: rgb(128, 28, 28);
   }
 }
 
