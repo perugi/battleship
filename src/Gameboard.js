@@ -73,7 +73,6 @@ const Gameboard = (dimension) => {
         const y = Math.floor(Math.random() * dimension);
         const dir = Math.random() < 0.5 ? 'h' : 'v';
         try {
-          console.log(shipLength, x, y, dir);
           placeShip(shipLength, x, y, dir);
           placed = true;
         } catch (e) {

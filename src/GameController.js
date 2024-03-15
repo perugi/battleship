@@ -22,45 +22,66 @@ const GameController = (events) => {
     }
   };
 
-  // const placeRandomShips = (player) => {
-  //   if (gameState !== GameState.notStarted) return;
+  const placeShip = (playerIndex, shipLength, x, y, direction) => {
+    if (gameState !== GameState.placingShips)
+      throw new Error('Not in placing ships state');
+    if (playerIndex < 0 || playerIndex > players.length - 1)
+      throw new Error('Invalid player index');
 
-  //   player.placeRandomShips(SHIP_LENGTHS);
-  //   updateGameState();
-  // };
+    players[playerIndex].placeShip(shipLength, x, y, direction);
+    updateGameState();
+  };
+
+  const placeRandomShips = (playerIndex) => {
+    if (gameState !== GameState.placingShips)
+      throw new Error('Not in placing ships state');
+    if (playerIndex < 0 || playerIndex > players.length - 1)
+      throw new Error('Invalid player index');
+
+    players[playerIndex].placeRandomShips(SHIP_LENGTHS);
+    updateGameState();
+  };
 
   // const placeRandomShipsEvent = (data) => {
   //   placeRandomShips(data.player);
   // };
 
-  const newGame = (player1Name, player1IsAi, player2Name, player2IsAi) => {
+  const createPlayers = (
+    player1Name,
+    player1IsAi,
+    player2Name,
+    player2IsAi
+  ) => {
     winner = null;
+    activePlayer = null;
     players = [];
     players.push(Player(player1Name, player1IsAi));
     players.push(Player(player2Name, player2IsAi));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
-    [activePlayer] = players;
 
-    // TODO implement a mechanism to position the ships. For now, just
-    // place the ships on the board automatically
-    players[0].placeShip(1, 0, 0, 'v');
-    players[0].placeShip(2, 1, 0, 'h');
-    players[1].placeShip(1, 0, 0, 'v');
-    players[1].placeShip(2, 1, 0, 'h');
-
-    gameState = GameState.gameStarted;
+    gameState = GameState.placingShips;
     updateGameState();
   };
 
-  const newGameEvent = (data) => {
-    newGame(
-      data.player1Name,
-      data.player1IsAi,
-      data.player2Name,
-      data.player2IsAi
-    );
+  const startGame = () => {
+    if (gameState !== GameState.placingShips)
+      throw new Error('Not in placingShips state');
+
+    gameState = GameState.gameStarted;
+    [activePlayer] = players;
+    updateGameState();
   };
+
+  // TODO
+  // const newGameEvent = (data) => {
+  //   newGame(
+  //     data.player1Name,
+  //     data.player1IsAi,
+  //     data.player2Name,
+  //     data.player2IsAi
+  //   );
+  // };
 
   const shoot = async (x, y) => {
     const shootingPlayer = activePlayer;
@@ -111,7 +132,10 @@ const GameController = (events) => {
     If at any stage the game is over, the round terminates and the function returns true;
     */
 
-    if (gameState === GameState.gameSetup || gameState === GameState.gameOver)
+    if (
+      gameState !== GameState.gameStarted &&
+      gameState !== GameState.shotReceived
+    )
       throw new Error('Game not active');
 
     gameState = GameState.shotReceived;
@@ -145,10 +169,11 @@ const GameController = (events) => {
   }
 
   return {
-    // placeRandomShips,
-    // placeShip,
+    placeRandomShips,
+    placeShip,
     // removeShip
-    newGame,
+    createPlayers,
+    startGame,
     playRound,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,
