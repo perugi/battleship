@@ -220,3 +220,5 @@ test.skip('it is possible to randomly place ships', () => {
   expect(countShips(gameboard)).toBe(5);
   expect(countShipCells(gameboard)).toBe(1 + 2 + 3 + 4 + 5);
 });
+
+test.skip('randomly placing a ship of length 0 does not place anything', () => {});

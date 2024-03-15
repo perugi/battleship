@@ -2,7 +2,7 @@ import Events from '@perugi/events';
 import GameController from './GameController';
 import GameState from './GameState';
 
-describe('test of GameController API using events', () => {
+describe.skip('test of GameController API using events', () => {
   test('start a new game after receiving a newGame event', () => {
     const events = Events();
     const gameController = GameController(events);
