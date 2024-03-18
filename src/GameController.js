@@ -32,6 +32,16 @@ const GameController = (events) => {
     updateGameState();
   };
 
+  const placeShipEvent = (data) => {
+    placeShip(
+      data.playerIndex,
+      data.shipLength,
+      data.x,
+      data.y,
+      data.direction
+    );
+  };
+
   const placeRandomShips = (playerIndex) => {
     if (gameState !== GameState.placingShips)
       throw new Error('Not in placing ships state');
@@ -42,9 +52,9 @@ const GameController = (events) => {
     updateGameState();
   };
 
-  // const placeRandomShipsEvent = (data) => {
-  //   placeRandomShips(data.player);
-  // };
+  const placeRandomShipsEvent = (data) => {
+    placeRandomShips(data.playerIndex);
+  };
 
   const createPlayers = (
     player1Name,
@@ -73,15 +83,14 @@ const GameController = (events) => {
     updateGameState();
   };
 
-  // TODO
-  // const newGameEvent = (data) => {
-  //   newGame(
-  //     data.player1Name,
-  //     data.player1IsAi,
-  //     data.player2Name,
-  //     data.player2IsAi
-  //   );
-  // };
+  const createPlayersEvent = (data) => {
+    createPlayers(
+      data.player1Name,
+      data.player1IsAi,
+      data.player2Name,
+      data.player2IsAi
+    );
+  };
 
   const shoot = async (x, y) => {
     const shootingPlayer = activePlayer;
@@ -162,10 +171,11 @@ const GameController = (events) => {
   };
 
   if (events) {
-    events.on('newGame', newGameEvent);
+    events.on('createPlayers', createPlayersEvent);
+    events.on('placeShip', placeShipEvent);
+    events.on('placeRandomShips', placeRandomShipsEvent);
+    events.on('startGame', startGame);
     events.on('shoot', shootEvent);
-    // events.on('createPlayers', createPlayersEvent);
-    // events.on('placeRandomShips', placeRandomShipsEvent);
   }
 
   return {
