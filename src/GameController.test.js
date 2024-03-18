@@ -1,5 +1,6 @@
 import GameController from './GameController';
 import GameState from './GameState';
+import { countShips } from './testHelpers';
 
 test('create a new game controller', () => {
   const gameController = GameController();
@@ -28,7 +29,11 @@ test('create two players and start a new game', () => {
   const gameController = GameController();
   gameController.createPlayers('Player 1', false, 'Player 2', false);
   gameController.placeShip(0, 2, 0, 0, 'h');
+  expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
+  expect(gameController.getPlayers()[1].getShips()[0][0]).toBe(null);
   gameController.placeShip(1, 2, 0, 0, 'h');
+  expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
+  expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
   gameController.startGame();
   expect(gameController.getGameState()).toBe(GameState.gameStarted);
   expect(gameController.getActivePlayer()).toBe(gameController.getPlayers()[0]);
@@ -169,20 +174,6 @@ test('creating players when players already exist clears the existing players', 
   expect(gameController.getPlayers()[1].getName()).toBe('Player 4');
   expect(gameController.getPlayers()[1].getIsAi()).toBe(true);
 });
-
-const countShips = (gameboard) => {
-  const uniqueShips = new Set();
-
-  gameboard.getShips().forEach((row) => {
-    row.forEach((cell) => {
-      if (cell) {
-        uniqueShips.add(cell);
-      }
-    });
-  });
-
-  return uniqueShips.size;
-};
 
 test('placing random ships to a specified player board', () => {
   const gameController = GameController();

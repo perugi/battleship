@@ -1,4 +1,5 @@
 import Player from './Player';
+import { countHitsOnBoard } from './testHelpers';
 
 test('Instantiate human player with name', () => {
   const player = Player('Player', false);
@@ -137,22 +138,13 @@ test('Print player data', () => {
 `);
 });
 
-function countHitsOnBoard(board) {
-  return board.reduce(
-    (totalHitsOnBoard, row) =>
-      totalHitsOnBoard +
-      row.reduce((totalHitsInRow, el) => totalHitsInRow + (el === true), 0),
-    0
-  );
-}
-
 test('human player can manually attack', () => {
   const computer = Player('Computer', true);
   const player = Player('Player', false);
   player.setOpponent(computer);
-  expect(countHitsOnBoard(computer.getShotsReceived())).toBe(0);
+  expect(countHitsOnBoard(computer)).toBe(0);
   player.shoot(0, 0);
-  expect(countHitsOnBoard(computer.getShotsReceived())).toBe(1);
+  expect(countHitsOnBoard(computer)).toBe(1);
   expect(computer.getShotsReceived()[0][0]).toBe(true);
 });
 
@@ -160,9 +152,9 @@ test('AI player can automatically attack', async () => {
   const computer = Player('Computer', true);
   const player = Player('Player', false);
   computer.setOpponent(player);
-  expect(countHitsOnBoard(player.getShotsReceived())).toBe(0);
+  expect(countHitsOnBoard(player)).toBe(0);
   await computer.shootAuto(0);
-  expect(countHitsOnBoard(player.getShotsReceived())).toBe(1);
+  expect(countHitsOnBoard(player)).toBe(1);
 });
 
 test('hitting an opponent ship returns true and shot coords, missing returns false and shot coords', () => {
@@ -199,7 +191,7 @@ test('When AI cannot find an empty space to shoot, exception is thrown', async (
   for (let i = 0; i < 100; i++) {
     await computer.shootAuto(0);
   }
-  expect(countHitsOnBoard(player.getShotsReceived())).toBe(100);
+  expect(countHitsOnBoard(player)).toBe(100);
   try {
     await computer.shootAuto(0);
   } catch (error) {
