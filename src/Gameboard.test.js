@@ -200,3 +200,14 @@ test.skip('it is possible to randomly place ships', () => {
 });
 
 test.skip('randomly placing a ship of length 0 does not place anything', () => {});
+
+test('clear the board', () => {
+  const gameboard = Gameboard(10);
+  gameboard.placeShip(1, 0, 0, 'v');
+  gameboard.placeShip(2, 1, 0, 'h');
+  expect(countShips(gameboard)).toBe(2);
+  gameboard.clear();
+  expect(countShips(gameboard)).toBe(0);
+  gameboard.clear();
+  expect(countShips(gameboard)).toBe(0);
+});

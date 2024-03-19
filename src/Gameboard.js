@@ -65,7 +65,18 @@ const Gameboard = (dimension) => {
     );
   };
 
+  const clear = () => {
+    for (let x = 0; x < dimension; x++) {
+      for (let y = 0; y < dimension; y++) {
+        placedShips[y][x] = null;
+        shotsReceived[y][x] = false;
+      }
+    }
+  };
+
   const placeRandomShips = (shipLengths) => {
+    clear();
+
     shipLengths.forEach((shipLength) => {
       let placed = false;
       while (!placed) {
@@ -111,6 +122,7 @@ const Gameboard = (dimension) => {
     placeShip,
     removeShip,
     placeRandomShips,
+    clear,
     receiveAttack,
     allSunk,
   };
