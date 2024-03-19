@@ -1,5 +1,4 @@
 import GameState from './GameState';
-import Player from './Player';
 
 const UserInterface = (events) => {
   const renderGameboard = (player, gameboardDiv, showShips) => {
@@ -33,26 +32,44 @@ const UserInterface = (events) => {
     });
   };
 
-  const renderStartScreen = () => {
+  const renderGameSetup = () => {
     document.querySelector('#content').innerHTML = `
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />
-        <div id="player-gameboard"></div>
-        <button id="start-game">Start Game</button>
+        <button id="create-players">Confirm</button>
     `;
 
-    const playerGameboardDiv = document.querySelector('#player-gameboard');
-    renderGameboard(Player(), playerGameboardDiv, false);
-
-    const startGameButton = document.querySelector('#start-game');
-    startGameButton.addEventListener('click', () => {
+    const createPlayersButton = document.querySelector('#create-players');
+    createPlayersButton.addEventListener('click', () => {
       const playerName = document.querySelector('#player-name').value;
-      events.emit('newGame', {
+      events.emit('createPlayers', {
         player1Name: playerName,
         player1IsAi: false,
         player2Name: 'Computer',
         player2IsAi: true,
       });
+    });
+  };
+
+  const renderShipPlacing = (data) => {
+    document.querySelector('#content').innerHTML = `
+        <h1> Player Board [${data.player1.getName()}] </h1>
+        <div id="player-gameboard"></div>
+        <button id="place-random">Place Ships Randomly</button>
+        <button id="start-game">Start Game</button>
+    `;
+
+    const playerGameboardDiv = document.querySelector('#player-gameboard');
+    renderGameboard(data.player1, playerGameboardDiv, true);
+
+    const placeRandomShipsButton = document.querySelector('#place-random');
+    placeRandomShipsButton.addEventListener('click', () => {
+      events.emit('placeRandomShips', { playerIndex: 0 });
+    });
+
+    const startGameButton = document.querySelector('#start-game');
+    startGameButton.addEventListener('click', () => {
+      events.emit('startGame');
     });
   };
 
@@ -137,7 +154,9 @@ const UserInterface = (events) => {
 
   const handleGameStateChange = (data) => {
     if (data.gameState === GameState.notStarted) {
-      renderStartScreen();
+      renderGameSetup();
+    } else if (data.gameState === GameState.placingShips) {
+      renderShipPlacing(data);
     } else if (data.gameState === GameState.gameStarted) {
       renderGameboards(data);
     } else if (data.gameState === GameState.shotReceived) {
@@ -155,7 +174,7 @@ const UserInterface = (events) => {
     gameOverToGameSetupButton.addEventListener('click', () => {
       const modal = document.querySelector('#game-over-modal');
       modal.style.display = 'none';
-      renderStartScreen();
+      renderGameSetup();
     });
 
     const pausedToGameSetupButton = document.querySelector(
@@ -165,7 +184,7 @@ const UserInterface = (events) => {
     pausedToGameSetupButton.addEventListener('click', () => {
       const modal = document.querySelector('#pause-modal');
       modal.style.display = 'none';
-      renderStartScreen();
+      renderGameSetup();
     });
   };
 
@@ -177,7 +196,7 @@ const UserInterface = (events) => {
 
   createEventListeners();
   events.on('gameStateChange', handleGameStateChange);
-  renderStartScreen();
+  renderGameSetup();
 };
 
 export default UserInterface;
