@@ -25,7 +25,7 @@ describe('Gameboard tests', () => {
     }).toThrow('Gameboard dimension must be greater than 0');
   });
 
-  test.skip('create a board with a single ship', () => {
+  test('create a board with a single ship', () => {
     const gameboard = Gameboard(5);
     gameboard.placeShip(1, 0, 0, 'v');
     // In this test, we also test that all the other coordinates stay null.

@@ -11,7 +11,7 @@ const Gameboard = (dimension) => {
     .map(() => new Array(dimension).fill(false));
   const adjacents = new Array(dimension)
     .fill(false)
-    .map(() => new Array(dimension).fill(new Set()));
+    .map(() => new Array(dimension).fill(false).map(() => new Set()));
 
   const calculateShipCoordinates = (shipLength, x, y, dir) => {
     const shipCoordinates = [];
@@ -23,6 +23,26 @@ const Gameboard = (dimension) => {
       }
     }
     return shipCoordinates;
+  };
+
+  const modifyAdjacents = (x, y, ship, operation) => {
+    for (
+      let row = Math.max(0, y - 1);
+      row <= Math.min(y + 1, dimension - 1);
+      row++
+    ) {
+      for (
+        let col = Math.max(0, x - 1);
+        col <= Math.min(x + 1, dimension - 1);
+        col++
+      ) {
+        if (operation === 'add') {
+          adjacents[row][col].add(ship);
+        } else if (operation === 'remove') {
+          adjacents[row][col].delete(ship);
+        }
+      }
+    }
   };
 
   const placeShip = (shipLength, originX, originY, dir) => {
@@ -50,7 +70,7 @@ const Gameboard = (dimension) => {
       dir
     );
     newShipCoords.forEach(([x, y]) => {
-      if (placedShips[y][x]) {
+      if (adjacents[y][x].size > 0) {
         throw new Error('Placed ship collides or adjacent to an existing ship');
       }
     });
@@ -58,37 +78,17 @@ const Gameboard = (dimension) => {
     const ship = Ship(shipLength);
     newShipCoords.forEach(([x, y]) => {
       placedShips[y][x] = ship;
-
-      // Fill in surrounding cells with adjacentTo objects. This is used to prevent
-      // additional ships to be placed adjacent to this ship. The adjacentTo is a list
-      // of ships that are adjacent to this ship, in order to show it on the GUI, once
-      // a ship is sunk.
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) {
-          if (
-            x + i >= 0 &&
-            x + i < dimension &&
-            y + j >= 0 &&
-            y + j < dimension
-          ) {
-            if (placedShips[y + j][x + i] === null) {
-              placedShips[y + j][x + i] = { adjacentTo: [ship] };
-            } else if (placedShips[y + j][x + i].adjacentTo) {
-              placedShips[y + j][x + i].adjacentTo.push(ship);
-            }
-          }
-        }
-      }
+      modifyAdjacents(x, y, ship, 'add');
     });
   };
 
   const removeShip = (shipLength, originX, originY, dir) => {
     calculateShipCoordinates(shipLength, originX, originY, dir).forEach(
       ([x, y]) => {
+        const ship = placedShips[y][x];
         placedShips[y][x] = null;
+        modifyAdjacents(x, y, ship, 'remove');
       }
-
-      // TODO remove the adjacentTo from the surrounding cells
     );
   };
 
@@ -97,6 +97,7 @@ const Gameboard = (dimension) => {
       for (let y = 0; y < dimension; y++) {
         placedShips[y][x] = null;
         shotsReceived[y][x] = false;
+        adjacents[y][x].clear();
       }
     }
   };
@@ -131,7 +132,7 @@ const Gameboard = (dimension) => {
     shotsReceived[y][x] = true;
 
     const ship = placedShips[y][x];
-    if (ship && ship.hit) {
+    if (ship) {
       ship.hit();
       return true;
     }
@@ -141,7 +142,7 @@ const Gameboard = (dimension) => {
 
   const allSunk = () =>
     placedShips.every((row) =>
-      row.every((el) => el === null || el.adjacentTo || el.isSunk() === true)
+      row.every((el) => el === null || el.isSunk() === true)
     );
 
   const toString = () => {
@@ -150,18 +151,18 @@ const Gameboard = (dimension) => {
     for (let i = 0; i < dimension; i++) {
       string += '  ';
       for (let j = 0; j < dimension; j++) {
-        if (!shotsReceived[i][j]) {
-          if (placedShips[i][j] && placedShips[i][j].hit) {
-            string += ' O ';
-          } else if (placedShips[i][j] && placedShips[i][j].adjacentTo) {
-            string += ' . ';
+        if (shotsReceived[i][j]) {
+          if (placedShips[i][j]) {
+            string += ' X ';
           } else {
-            string += '   ';
+            string += ' - ';
           }
-        } else if (placedShips[i][j] && placedShips[i][j].hit) {
-          string += ' X ';
+        } else if (placedShips[i][j]) {
+          string += ' O ';
+        } else if (adjacents[i][j].size > 0) {
+          string += ' . ';
         } else {
-          string += ' - ';
+          string += '   ';
         }
         string += '|';
       }
@@ -176,6 +177,7 @@ const Gameboard = (dimension) => {
     getDimension: () => dimension,
     getShips: () => placedShips,
     getShotsReceived: () => shotsReceived,
+    getAdjacents: () => adjacents,
     placeShip,
     removeShip,
     placeRandomShips,

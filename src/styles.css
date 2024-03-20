@@ -33,12 +33,12 @@ main {
 
 #player-gameboard,
 #opponent-gameboard {
-  .ship {
-    background-color: gray;
-  }
-
   .adjacent {
     background-color: lightgray;
+  }
+
+  .ship {
+    background-color: gray;
   }
 
   .miss {
