@@ -2,7 +2,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips } from './testHelpers';
 
-describe.skip('GameController tests', () => {
+describe('GameController tests', () => {
   test('create a new game controller', () => {
     const gameController = GameController();
     expect(gameController.getGameState()).toBe(GameState.gameSetup);

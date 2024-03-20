@@ -3,7 +3,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips, delay } from './testHelpers';
 
-describe.skip('GameController events API', () => {
+describe('GameController events API', () => {
   test('create the players after receiving the createPlayers event', () => {
     const events = Events();
     const gameController = GameController(events);
@@ -56,7 +56,6 @@ describe.skip('GameController events API', () => {
     expect(countShips(gameController.getPlayers()[0])).toBe(1);
     expect(countShips(gameController.getPlayers()[1])).toBe(0);
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
-    expect(gameController.getPlayers()[0].getShips()[1][0]).toBe(null);
   });
 
   test('Place random ships after receiving the placeRandomShips event', () => {

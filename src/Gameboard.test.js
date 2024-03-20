@@ -28,28 +28,18 @@ describe('Gameboard tests', () => {
   test('create a board with a single ship', () => {
     const gameboard = Gameboard(5);
     gameboard.placeShip(1, 0, 0, 'v');
-    // In this test, we also test that all the other coordinates stay null.
-    // This is not re-tested in the following tests.
     const ships = gameboard.getShips();
     expect(ships[0][0].getLength()).toBe(1);
-    for (let i = 1; i < 5; i++) {
-      expect(ships[0][i]).toBe(null);
-    }
-    for (let i = 0; i < 5; i++) {
-      for (let j = 1; j < 5; j++) {
-        expect(ships[i][j]).toBe(null);
-      }
-    }
   });
 
   test('create a board with multiple ships', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
-    gameboard.placeShip(2, 1, 0, 'h');
+    gameboard.placeShip(2, 2, 0, 'h');
     const ships = gameboard.getShips();
     expect(ships[0][0].getLength()).toBe(1);
-    expect(ships[0][1].getLength()).toBe(2);
-    expect(ships[0][1]).toBe(ships[0][2]);
+    expect(ships[0][2].getLength()).toBe(2);
+    expect(ships[0][3]).toBe(ships[0][2]);
   });
 
   test('placing a ship out of bounds throws an error', () => {
@@ -128,24 +118,24 @@ describe('Gameboard tests', () => {
   test('remove a ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
-    gameboard.placeShip(2, 1, 0, 'h');
+    gameboard.placeShip(2, 2, 0, 'h');
     gameboard.removeShip(1, 0, 0, 'v');
     const ships = gameboard.getShips();
     expect(ships[0][0]).toBe(null);
-    expect(ships[0][1].getLength()).toBe(2);
+    expect(ships[0][2].getLength()).toBe(2);
   });
 
   test('remove a large ship, place another one in its previous spot', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
-    gameboard.placeShip(2, 1, 0, 'h');
-    expect(gameboard.getShips()[0][1].getLength()).toBe(2);
+    gameboard.placeShip(2, 2, 0, 'h');
     expect(gameboard.getShips()[0][2].getLength()).toBe(2);
-    gameboard.removeShip(2, 1, 0, 'h');
-    expect(gameboard.getShips()[0][1]).toBe(null);
+    expect(gameboard.getShips()[0][3].getLength()).toBe(2);
+    gameboard.removeShip(2, 2, 0, 'h');
     expect(gameboard.getShips()[0][2]).toBe(null);
-    gameboard.placeShip(2, 1, 0, 'h');
-    expect(gameboard.getShips()[0][1].getLength()).toBe(2);
+    expect(gameboard.getShips()[0][3]).toBe(null);
+    gameboard.placeShip(2, 2, 0, 'h');
+    expect(gameboard.getShips()[0][2].getLength()).toBe(2);
   });
 
   test('make an attack and hit a ship', () => {
@@ -211,13 +201,13 @@ describe('Gameboard tests', () => {
   test('return allSunk as true when all ships are sunk', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
-    gameboard.placeShip(2, 1, 0, 'h');
+    gameboard.placeShip(2, 2, 0, 'h');
     expect(gameboard.allSunk()).toBe(false);
     gameboard.receiveAttack(0, 0);
     expect(gameboard.allSunk()).toBe(false);
-    gameboard.receiveAttack(1, 0);
-    expect(gameboard.allSunk()).toBe(false);
     gameboard.receiveAttack(2, 0);
+    expect(gameboard.allSunk()).toBe(false);
+    gameboard.receiveAttack(3, 0);
     expect(gameboard.allSunk()).toBe(true);
   });
 
@@ -234,7 +224,7 @@ describe('Gameboard tests', () => {
   test('clear the board', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
-    gameboard.placeShip(2, 1, 0, 'h');
+    gameboard.placeShip(2, 2, 0, 'h');
     expect(countShips(gameboard)).toBe(2);
     gameboard.clear();
     expect(countShips(gameboard)).toBe(0);

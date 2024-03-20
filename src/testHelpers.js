@@ -3,7 +3,7 @@ const countShips = (gameboard) => {
 
   gameboard.getShips().forEach((row) => {
     row.forEach((cell) => {
-      if (cell) {
+      if (cell && cell.hit) {
         uniqueShips.add(cell);
       }
     });
@@ -17,7 +17,8 @@ const countShipCells = (gameboard) =>
     .getShips()
     .reduce(
       (totalSum, row) =>
-        totalSum + row.reduce((rowSum, cell) => rowSum + (cell ? 1 : 0), 0),
+        totalSum +
+        row.reduce((rowSum, cell) => rowSum + (cell && cell.hit ? 1 : 0), 0),
       0
     );
 

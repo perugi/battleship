@@ -1,6 +1,6 @@
 import Ship from './Ship';
 
-describe.skip('Ship tests', () => {
+describe('Ship tests', () => {
   test('Ship length', () => {
     const ship = Ship(3);
     expect(ship.getLength()).toBe(3);

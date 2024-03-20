@@ -1,7 +1,7 @@
 import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
-describe.skip('Player tests', () => {
+describe('Player tests', () => {
   test('Instantiate human player with name', () => {
     const player = Player('Player', false);
     expect(player.getName()).toBe('Player');
@@ -64,9 +64,9 @@ describe.skip('Player tests', () => {
   Name: Player, isAi: false
 
   Gameboard:
-   O |   |   |   |   |   |   |   |   |   |
+   O | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
@@ -90,9 +90,9 @@ describe.skip('Player tests', () => {
   Name: Player, isAi: false
 
   Gameboard:
-   X |   |   |   |   |   |   |   |   |   |
+   X | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
@@ -118,7 +118,7 @@ describe.skip('Player tests', () => {
   Gameboard:
    X | - |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------

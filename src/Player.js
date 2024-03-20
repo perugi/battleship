@@ -58,14 +58,18 @@ const Player = (name, isAi) => {
     for (let i = 0; i < DIMENSION; i++) {
       string += '  ';
       for (let j = 0; j < DIMENSION; j++) {
-        if (ships[i][j] && !shotsReceived[i][j]) {
-          string += ' O ';
-        } else if (ships[i][j] && shotsReceived[i][j]) {
+        if (!shotsReceived[i][j]) {
+          if (ships[i][j] && ships[i][j].hit) {
+            string += ' O ';
+          } else if (ships[i][j] && ships[i][j].adjacentTo) {
+            string += ' . ';
+          } else {
+            string += '   ';
+          }
+        } else if (ships[i][j] && ships[i][j].hit) {
           string += ' X ';
-        } else if (!ships[i][j] && shotsReceived[i][j]) {
-          string += ' - ';
         } else {
-          string += '   ';
+          string += ' - ';
         }
         string += '|';
       }
