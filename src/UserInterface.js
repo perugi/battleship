@@ -5,25 +5,29 @@ const UserInterface = (events) => {
     gameboardDiv.innerHTML = '';
 
     player.getShips().forEach((row, rowIndex) => {
-      row.forEach((ship, colIndex) => {
+      row.forEach((cell, colIndex) => {
         const cellElement = document.createElement('div');
         cellElement.classList.add('cell');
         cellElement.setAttribute('data-row', rowIndex);
         cellElement.setAttribute('data-col', colIndex);
 
-        if (showShips && ship) {
+        if (showShips && cell && cell.hit) {
           cellElement.classList.add('ship');
         }
 
+        if (showShips && cell && cell.adjacentTo) {
+          cellElement.classList.add('adjacent');
+        }
+
         if (player.getShotsReceived()[rowIndex][colIndex]) {
-          if (ship) {
+          if (cell && cell.hit) {
             cellElement.classList.add('hit');
           } else {
             cellElement.classList.add('miss');
           }
         }
 
-        if (ship && ship.isSunk()) {
+        if (cell && cell.hit && cell.isSunk()) {
           cellElement.classList.add('sunk');
         }
 

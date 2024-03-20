@@ -9,6 +9,9 @@ const Gameboard = (dimension) => {
   const shotsReceived = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(false));
+  const adjacents = new Array(dimension)
+    .fill(false)
+    .map(() => new Array(dimension).fill(new Set()));
 
   const calculateShipCoordinates = (shipLength, x, y, dir) => {
     const shipCoordinates = [];
@@ -47,13 +50,35 @@ const Gameboard = (dimension) => {
       dir
     );
     newShipCoords.forEach(([x, y]) => {
-      if (placedShips[x][y])
-        throw new Error('Placed ship collides with an existing ship');
+      if (placedShips[y][x]) {
+        throw new Error('Placed ship collides or adjacent to an existing ship');
+      }
     });
 
     const ship = Ship(shipLength);
     newShipCoords.forEach(([x, y]) => {
       placedShips[y][x] = ship;
+
+      // Fill in surrounding cells with adjacentTo objects. This is used to prevent
+      // additional ships to be placed adjacent to this ship. The adjacentTo is a list
+      // of ships that are adjacent to this ship, in order to show it on the GUI, once
+      // a ship is sunk.
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          if (
+            x + i >= 0 &&
+            x + i < dimension &&
+            y + j >= 0 &&
+            y + j < dimension
+          ) {
+            if (placedShips[y + j][x + i] === null) {
+              placedShips[y + j][x + i] = { adjacentTo: [ship] };
+            } else if (placedShips[y + j][x + i].adjacentTo) {
+              placedShips[y + j][x + i].adjacentTo.push(ship);
+            }
+          }
+        }
+      }
     });
   };
 
@@ -62,6 +87,8 @@ const Gameboard = (dimension) => {
       ([x, y]) => {
         placedShips[y][x] = null;
       }
+
+      // TODO remove the adjacentTo from the surrounding cells
     );
   };
 
@@ -78,17 +105,19 @@ const Gameboard = (dimension) => {
     clear();
 
     shipLengths.forEach((shipLength) => {
-      let placed = false;
-      while (!placed) {
-        const x = Math.floor(Math.random() * dimension);
-        const y = Math.floor(Math.random() * dimension);
-        const dir = Math.random() < 0.5 ? 'h' : 'v';
-        try {
-          placeShip(shipLength, x, y, dir);
-          placed = true;
-        } catch (e) {
-          // If a collision or out of bounds occurs, do nothing and try to place
-          // the ship again in the next iteration of the loop.
+      if (shipLength > 0) {
+        let placed = false;
+        while (!placed) {
+          const x = Math.floor(Math.random() * dimension);
+          const y = Math.floor(Math.random() * dimension);
+          const dir = Math.random() < 0.5 ? 'h' : 'v';
+          try {
+            placeShip(shipLength, x, y, dir);
+            placed = true;
+          } catch (e) {
+            // If a collision or out of bounds occurs, do nothing and try to place
+            // the ship again in the next iteration of the loop.
+          }
         }
       }
     });
@@ -102,7 +131,7 @@ const Gameboard = (dimension) => {
     shotsReceived[y][x] = true;
 
     const ship = placedShips[y][x];
-    if (ship) {
+    if (ship && ship.hit) {
       ship.hit();
       return true;
     }
@@ -112,8 +141,36 @@ const Gameboard = (dimension) => {
 
   const allSunk = () =>
     placedShips.every((row) =>
-      row.every((el) => el === null || el.isSunk() === true)
+      row.every((el) => el === null || el.adjacentTo || el.isSunk() === true)
     );
+
+  const toString = () => {
+    let string = '';
+
+    for (let i = 0; i < dimension; i++) {
+      string += '  ';
+      for (let j = 0; j < dimension; j++) {
+        if (!shotsReceived[i][j]) {
+          if (placedShips[i][j] && placedShips[i][j].hit) {
+            string += ' O ';
+          } else if (placedShips[i][j] && placedShips[i][j].adjacentTo) {
+            string += ' . ';
+          } else {
+            string += '   ';
+          }
+        } else if (placedShips[i][j] && placedShips[i][j].hit) {
+          string += ' X ';
+        } else {
+          string += ' - ';
+        }
+        string += '|';
+      }
+      string += '\n';
+      string += '  ----------------------------------------\n';
+    }
+
+    return string;
+  };
 
   return {
     getDimension: () => dimension,
@@ -125,6 +182,7 @@ const Gameboard = (dimension) => {
     clear,
     receiveAttack,
     allSunk,
+    toString,
   };
 };
 

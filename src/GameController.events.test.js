@@ -227,8 +227,8 @@ describe('GameController events API', () => {
     events.emit('placeShip', {
       playerIndex: 1,
       shipLength: 1,
-      x: 2,
-      y: 0,
+      x: 0,
+      y: 2,
       direction: 'h',
     });
     events.emit('startGame');
@@ -236,7 +236,7 @@ describe('GameController events API', () => {
     await delay(0);
     events.emit('shoot', { x: 1, y: 0 });
     await delay(0);
-    events.emit('shoot', { x: 2, y: 0 });
+    events.emit('shoot', { x: 0, y: 2 });
     await delay(0);
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,

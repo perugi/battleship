@@ -148,16 +148,16 @@ describe('GameController tests', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 2, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 2, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
     expect(gameController.getWinner()).toBe(null);
     expect(await gameController.playRound(0, 0)).toBe(false);
     expect(gameController.getWinner()).toBe(null);
     expect(await gameController.playRound(1, 0)).toBe(false);
     expect(gameController.getWinner()).toBe(null);
-    expect(await gameController.playRound(2, 0)).toBe(true);
+    expect(await gameController.playRound(0, 2)).toBe(true);
     expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
   });
 
@@ -166,13 +166,13 @@ describe('GameController tests', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 2, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 2, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
     await gameController.playRound(0, 0);
     await gameController.playRound(1, 0);
-    await gameController.playRound(2, 0);
+    await gameController.playRound(0, 2);
     try {
       await gameController.playRound(3, 0);
     } catch (error) {

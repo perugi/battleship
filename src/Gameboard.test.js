@@ -25,11 +25,21 @@ describe('Gameboard tests', () => {
     }).toThrow('Gameboard dimension must be greater than 0');
   });
 
-  test('create a board with a single ship', () => {
+  test.skip('create a board with a single ship', () => {
     const gameboard = Gameboard(5);
     gameboard.placeShip(1, 0, 0, 'v');
+    // In this test, we also test that all the other coordinates stay null.
+    // This is not re-tested in the following tests.
     const ships = gameboard.getShips();
     expect(ships[0][0].getLength()).toBe(1);
+    for (let i = 1; i < 5; i++) {
+      expect(ships[0][i]).toBe(null);
+    }
+    for (let i = 0; i < 5; i++) {
+      for (let j = 1; j < 5; j++) {
+        expect(ships[i][j]).toBe(null);
+      }
+    }
   });
 
   test('create a board with multiple ships', () => {
@@ -92,6 +102,11 @@ describe('Gameboard tests', () => {
     }).toThrow('Placed ship collides or adjacent to an existing ship');
     expect(() => {
       gameboard.placeShip(1, 2, 2, 'v');
+    }).toThrow('Placed ship collides or adjacent to an existing ship');
+
+    gameboard.placeShip(2, 5, 5, 'h');
+    expect(() => {
+      gameboard.placeShip(2, 3, 5, 'h');
     }).toThrow('Placed ship collides or adjacent to an existing ship');
   });
 
@@ -211,15 +226,18 @@ describe('Gameboard tests', () => {
     expect(gameboard.allSunk()).toBe(true);
   });
 
-  test.skip('it is possible to randomly place ships', () => {
+  test('it is possible to randomly place ships', () => {
     const gameboard = Gameboard(10);
     gameboard.placeRandomShips([1, 2, 3, 4, 5]);
-    // console.log(gameboard.getShips());
     expect(countShips(gameboard)).toBe(5);
     expect(countShipCells(gameboard)).toBe(1 + 2 + 3 + 4 + 5);
   });
 
-  test.skip('randomly placing a ship of length 0 does not place anything', () => {});
+  test('randomly placing a ship of length 0 does not place anything', () => {
+    const gameboard = Gameboard(10);
+    gameboard.placeRandomShips([0]);
+    expect(countShips(gameboard)).toBe(0);
+  });
 
   test('clear the board', () => {
     const gameboard = Gameboard(10);

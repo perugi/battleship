@@ -37,6 +37,10 @@ main {
     background-color: gray;
   }
 
+  .adjacent {
+    background-color: lightgray;
+  }
+
   .miss {
     background-color: lightblue;
   }
