@@ -31,6 +31,14 @@ const UserInterface = (events) => {
           cellElement.classList.add('sunk');
         }
 
+        if (
+          [...player.getAdjacents()[rowIndex][colIndex]].some((adjacentShip) =>
+            adjacentShip.isSunk()
+          )
+        ) {
+          cellElement.classList.add('adjacent');
+        }
+
         gameboardDiv.appendChild(cellElement);
       });
     });
