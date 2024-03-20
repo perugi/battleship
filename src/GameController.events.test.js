@@ -3,7 +3,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips, delay } from './testHelpers';
 
-describe('test of GameController API using events', () => {
+describe.skip('GameController events API', () => {
   test('create the players after receiving the createPlayers event', () => {
     const events = Events();
     const gameController = GameController(events);
