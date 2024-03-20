@@ -78,6 +78,10 @@ const GameController = (events) => {
     if (gameState !== GameState.placingShips)
       throw new Error('Not in placingShips state');
 
+    if (players[1].getIsAi()) {
+      placeRandomShips(1);
+    }
+
     gameState = GameState.gameStarted;
     [activePlayer] = players;
     updateGameState();
