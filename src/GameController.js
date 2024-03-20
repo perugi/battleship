@@ -185,7 +185,6 @@ const GameController = (events) => {
   return {
     placeRandomShips,
     placeShip,
-    // removeShip
     createPlayers,
     startGame,
     playRound,

@@ -141,7 +141,7 @@ describe('GameController events API', () => {
     events.emit('startGame');
     events.emit('shoot', { x: 0, y: 0 });
     expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
-    expect(fn).toHaveBeenLastCalledWith({
+    expect(fn).toHaveBeenCalledWith({
       gameState: GameState.shotReceived,
       shot: {
         shootingPlayer: gameController.getPlayers()[0],

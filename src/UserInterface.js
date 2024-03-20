@@ -131,9 +131,6 @@ const UserInterface = (events) => {
   };
 
   const renderShot = (data) => {
-    // TODO show whose turn it is on the screen (based on data.activePlayer)
-    console.log('shotReceived');
-
     const gameboardDiv = document.querySelector(
       `#${
         data.shot.shootingPlayer === data.player1 ? 'opponent' : 'player'

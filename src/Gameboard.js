@@ -92,7 +92,7 @@ const Gameboard = (dimension) => {
     );
   };
 
-  const clear = () => {
+  const clearBoard = () => {
     for (let x = 0; x < dimension; x++) {
       for (let y = 0; y < dimension; y++) {
         placedShips[y][x] = null;
@@ -103,7 +103,7 @@ const Gameboard = (dimension) => {
   };
 
   const placeRandomShips = (shipLengths) => {
-    clear();
+    clearBoard();
 
     shipLengths.forEach((shipLength) => {
       if (shipLength > 0) {
@@ -181,7 +181,6 @@ const Gameboard = (dimension) => {
     placeShip,
     removeShip,
     placeRandomShips,
-    clear,
     receiveAttack,
     allSunk,
     toString,
