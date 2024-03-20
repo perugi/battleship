@@ -49,33 +49,9 @@ const Player = (name, isAi) => {
 
   const toString = () => {
     let string = `\n  Name: ${name}, isAi: ${isAi}\n\n`;
-
     string += `  Gameboard:\n`;
 
-    const shotsReceived = gameboard.getShotsReceived();
-    const ships = gameboard.getShips();
-
-    for (let i = 0; i < DIMENSION; i++) {
-      string += '  ';
-      for (let j = 0; j < DIMENSION; j++) {
-        if (!shotsReceived[i][j]) {
-          if (ships[i][j] && ships[i][j].hit) {
-            string += ' O ';
-          } else if (ships[i][j] && ships[i][j].adjacentTo) {
-            string += ' . ';
-          } else {
-            string += '   ';
-          }
-        } else if (ships[i][j] && ships[i][j].hit) {
-          string += ' X ';
-        } else {
-          string += ' - ';
-        }
-        string += '|';
-      }
-      string += '\n';
-      string += '  ----------------------------------------\n';
-    }
+    string += gameboard.toString();
 
     return string;
   };
