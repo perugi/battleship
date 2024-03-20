@@ -249,4 +249,14 @@ describe('Gameboard tests', () => {
     gameboard.clearBoard();
     expect(countShips(gameboard)).toBe(0);
   });
+
+  test('clear shots received', () => {
+    const gameboard = Gameboard(10);
+    gameboard.receiveAttack(0, 0);
+    expect(gameboard.getShotsReceived()[0][0]).toBe(true);
+    gameboard.receiveAttack(0, 1);
+    expect(gameboard.getShotsReceived()[1][0]).toBe(true);
+    gameboard.clearShotsReceived();
+    expect(gameboard.getShotsReceived()[0][0]).toBe(false);
+  });
 });

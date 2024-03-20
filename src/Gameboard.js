@@ -92,6 +92,14 @@ const Gameboard = (dimension) => {
     );
   };
 
+  const clearShotsReceived = () => {
+    for (let x = 0; x < dimension; x++) {
+      for (let y = 0; y < dimension; y++) {
+        shotsReceived[y][x] = false;
+      }
+    }
+  };
+
   const clearBoard = () => {
     for (let x = 0; x < dimension; x++) {
       for (let y = 0; y < dimension; y++) {
@@ -178,6 +186,7 @@ const Gameboard = (dimension) => {
     getShips: () => placedShips,
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,
+    clearShotsReceived,
     placeShip,
     removeShip,
     placeRandomShips,

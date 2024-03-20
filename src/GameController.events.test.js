@@ -13,7 +13,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     expect(gameController.getPlayers().length).toBe(2);
     expect(gameController.getPlayers()[0].getName()).toBe('Player 1');
@@ -36,7 +36,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeShip', {
       playerIndex: 0,
@@ -67,7 +67,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeRandomShips', {
       playerIndex: 0,
@@ -93,7 +93,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeShip', {
       playerIndex: 0,
@@ -113,6 +113,44 @@ describe('GameController events API', () => {
     });
   });
 
+  test('restart the game after receiving the restartGame event', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placeShip', {
+      playerIndex: 0,
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('placeShip', {
+      playerIndex: 1,
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('startGame');
+    events.emit('shoot', { x: 1, y: 1 });
+    events.emit('restartGame');
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.gameStarted,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: gameController.getPlayers()[0],
+      winner: null,
+    });
+  });
+
   test('when a shot hits, this is reflected in the gameStateChange event', () => {
     const events = Events();
     const gameController = GameController(events);
@@ -122,7 +160,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeShip', {
       playerIndex: 0,
@@ -165,7 +203,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeShip', {
       playerIndex: 0,
@@ -208,7 +246,7 @@ describe('GameController events API', () => {
       player1Name: 'Player 1',
       player1IsAi: false,
       player2Name: 'Player 2',
-      player2IsAi: true,
+      player2IsAi: false,
     });
     events.emit('placeShip', {
       playerIndex: 0,

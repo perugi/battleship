@@ -64,6 +64,22 @@ describe('GameController tests', () => {
     );
   });
 
+  test('at restart, clear the shotsReceived and start a new game', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    gameController.playRound(1, 1);
+    expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
+    expect(gameController.getPlayers()[1].getShotsReceived()[1][1]).toBe(true);
+    expect(gameController.getGameState()).toBe(GameState.shotReceived);
+    gameController.restartGame();
+    expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
+    expect(gameController.getPlayers()[0].getShotsReceived()[1][1]).toBe(false);
+    expect(gameController.getGameState()).toBe(GameState.gameStarted);
+  });
+
   test('placing ships when not in placingShips state throws', async () => {
     const gameController = GameController();
     expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(

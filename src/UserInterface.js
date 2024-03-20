@@ -137,8 +137,6 @@ const UserInterface = (events) => {
       }-gameboard`
     );
 
-    console.log(gameboardDiv);
-
     if (data.shot.shootingPlayer === data.player1) {
       renderGameboard(data.player2, gameboardDiv, false);
 
@@ -179,7 +177,6 @@ const UserInterface = (events) => {
     const gameOverToGameSetupButton = document.querySelector(
       '#game-over-to-game-setup'
     );
-
     gameOverToGameSetupButton.addEventListener('click', () => {
       const modal = document.querySelector('#game-over-modal');
       modal.style.display = 'none';
@@ -189,19 +186,36 @@ const UserInterface = (events) => {
     const pausedToGameSetupButton = document.querySelector(
       '#pause-to-game-setup'
     );
-
     pausedToGameSetupButton.addEventListener('click', () => {
       const modal = document.querySelector('#pause-modal');
       modal.style.display = 'none';
       renderGameSetup();
     });
-  };
 
-  const continueButton = document.querySelector('.continue.modal-button');
-  continueButton.addEventListener('click', () => {
-    const pauseModal = document.querySelector('#pause-modal');
-    pauseModal.style.display = 'none';
-  });
+    const continueButton = document.querySelector('.continue.modal-button');
+    continueButton.addEventListener('click', () => {
+      const pauseModal = document.querySelector('#pause-modal');
+      pauseModal.style.display = 'none';
+    });
+
+    const pausedToRestartButton = document.querySelector(
+      '#pause-to-restart-game'
+    );
+    pausedToRestartButton.addEventListener('click', () => {
+      const modal = document.querySelector('#pause-modal');
+      modal.style.display = 'none';
+      events.emit('restartGame');
+    });
+
+    const gameOverToRestartButton = document.querySelector(
+      '#game-over-to-restart-game'
+    );
+    gameOverToRestartButton.addEventListener('click', () => {
+      const modal = document.querySelector('#game-over-modal');
+      modal.style.display = 'none';
+      events.emit('restartGame');
+    });
+  };
 
   createEventListeners();
   events.on('gameStateChange', handleGameStateChange);

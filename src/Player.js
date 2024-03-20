@@ -58,6 +58,7 @@ const Player = (name, isAi) => {
 
   return {
     getShotsReceived: () => gameboard.getShotsReceived(),
+    clearShotsReceived: () => gameboard.clearShotsReceived(),
     getShips: () => gameboard.getShips(),
     getAdjacents: () => gameboard.getAdjacents(),
     placeShip: (...args) => gameboard.placeShip(...args),
