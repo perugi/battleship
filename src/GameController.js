@@ -22,8 +22,18 @@ const GameController = (events) => {
     }
   };
 
+  const placingPlayer2Event = () => {
+    if (gameState === GameState.placingShips1 && !players[1].getIsAi()) {
+      gameState = GameState.placingShips2;
+      updateGameState();
+    }
+  };
+
   const placeShip = (playerIndex, shipLength, x, y, direction) => {
-    if (gameState !== GameState.placingShips)
+    if (
+      gameState !== GameState.placingShips1 &&
+      gameState !== GameState.placingShips2
+    )
       throw new Error('Not in placing ships state');
     if (playerIndex < 0 || playerIndex > players.length - 1)
       throw new Error('Invalid player index');
@@ -33,17 +43,20 @@ const GameController = (events) => {
   };
 
   const placeShipEvent = (data) => {
-    placeShip(
-      data.playerIndex,
-      data.shipLength,
-      data.x,
-      data.y,
-      data.direction
-    );
+    if (gameState === GameState.placingShips1) {
+      placeShip(0, data.shipLength, data.x, data.y, data.direction);
+    }
+
+    if (gameState === GameState.placingShips2) {
+      placeShip(1, data.shipLength, data.x, data.y, data.direction);
+    }
   };
 
   const placeRandomShips = (playerIndex) => {
-    if (gameState !== GameState.placingShips)
+    if (
+      gameState !== GameState.placingShips1 &&
+      gameState !== GameState.placingShips2
+    )
       throw new Error('Not in placing ships state');
     if (playerIndex < 0 || playerIndex > players.length - 1)
       throw new Error('Invalid player index');
@@ -52,8 +65,14 @@ const GameController = (events) => {
     updateGameState();
   };
 
-  const placeRandomShipsEvent = (data) => {
-    placeRandomShips(data.playerIndex);
+  const placeRandomShipsEvent = () => {
+    if (gameState === GameState.placingShips1) {
+      placeRandomShips(0);
+    }
+
+    if (gameState === GameState.placingShips2) {
+      placeRandomShips(1);
+    }
   };
 
   const createPlayers = (
@@ -70,12 +89,15 @@ const GameController = (events) => {
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
 
-    gameState = GameState.placingShips;
+    gameState = GameState.placingShips1;
     updateGameState();
   };
 
   const startGame = () => {
-    if (gameState !== GameState.placingShips)
+    if (
+      gameState !== GameState.placingShips1 &&
+      gameState !== GameState.placingShips2
+    )
       throw new Error('Not in placingShips state');
 
     if (players[1].getIsAi()) {
@@ -97,7 +119,7 @@ const GameController = (events) => {
   };
 
   const restartGame = () => {
-    gameState = GameState.placingShips;
+    gameState = GameState.placingShips1;
     players[0].clearShotsReceived();
     players[1].clearShotsReceived();
 
@@ -189,6 +211,7 @@ const GameController = (events) => {
     events.on('startGame', startGame);
     events.on('restartGame', restartGame);
     events.on('shoot', shootEvent);
+    events.on('placingPlayer2', placingPlayer2Event);
   }
 
   return {

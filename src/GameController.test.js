@@ -11,7 +11,7 @@ describe('GameController tests', () => {
   test('create two players', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Computer', true);
-    expect(gameController.getGameState()).toBe(GameState.placingShips);
+    expect(gameController.getGameState()).toBe(GameState.placingShips1);
     expect(gameController.getPlayers().length).toBe(2);
     expect(gameController.getPlayers()[0].getName()).toBe('Player 1');
     expect(gameController.getPlayers()[0].getIsAi()).toBe(false);
@@ -26,9 +26,9 @@ describe('GameController tests', () => {
     expect(gameController.getActivePlayer()).toBe(null);
   });
 
-  test('create two players and start a new game', () => {
+  test('create two players and start a new single player game', () => {
     const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.createPlayers('Player 1', false, 'Computer', true);
     gameController.placeShip(0, 2, 0, 0, 'h');
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
     expect(gameController.getPlayers()[1].getShips()[0][0]).toBe(null);

@@ -18,7 +18,7 @@ describe('GameController events API', () => {
     expect(gameController.getPlayers().length).toBe(2);
     expect(gameController.getPlayers()[0].getName()).toBe('Player 1');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips,
+      gameState: GameState.placingShips1,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -27,7 +27,7 @@ describe('GameController events API', () => {
     });
   });
 
-  test('Place a ship after receiving the placeShip event', () => {
+  test('Place a ship to player 1 after receiving the placeShip event', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -39,14 +39,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
       shipLength: 2,
       x: 0,
       y: 0,
       direction: 'h',
     });
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips,
+      gameState: GameState.placingShips1,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -58,7 +57,7 @@ describe('GameController events API', () => {
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
   });
 
-  test('Place random ships after receiving the placeRandomShips event', () => {
+  test('Place random ships to player 1 after receiving the placeRandomShips event', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -73,7 +72,7 @@ describe('GameController events API', () => {
       playerIndex: 0,
     });
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips,
+      gameState: GameState.placingShips1,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -84,7 +83,137 @@ describe('GameController events API', () => {
     expect(countShips(gameController.getPlayers()[1])).toBe(0);
   });
 
-  test('start the game after receiving the startGame event', () => {
+  test('move to placingShips2 game state after receiving after placingPlayer2 event', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placingPlayer2');
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.placingShips2,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: null,
+      winner: null,
+    });
+  });
+
+  test('Place a ship to player 2 after receiving the placeShip event', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placingPlayer2');
+    events.emit('placeShip', {
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.placingShips2,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: null,
+      winner: null,
+    });
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    expect(countShips(gameController.getPlayers()[1])).toBe(1);
+    expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
+  });
+
+  test('Place random ships to player 2 after receiving the placeRandomShips event', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placingPlayer2');
+    events.emit('placeRandomShips', {
+      playerIndex: 0,
+    });
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.placingShips2,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: null,
+      winner: null,
+    });
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    expect(countShips(gameController.getPlayers()[1])).toBe(5);
+  });
+
+  test('placingPlayer2 event does nothing in a single player game', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: true,
+    });
+    events.emit('placingPlayer2');
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.placingShips1,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: null,
+      winner: null,
+    });
+  });
+
+  test('start the game after receiving the startGame event in a single player game', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: true,
+    });
+    events.emit('placeShip', {
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('startGame');
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.gameStarted,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: gameController.getPlayers()[0],
+      winner: null,
+    });
+  });
+
+  test('start the game after receiving the startGame event in a 2-player game', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -96,7 +225,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('placingPlayer2');
+    events.emit('placeShip', {
       shipLength: 2,
       x: 0,
       y: 0,
@@ -125,14 +260,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
       shipLength: 2,
       x: 0,
       y: 0,
       direction: 'h',
     });
+    events.emit('placingPlayer2');
     events.emit('placeShip', {
-      playerIndex: 1,
       shipLength: 2,
       x: 0,
       y: 0,
@@ -163,14 +297,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
       shipLength: 2,
       x: 0,
       y: 0,
       direction: 'h',
     });
+    events.emit('placingPlayer2');
     events.emit('placeShip', {
-      playerIndex: 1,
       shipLength: 2,
       x: 0,
       y: 0,
@@ -206,14 +339,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
       shipLength: 2,
       x: 0,
       y: 0,
       direction: 'h',
     });
+    events.emit('placingPlayer2');
     events.emit('placeShip', {
-      playerIndex: 1,
       shipLength: 2,
       x: 0,
       y: 0,
@@ -249,21 +381,19 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('placingPlayer2');
+    events.emit('placeShip', {
       shipLength: 2,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placeShip', {
-      playerIndex: 1,
-      shipLength: 2,
-      x: 0,
-      y: 0,
-      direction: 'h',
-    });
-    events.emit('placeShip', {
-      playerIndex: 1,
       shipLength: 1,
       x: 0,
       y: 2,
@@ -298,14 +428,6 @@ describe('GameController events API', () => {
       player2IsAi: true,
     });
     events.emit('placeShip', {
-      playerIndex: 0,
-      shipLength: 2,
-      x: 0,
-      y: 0,
-      direction: 'h',
-    });
-    events.emit('placeShip', {
-      playerIndex: 1,
       shipLength: 2,
       x: 0,
       y: 0,
