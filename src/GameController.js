@@ -24,7 +24,7 @@ const GameController = (events) => {
 
   const placingPlayer2Event = () => {
     if (gameState === GameState.placingShips && !players[1].getIsAi()) {
-      activePlayer = players[1];
+      [,activePlayer] = players;
       updateGameState();
     }
   };
@@ -69,7 +69,7 @@ const GameController = (events) => {
     players.push(Player(player2Name, player2IsAi));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
-    activePlayer = players[0];
+    [activePlayer,] = players;
 
     gameState = GameState.placingShips;
     updateGameState();
