@@ -18,11 +18,11 @@ describe('GameController events API', () => {
     expect(gameController.getPlayers().length).toBe(2);
     expect(gameController.getPlayers()[0].getName()).toBe('Player 1');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips1,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[0],
       winner: null,
     });
   });
@@ -45,11 +45,11 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips1,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[0],
       winner: null,
     });
     expect(countShips(gameController.getPlayers()[0])).toBe(1);
@@ -72,18 +72,18 @@ describe('GameController events API', () => {
       playerIndex: 0,
     });
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips1,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[0],
       winner: null,
     });
     expect(countShips(gameController.getPlayers()[0])).toBe(5);
     expect(countShips(gameController.getPlayers()[1])).toBe(0);
   });
 
-  test('move to placingShips2 game state after receiving after placingPlayer2 event', () => {
+  test('Change the activePlayer after receiving after placingPlayer2 event', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -96,11 +96,11 @@ describe('GameController events API', () => {
     });
     events.emit('placingPlayer2');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips2,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[1],
       winner: null,
     });
   });
@@ -124,11 +124,11 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips2,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[1],
       winner: null,
     });
     expect(countShips(gameController.getPlayers()[0])).toBe(0);
@@ -148,15 +148,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placingPlayer2');
-    events.emit('placeRandomShips', {
-      playerIndex: 0,
-    });
+    events.emit('placeRandomShips');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips2,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[1],
       winner: null,
     });
     expect(countShips(gameController.getPlayers()[0])).toBe(0);
@@ -176,11 +174,11 @@ describe('GameController events API', () => {
     });
     events.emit('placingPlayer2');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.placingShips1,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
-      activePlayer: null,
+      activePlayer: gameController.getPlayers()[0],
       winner: null,
     });
   });
