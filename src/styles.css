@@ -17,6 +17,10 @@ main {
   flex: auto;
 }
 
+#opponent-setup {
+  display: none;
+}
+
 #player-gameboard,
 #opponent-gameboard {
   display: grid;

@@ -48,18 +48,36 @@ const UserInterface = (events) => {
     document.querySelector('#content').innerHTML = `
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />
+        <label for "player-ai">Play vs. Computer</label>
+        <input type="checkbox" id="player-ai" checked/>
+        <div id="opponent-setup">
+          <label for="opponent-name">Opponent Name:</label>
+          <input type="text" id="opponent-name" />
+        </div>
         <button id="create-players">Confirm</button>
     `;
 
     const createPlayersButton = document.querySelector('#create-players');
     createPlayersButton.addEventListener('click', () => {
       const playerName = document.querySelector('#player-name').value;
-      events.emit('createPlayers', {
-        player1Name: playerName,
-        player1IsAi: false,
-        player2Name: 'Computer',
-        player2IsAi: true,
-      });
+      const opponentName = document.querySelector('#opponent-name').value;
+      const playVsAi = document.querySelector('#player-ai').checked;
+
+      if (playVsAi) {
+        events.emit('createPlayers', {
+          player1Name: playerName,
+          player1IsAi: false,
+          player2Name: 'Computer',
+          player2IsAi: true,
+        });
+      } else {
+        events.emit('createPlayers', {
+          player1Name: playerName,
+          player1IsAi: false,
+          player2Name: opponentName,
+          player2IsAi: false,
+        });
+      }
     });
   };
 
