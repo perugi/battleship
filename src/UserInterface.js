@@ -63,21 +63,12 @@ const UserInterface = (events) => {
       const opponentName = document.querySelector('#opponent-name').value;
       const playVsAi = document.querySelector('#player-ai').checked;
 
-      if (playVsAi) {
-        events.emit('createPlayers', {
-          player1Name: playerName,
-          player1IsAi: false,
-          player2Name: 'Computer',
-          player2IsAi: true,
-        });
-      } else {
-        events.emit('createPlayers', {
-          player1Name: playerName,
-          player1IsAi: false,
-          player2Name: opponentName,
-          player2IsAi: false,
-        });
-      }
+      events.emit('createPlayers', {
+        player1Name: playerName,
+        player1IsAi: false,
+        player2Name: playVsAi ? 'Computer' : opponentName,
+        player2IsAi: playVsAi,
+      });
     });
   };
 
