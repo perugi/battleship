@@ -49,7 +49,7 @@ const UserInterface = (events) => {
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />
         <label for "player-ai">Play vs. Computer</label>
-        <input type="checkbox" id="player-ai" checked/>
+        <input type="checkbox" id="play-vs-ai" checked/>
         <div id="opponent-setup">
           <label for="opponent-name">Opponent Name:</label>
           <input type="text" id="opponent-name" />
@@ -69,6 +69,17 @@ const UserInterface = (events) => {
         player2Name: playVsAi ? 'Computer' : opponentName,
         player2IsAi: playVsAi,
       });
+    });
+
+    // TODO test this
+    const playVsAiCheckbox = document.querySelector('#play-vs-ai');
+    playVsAiCheckbox.addEventListener('change', () => {
+      const opponentSetup = document.querySelector('#opponent-setup');
+      if (playVsAiCheckbox.checked) {
+        opponentSetup.style.display = 'none';
+      } else {
+        opponentSetup.style.display = 'block';
+      }
     });
   };
 
