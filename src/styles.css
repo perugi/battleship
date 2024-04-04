@@ -3,7 +3,7 @@
 }
 
 :root {
-  --text-color: #4d4d4d;
+  --text-color: #000000;
 }
 
 body {
@@ -58,8 +58,7 @@ main {
   }
 }
 
-#game-over-modal,
-#pause-modal {
+.modal {
   display: none;
   z-index: 2;
   position: fixed;
@@ -72,8 +71,12 @@ main {
   justify-content: center;
 }
 
-#game-over-modal > .modal-content,
-#pause-modal > .modal-content {
+.pass-turn.modal {
+  background-color: rgb(255, 255, 255);
+  display: none;
+}
+
+.modal > .modal-content {
   z-index: 3;
   background-color: rgb(255, 255, 255);
   padding: 16px;
@@ -84,7 +87,6 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--highlight-color);
 }
 
 #gh-link {
@@ -92,7 +94,6 @@ footer {
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
-  color: var(--font-medium);
   display: flex;
   align-items: center;
   margin: 10px 0;

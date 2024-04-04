@@ -13,7 +13,7 @@
   </head>
   <body>
     <div id="modals">
-      <div id="game-over-modal" class="modal">
+      <div class="game-over modal">
         <div class="modal-content">
           <div class="modal-title">Game Over</div>
           <div>Winner is: <span id="winner-name"></span></div>
@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <div id="pause-modal" class="modal">
+      <div class="pause modal">
         <div class="modal-content">
           <div class="modal-title">Game Paused</div>
           <div>
@@ -40,6 +40,14 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="pass-turn modal">
+      <div class="modal-content">
+        <div class="modal-title">
+          Next Player: <span id="next-player"></span>
+        </div>
+        <div class="pass-turn-text">Pass the device and press any key...</div>
       </div>
     </div>
     <header>Battleship</header>

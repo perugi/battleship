@@ -73,25 +73,39 @@ const UserInterface = (events) => {
   };
 
   const renderShipPlacing = (data) => {
-    document.querySelector('#content').innerHTML = `
-        <h1> Player Board [${data.player1.getName()}] </h1>
+    const content = document.querySelector('#content');
+
+    content.innerHTML = `
+        <h1> Player Board [${data.activePlayer.getName()}] </h1>
         <div id="player-gameboard"></div>
         <button id="place-random">Place Ships Randomly</button>
-        <button id="start-game">Start Game</button>
     `;
 
     const playerGameboardDiv = document.querySelector('#player-gameboard');
-    renderGameboard(data.player1, playerGameboardDiv, true);
+    renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
     const placeRandomShipsButton = document.querySelector('#place-random');
     placeRandomShipsButton.addEventListener('click', () => {
-      events.emit('placeRandomShips', { playerIndex: 0 });
+      events.emit('placeRandomShips');
     });
 
-    const startGameButton = document.querySelector('#start-game');
-    startGameButton.addEventListener('click', () => {
-      events.emit('startGame');
-    });
+    if (!data.player2.getIsAi() && data.activePlayer === data.player1) {
+      const placePlayer2Button = document.createElement('button');
+      placePlayer2Button.textContent = 'Confirm';
+      placePlayer2Button.classList.add('place-player-2');
+      placePlayer2Button.addEventListener('click', () => {
+        events.emit('placingPlayer2');
+      });
+      content.appendChild(placePlayer2Button);
+    } else {
+      const startButton = document.createElement('button');
+      startButton.textContent = 'Start Game';
+      startButton.classList.add('start-game');
+      startButton.addEventListener('click', () => {
+        events.emit('startGame');
+      });
+      content.appendChild(startButton);
+    }
   };
 
   const shoot = (event) => {
