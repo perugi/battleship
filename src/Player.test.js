@@ -28,6 +28,7 @@ describe('Player tests', () => {
   test('Set players opponent', () => {
     const player = Player('Player', false);
     const opponent = Player('Computer', true);
+    expect(player.getOpponent()).toBe(null);
     player.setOpponent(opponent);
     expect(player.getOpponent()).toBe(opponent);
   });
