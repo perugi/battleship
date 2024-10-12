@@ -193,7 +193,7 @@ const UserInterface = (events) => {
   };
 
   const handleGameStateChange = (data) => {
-    if (data.gameState === GameState.notStarted) {
+    if (data.gameState === GameState.gameSetup) {
       renderGameSetup();
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
