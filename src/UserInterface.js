@@ -132,7 +132,7 @@ const UserInterface = (events) => {
   };
 
   const renderPauseScreen = () => {
-    const pauseModal = document.querySelector('#pause-modal');
+    const pauseModal = document.querySelector('.pause.modal');
     pauseModal.style.display = 'flex';
   };
 
@@ -185,7 +185,7 @@ const UserInterface = (events) => {
   };
 
   const renderEndScreen = (data) => {
-    const gameOverModal = document.querySelector('#game-over-modal');
+    const gameOverModal = document.querySelector('.game-over.modal');
     const winnerName = document.querySelector('#winner-name');
 
     winnerName.textContent = data.winner.getName();
@@ -211,7 +211,7 @@ const UserInterface = (events) => {
       '#game-over-to-game-setup'
     );
     gameOverToGameSetupButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       renderGameSetup();
     });
@@ -220,14 +220,14 @@ const UserInterface = (events) => {
       '#pause-to-game-setup'
     );
     pausedToGameSetupButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       renderGameSetup();
     });
 
     const continueButton = document.querySelector('.continue.modal-button');
     continueButton.addEventListener('click', () => {
-      const pauseModal = document.querySelector('#pause-modal');
+      const pauseModal = document.querySelector('.pause.modal');
       pauseModal.style.display = 'none';
     });
 
@@ -235,7 +235,7 @@ const UserInterface = (events) => {
       '#pause-to-restart-game'
     );
     pausedToRestartButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
@@ -244,7 +244,7 @@ const UserInterface = (events) => {
       '#game-over-to-restart-game'
     );
     gameOverToRestartButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });

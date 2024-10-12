@@ -7,7 +7,9 @@ const GameController = (events) => {
   let winner = null;
   let gameState = GameState.gameSetup;
 
-  const SHIP_LENGTHS = [5, 4, 3, 3, 2];
+  // TODO change this to the original array after testing
+  // const SHIP_LENGTHS = [5, 4, 3, 3, 2];
+  const SHIP_LENGTHS = [3, 2, 1];
 
   const updateGameState = (shot) => {
     if (events) {
@@ -24,7 +26,7 @@ const GameController = (events) => {
 
   const placingPlayer2Event = () => {
     if (gameState === GameState.placingShips && !players[1].getIsAi()) {
-      [,activePlayer] = players;
+      [, activePlayer] = players;
       updateGameState();
     }
   };
@@ -40,7 +42,13 @@ const GameController = (events) => {
   };
 
   const placeShipEvent = (data) => {
-    placeShip(players.indexOf(activePlayer), data.shipLength, data.x, data.y, data.direction);
+    placeShip(
+      players.indexOf(activePlayer),
+      data.shipLength,
+      data.x,
+      data.y,
+      data.direction
+    );
   };
 
   const placeRandomShips = (playerIndex) => {
@@ -69,7 +77,7 @@ const GameController = (events) => {
     players.push(Player(player2Name, player2IsAi));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
-    [activePlayer,] = players;
+    [activePlayer] = players;
 
     gameState = GameState.placingShips;
     updateGameState();
