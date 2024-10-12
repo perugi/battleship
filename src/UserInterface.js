@@ -61,7 +61,7 @@ const UserInterface = (events) => {
     createPlayersButton.addEventListener('click', () => {
       const playerName = document.querySelector('#player-name').value;
       const opponentName = document.querySelector('#opponent-name').value;
-      const playVsAi = document.querySelector('#player-ai').checked;
+      const playVsAi = document.querySelector('#play-vs-ai').checked;
 
       events.emit('createPlayers', {
         player1Name: playerName,
@@ -71,7 +71,6 @@ const UserInterface = (events) => {
       });
     });
 
-    // TODO test this
     const playVsAiCheckbox = document.querySelector('#play-vs-ai');
     playVsAiCheckbox.addEventListener('change', () => {
       const opponentSetup = document.querySelector('#opponent-setup');
