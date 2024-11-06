@@ -105,14 +105,6 @@ const GameController = (events) => {
     );
   };
 
-  const restartGame = () => {
-    gameState = GameState.placingShips;
-    players[0].clearShotsReceived();
-    players[1].clearShotsReceived();
-
-    startGame();
-  };
-
   const shoot = async (x, y) => {
     const shootingPlayer = activePlayer;
     let shipHit;
@@ -196,7 +188,14 @@ const GameController = (events) => {
     events.on('placeShip', placeShipEvent);
     events.on('placeRandomShips', placeRandomShipsEvent);
     events.on('startGame', startGame);
-    events.on('restartGame', restartGame);
+    events.on('restartGame', () =>
+      createPlayers(
+        players[0].getName(),
+        players[0].getIsAi(),
+        players[1].getName(),
+        players[1].getIsAi()
+      )
+    );
     events.on('shoot', shootEvent);
     events.on('placingPlayer2', placingPlayer2Event);
   }
@@ -206,7 +205,6 @@ const GameController = (events) => {
     placeShip,
     createPlayers,
     startGame,
-    restartGame,
     playRound,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,

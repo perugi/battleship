@@ -44,7 +44,7 @@ const UserInterface = (events) => {
     });
   };
 
-  const renderGameSetup = () => {
+  const renderMainMenu = () => {
     document.querySelector('#content').innerHTML = `
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" />
@@ -193,8 +193,8 @@ const UserInterface = (events) => {
   };
 
   const handleGameStateChange = (data) => {
-    if (data.gameState === GameState.gameSetup) {
-      renderGameSetup();
+    if (data.gameState === GameState.notStarted) {
+      renderMainMenu();
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
     } else if (data.gameState === GameState.gameStarted) {
@@ -207,22 +207,22 @@ const UserInterface = (events) => {
   };
 
   const createEventListeners = () => {
-    const gameOverToGameSetupButton = document.querySelector(
-      '#game-over-to-game-setup'
+    const gameOverToMainMenuButton = document.querySelector(
+      '#game-over-to-main-menu'
     );
-    gameOverToGameSetupButton.addEventListener('click', () => {
-      const modal = document.querySelector('.game-over.modal');
+    gameOverToMainMenuButton.addEventListener('click', () => {
+      const modal = document.querySelector('#game-over-modal');
       modal.style.display = 'none';
-      renderGameSetup();
+      renderMainMenu();
     });
 
-    const pausedToGameSetupButton = document.querySelector(
-      '#pause-to-game-setup'
+    const pausedToMainMenuButton = document.querySelector(
+      '#pause-to-main-menu'
     );
-    pausedToGameSetupButton.addEventListener('click', () => {
-      const modal = document.querySelector('.pause.modal');
+    pausedToMainMenuButton.addEventListener('click', () => {
+      const modal = document.querySelector('#pause-modal');
       modal.style.display = 'none';
-      renderGameSetup();
+      renderMainMenu();
     });
 
     const continueButton = document.querySelector('.continue.modal-button');
@@ -231,20 +231,20 @@ const UserInterface = (events) => {
       pauseModal.style.display = 'none';
     });
 
-    const pausedToRestartButton = document.querySelector(
-      '#pause-to-restart-game'
+    const pausedToShipPlaceButton = document.querySelector(
+      '#pause-to-ship-place'
     );
-    pausedToRestartButton.addEventListener('click', () => {
-      const modal = document.querySelector('.pause.modal');
+    pausedToShipPlaceButton.addEventListener('click', () => {
+      const modal = document.querySelector('#pause-modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
 
-    const gameOverToRestartButton = document.querySelector(
-      '#game-over-to-restart-game'
+    const gameOverToShipPlaceButton = document.querySelector(
+      '#game-over-to-ship-place'
     );
-    gameOverToRestartButton.addEventListener('click', () => {
-      const modal = document.querySelector('.game-over.modal');
+    gameOverToShipPlaceButton.addEventListener('click', () => {
+      const modal = document.querySelector('#game-over-modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
@@ -252,7 +252,7 @@ const UserInterface = (events) => {
 
   createEventListeners();
   events.on('gameStateChange', handleGameStateChange);
-  renderGameSetup();
+  renderMainMenu();
 };
 
 export default UserInterface;
