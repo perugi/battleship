@@ -211,7 +211,7 @@ const UserInterface = (events) => {
       '#game-over-to-main-menu'
     );
     gameOverToMainMenuButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       renderMainMenu();
     });
@@ -220,7 +220,7 @@ const UserInterface = (events) => {
       '#pause-to-main-menu'
     );
     pausedToMainMenuButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       renderMainMenu();
     });
@@ -235,7 +235,7 @@ const UserInterface = (events) => {
       '#pause-to-ship-place'
     );
     pausedToShipPlaceButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
@@ -244,7 +244,7 @@ const UserInterface = (events) => {
       '#game-over-to-ship-place'
     );
     gameOverToShipPlaceButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
