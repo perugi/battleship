@@ -1,6 +1,11 @@
 import GameState from './GameState';
 
 const UserInterface = (events) => {
+  const delay = (ms) =>
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+
   const renderGameboard = (player, gameboardDiv, showShips) => {
     gameboardDiv.innerHTML = '';
 
@@ -136,17 +141,15 @@ const UserInterface = (events) => {
     pauseModal.style.display = 'flex';
   };
 
-  const renderGameboards = (data) => {
+  const renderGameboards = (player, opponent, activePlayer) => {
     document.querySelector('#content').innerHTML = `
-        <div><span id="active-player">${data.activePlayer.getName()}</span>'s turn</div>
+        <div><span id="active-player">${activePlayer.getName()}</span>'s turn</div>
         <div>
-          <h1> Player Board [${data.activePlayer.getName()}] </h1>
+          <h1> Player Board [${player.getName()}] </h1>
           <div id="player-gameboard"></div>
         </div>
         <div>
-          <h1> Opponents Board [${data.activePlayer
-            .getOpponent()
-            .getName()}] </h1>
+          <h1> Opponents Board [${opponent.getName()}] </h1>
         <div id="opponent-gameboard"></div>
         <button id="pause-game">Pause Game</button>
     `;
@@ -154,9 +157,9 @@ const UserInterface = (events) => {
     const playerGameboard = document.querySelector('#player-gameboard');
     const opponentGameboard = document.querySelector('#opponent-gameboard');
 
-    renderGameboard(data.activePlayer, playerGameboard, true);
+    renderGameboard(player, playerGameboard, true);
 
-    renderGameboard(data.activePlayer.getOpponent(), opponentGameboard, false);
+    renderGameboard(opponent, opponentGameboard, false);
     [...opponentGameboard.children].forEach((cell) => {
       cell.addEventListener('click', shoot);
     });
@@ -165,8 +168,24 @@ const UserInterface = (events) => {
     pauseButton.addEventListener('click', renderPauseScreen);
   };
 
-  const renderShot = (data) => {
-    renderGameboards(data);
+  const renderShot = async (data) => {
+    if (data.shot.shootingPlayer.getIsAi()) {
+      await delay(1000);
+    }
+
+    if (data.activePlayer.getIsAi()) {
+      renderGameboards(
+        data.activePlayer.getOpponent(),
+        data.activePlayer,
+        data.activePlayer
+      );
+    } else {
+      renderGameboards(
+        data.activePlayer,
+        data.activePlayer.getOpponent(),
+        data.activePlayer
+      );
+    }
   };
 
   const renderEndScreen = (data) => {
@@ -183,7 +202,7 @@ const UserInterface = (events) => {
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
     } else if (data.gameState === GameState.gameStarted) {
-      renderGameboards(data);
+      renderGameboards(data.player1, data.player2, data.activePlayer);
     } else if (data.gameState === GameState.shotReceived) {
       renderShot(data);
     } else if (data.gameState === GameState.gameOver) {
