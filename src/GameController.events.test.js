@@ -1,7 +1,7 @@
 import Events from '@perugi/events';
 import GameController from './GameController';
 import GameState from './GameState';
-import { countShips, delay } from './testHelpers';
+import { countShips } from './testHelpers';
 
 describe('GameController events API', () => {
   test('create the players after receiving the createPlayers event', () => {
