@@ -7,11 +7,6 @@ const Player = (name, isAi) => {
 
   let opponent = null;
 
-  const delay = (ms) =>
-    new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-
   const setOpponent = (newOpponent) => {
     opponent = newOpponent;
   };
@@ -22,7 +17,7 @@ const Player = (name, isAi) => {
     return [opponent.receiveAttack(x, y), x, y];
   };
 
-  const shootAuto = async (delayTime = 1000) => {
+  const shootAuto = () => {
     if (!opponent) throw new Error('No opponent set');
 
     const emptySpaces = [];
@@ -38,8 +33,6 @@ const Player = (name, isAi) => {
     if (emptySpaces.length > 0) {
       const randomEmptySpace =
         emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
-
-      await delay(delayTime);
 
       return shoot(randomEmptySpace[0], randomEmptySpace[1]);
     }
