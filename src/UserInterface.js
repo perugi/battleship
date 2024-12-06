@@ -138,13 +138,15 @@ const UserInterface = (events) => {
 
   const renderGameboards = (data) => {
     document.querySelector('#content').innerHTML = `
-        <div><span id="next-player">${data.activePlayer.getName()}</span>'s turn</div>
+        <div><span id="active-player">${data.activePlayer.getName()}</span>'s turn</div>
         <div>
-          <h1> Player Board [${data.player1.getName()}] </h1>
+          <h1> Player Board [${data.activePlayer.getName()}] </h1>
           <div id="player-gameboard"></div>
         </div>
         <div>
-          <h1> Opponents Board [${data.player2.getName()}] </h1>
+          <h1> Opponents Board [${data.activePlayer
+            .getOpponent()
+            .getName()}] </h1>
         <div id="opponent-gameboard"></div>
         <button id="pause-game">Pause Game</button>
     `;
@@ -152,9 +154,9 @@ const UserInterface = (events) => {
     const playerGameboard = document.querySelector('#player-gameboard');
     const opponentGameboard = document.querySelector('#opponent-gameboard');
 
-    renderGameboard(data.player1, playerGameboard, true);
+    renderGameboard(data.activePlayer, playerGameboard, true);
 
-    renderGameboard(data.player2, opponentGameboard, false);
+    renderGameboard(data.activePlayer.getOpponent(), opponentGameboard, false);
     [...opponentGameboard.children].forEach((cell) => {
       cell.addEventListener('click', shoot);
     });
@@ -164,24 +166,7 @@ const UserInterface = (events) => {
   };
 
   const renderShot = (data) => {
-    const gameboardDiv = document.querySelector(
-      `#${
-        data.shot.shootingPlayer === data.player1 ? 'opponent' : 'player'
-      }-gameboard`
-    );
-
-    if (data.shot.shootingPlayer === data.player1) {
-      renderGameboard(data.player2, gameboardDiv, false);
-
-      [...gameboardDiv.children].forEach((cell) => {
-        cell.addEventListener('click', shoot);
-      });
-    } else {
-      renderGameboard(data.player1, gameboardDiv, true);
-    }
-
-    const nextPlayer = document.querySelector('#next-player');
-    nextPlayer.textContent = data.activePlayer.getName();
+    renderGameboards(data);
   };
 
   const renderEndScreen = (data) => {
