@@ -98,8 +98,18 @@ const GameController = (events) => {
       placeRandomShips(1);
     }
 
-    gameState = GameState.gameStarted;
+    // We go to shotReceived and not shotPrimed, because we want the players to
+    // go through the pass modal before seeing the board.
+    gameState = GameState.shotReceived;
     [activePlayer] = players;
+    updateGameState();
+  };
+
+  const primeShot = () => {
+    if (gameState !== GameState.shotReceived)
+      throw new Error('Not in shotReceived state');
+
+    gameState = GameState.shotPrimed;
     updateGameState();
   };
 
@@ -141,22 +151,12 @@ const GameController = (events) => {
     return false;
   };
 
-  const playRound = (x, y) => {
-    /* 
-    A round represents a single human player action (shot).
-    This has different consequence in single player and multiplayer:
-      - In a single player game against a computer, a round represents a player shot and,
-      if it is a miss, all computer shots until the computer misses. If the first player shot
-      is a hit, the round is over and the next shot represents a new round.
-      - In a multiplayer game, a round is always a single shot, either a hit or a miss.
-    If at any stage the game is over, the round terminates and the function returns true;
-    */
+  const makeShot = (x, y) => {
+    /* A human shot is represented by the presence of x and y.
+    If x and y are not present, it is an AI shot. */
 
-    if (
-      gameState !== GameState.gameStarted &&
-      gameState !== GameState.shotReceived
-    )
-      throw new Error('Game not active');
+    if (gameState !== GameState.shotPrimed)
+      throw new Error('Not primed for shot');
 
     gameState = GameState.shotReceived;
     shoot(x, y);
@@ -165,19 +165,11 @@ const GameController = (events) => {
       return true;
     }
 
-    while (activePlayer.getIsAi()) {
-      shoot();
-
-      if (checkIfGameOver()) {
-        return true;
-      }
-    }
-
     return false;
   };
 
-  const shootEvent = (data) => {
-    playRound(data.x, data.y);
+  const shootEvent = (data = { x: null, y: null }) => {
+    makeShot(data.x, data.y);
   };
 
   const restartGame = () => {
@@ -195,6 +187,7 @@ const GameController = (events) => {
     events.on('placeRandomShips', placeRandomShipsEvent);
     events.on('startGame', startGame);
     events.on('restartGame', restartGame);
+    events.on('primeShot', primeShot);
     events.on('shoot', shootEvent);
     events.on('placingPlayer2', placingPlayer2Event);
   }
@@ -204,7 +197,8 @@ const GameController = (events) => {
     placeShip,
     createPlayers,
     startGame,
-    playRound,
+    primeShot,
+    makeShot,
     restartGame,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,

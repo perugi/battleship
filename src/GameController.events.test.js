@@ -202,7 +202,7 @@ describe('GameController events API', () => {
     });
     events.emit('startGame');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.gameStarted,
+      gameState: GameState.shotReceived,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -237,7 +237,7 @@ describe('GameController events API', () => {
     });
     events.emit('startGame');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.gameStarted,
+      gameState: GameState.shotReceived,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -271,6 +271,7 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     events.emit('startGame');
+    events.emit('primeShot');
     events.emit('shoot', { x: 1, y: 1 });
     events.emit('restartGame');
     expect(fn).toHaveBeenLastCalledWith({
@@ -308,6 +309,7 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     events.emit('startGame');
+    events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 0 });
     expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
     expect(fn).toHaveBeenCalledWith({
@@ -350,6 +352,7 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     events.emit('startGame');
+    events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 1 });
     expect(gameController.getPlayers()[1].getShotsReceived()[1][0]).toBe(true);
     expect(fn).toHaveBeenLastCalledWith({
@@ -398,8 +401,11 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     events.emit('startGame');
+    events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 0 });
+    events.emit('primeShot');
     events.emit('shoot', { x: 1, y: 0 });
+    events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 2 });
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,
@@ -429,10 +435,11 @@ describe('GameController events API', () => {
       direction: 'h',
     });
     events.emit('startGame');
+    events.emit('primeShot');
     events.emit('shoot', { x: 5, y: 5 });
-    expect(fn.mock.calls.length).toBeGreaterThan(1);
-    expect(gameController.getActivePlayer()).toBe(
-      gameController.getPlayers()[0]
-    );
+    expect(fn.mock.calls.length).toBe(6);
+    events.emit('primeShot');
+    events.emit('shoot');
+    expect(fn.mock.calls.length).toBe(8);
   });
 });

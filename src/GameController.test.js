@@ -1,6 +1,6 @@
 import GameController from './GameController';
 import GameState from './GameState';
-import { countShips } from './testHelpers';
+import { countHitsOnBoard, countShips } from './testHelpers';
 
 describe('GameController tests', () => {
   test('create a new game controller', () => {
@@ -48,7 +48,7 @@ describe('GameController tests', () => {
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
     expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
     gameController.startGame();
-    expect(gameController.getGameState()).toBe(GameState.gameStarted);
+    expect(gameController.getGameState()).toBe(GameState.shotReceived);
     expect(gameController.getActivePlayer()).toBe(
       gameController.getPlayers()[0]
     );
@@ -66,11 +66,11 @@ describe('GameController tests', () => {
     expect(() => gameController.startGame()).toThrow(
       'Not in placingShips state'
     );
-    gameController.playRound(0, 0);
+    gameController.primeShot();
     expect(() => gameController.startGame()).toThrow(
       'Not in placingShips state'
     );
-    gameController.playRound(1, 0);
+    gameController.makeShot(0, 0);
     expect(() => gameController.startGame()).toThrow(
       'Not in placingShips state'
     );
@@ -83,7 +83,8 @@ describe('GameController tests', () => {
     gameController.placeShip(1, 2, 0, 0, 'h');
 
     gameController.startGame();
-    gameController.playRound(1, 1);
+    gameController.primeShot();
+    gameController.makeShot(1, 1);
     expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
     expect(gameController.getPlayers()[1].getShotsReceived()[1][1]).toBe(true);
     expect(gameController.getGameState()).toBe(GameState.shotReceived);
@@ -110,11 +111,11 @@ describe('GameController tests', () => {
     expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
-    gameController.playRound(0, 0);
+    gameController.primeShot();
     expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
-    gameController.playRound(1, 0);
+    gameController.makeShot(0, 0);
     expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
@@ -153,11 +154,11 @@ describe('GameController tests', () => {
     expect(() => gameController.placeRandomShips([1])).toThrow(
       'Not in placing ships state'
     );
-    gameController.playRound(0, 0);
+    gameController.primeShot();
     expect(() => gameController.placeRandomShips([1])).toThrow(
       'Not in placing ships state'
     );
-    gameController.playRound(1, 0);
+    gameController.makeShot(0, 0);
     expect(() => gameController.placeRandomShips([1])).toThrow(
       'Not in placing ships state'
     );
@@ -174,6 +175,24 @@ describe('GameController tests', () => {
     );
   });
 
+  test('priming a shot when not in shotReceived state throws', () => {
+    const gameController = GameController();
+    expect(() => gameController.primeShot()).toThrow(
+      'Not in shotReceived state'
+    );
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    expect(() => gameController.primeShot()).toThrow(
+      'Not in shotReceived state'
+    );
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    gameController.primeShot();
+    expect(() => gameController.primeShot()).toThrow(
+      'Not in shotReceived state'
+    );
+  });
+
   test('make a shot and hit the opponents ship', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
@@ -182,8 +201,9 @@ describe('GameController tests', () => {
     gameController.startGame();
     expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
     expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(false);
-
-    gameController.playRound(0, 0);
+    gameController.primeShot();
+    expect(gameController.getGameState()).toBe(GameState.shotPrimed);
+    gameController.makeShot(0, 0);
     expect(gameController.getGameState()).toBe(GameState.shotReceived);
     expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
     expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
@@ -199,28 +219,38 @@ describe('GameController tests', () => {
     gameController.placeShip(0, 2, 0, 0, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
     gameController.startGame();
-    gameController.playRound(9, 9);
+    gameController.primeShot();
+    gameController.makeShot(9, 9);
     expect(gameController.getGameState()).toBe(GameState.shotReceived);
     expect(gameController.getActivePlayer()).toBe(
       gameController.getPlayers()[1]
     );
+    expect(countHitsOnBoard(gameController.getPlayers()[0])).toBe(0);
+    expect(countHitsOnBoard(gameController.getPlayers()[1])).toBe(1);
   });
 
-  test('make a shot when the game is not active', () => {
+  test('AI plays after the player misses', () => {
     const gameController = GameController();
-    expect(() => gameController.playRound(0, 0)).toThrow('Game not active');
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    expect(() => gameController.playRound(0, 0)).toThrow('Game not active');
-  });
-
-  test('make a shot when the shot has not been primed', () => {
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.createPlayers('Player 1', false, 'Player 2', true);
     gameController.placeShip(0, 2, 0, 0, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
     gameController.startGame();
-    gameController.playRound(0, 0);
-    expect(() => gameController.playRound(1, 0)).toThrow('Shot not primed');
+    gameController.primeShot();
+    gameController.makeShot(9, 9);
+    gameController.primeShot();
+    gameController.makeShot();
+    expect(countHitsOnBoard(gameController.getPlayers()[0])).toBe(1);
+  });
+
+  test('make a shot when the controller is not waiting for shot', () => {
+    const gameController = GameController();
+    expect(() => gameController.makeShot(0, 0)).toThrow('Not primed for shot');
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    expect(() => gameController.makeShot(0, 0)).toThrow('Not primed for shot');
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    expect(() => gameController.makeShot(1, 0)).toThrow('Not primed for shot');
   });
 
   test('sinking all the ships wins the game', () => {
@@ -232,16 +262,19 @@ describe('GameController tests', () => {
     gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
     expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(0, 0)).toBe(false);
+    gameController.primeShot();
+    expect(gameController.makeShot(0, 0)).toBe(false);
     expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(1, 0)).toBe(false);
+    gameController.primeShot();
+    expect(gameController.makeShot(1, 0)).toBe(false);
     expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(0, 2)).toBe(true);
+    gameController.primeShot();
+    expect(gameController.makeShot(0, 2)).toBe(true);
     expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
   });
 
   test('after winning the game, no more shots can be made', () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
@@ -249,9 +282,15 @@ describe('GameController tests', () => {
     gameController.placeShip(1, 2, 0, 0, 'h');
     gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
-    gameController.playRound(0, 0);
-    gameController.playRound(1, 0);
-    gameController.playRound(0, 2);
-    expect(() => gameController.playRound(3, 0)).toThrow('Game not active');
+    gameController.primeShot();
+    gameController.makeShot(0, 0);
+    gameController.primeShot();
+    gameController.makeShot(1, 0);
+    gameController.primeShot();
+    gameController.makeShot(0, 2);
+    expect(() => gameController.primeShot()).toThrow(
+      'Not in shotReceived state'
+    );
+    expect(() => gameController.makeShot(3, 0)).toThrow('Not primed for shot');
   });
 });

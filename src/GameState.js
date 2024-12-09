@@ -1,7 +1,7 @@
 const GameState = {
   gameSetup: 'gameSetup',
   placingShips: 'placingShips',
-  gameStarted: 'gameStarted',
+  shotPrimed: 'shotPrimed',
   shotReceived: 'shotReceived',
   gameOver: 'gameOver',
 };
