@@ -1,0 +1,11 @@
+@startuml GameState FSM
+
+[*] --> gameSetup
+gameSetup --> placingShips: createPlayers()
+placingShips --> placingShips: placeShip(),\nplaceRandomShips()
+placingShips --> gameStarted: startGame()
+gameStarted --> shotReceived: playRound()
+shotReceived --> gameOver: checkIfGameOver() === true 
+gameOver --> gameSetup
+
+@enduml
