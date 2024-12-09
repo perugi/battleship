@@ -28,6 +28,16 @@ describe('GameController tests', () => {
     );
   });
 
+  test('creating players when players already exist clears the existing players', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.createPlayers('Player 3', true, 'Player 4', true);
+    expect(gameController.getPlayers()[0].getName()).toBe('Player 3');
+    expect(gameController.getPlayers()[0].getIsAi()).toBe(true);
+    expect(gameController.getPlayers()[1].getName()).toBe('Player 4');
+    expect(gameController.getPlayers()[1].getIsAi()).toBe(true);
+  });
+
   test('create two players and start a new single player game', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Computer', true);
@@ -121,99 +131,6 @@ describe('GameController tests', () => {
     );
   });
 
-  test('make a shot and hit the opponents ship', () => {
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.startGame();
-    expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
-    expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(false);
-
-    gameController.playRound(0, 0);
-    expect(gameController.getGameState()).toBe(GameState.shotReceived);
-    expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
-    expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
-
-    expect(gameController.getActivePlayer()).toBe(
-      gameController.getPlayers()[0]
-    );
-  });
-
-  test('make a shot and miss the opponents ship', () => {
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.startGame();
-    gameController.playRound(9, 9);
-    expect(gameController.getGameState()).toBe(GameState.shotReceived);
-    expect(gameController.getActivePlayer()).toBe(
-      gameController.getPlayers()[1]
-    );
-  });
-
-  test('make a shot when the game is not active', () => {
-    const gameController = GameController();
-    try {
-      gameController.playRound(0, 0);
-    } catch (error) {
-      expect(error.message).toBe('Game not active');
-    }
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    try {
-      gameController.playRound(0, 0);
-    } catch (error) {
-      expect(error.message).toBe('Game not active');
-    }
-  });
-
-  test('sinking all the ships wins the game', () => {
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 0, 2, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 0, 2, 'h');
-    gameController.startGame();
-    expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(0, 0)).toBe(false);
-    expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(1, 0)).toBe(false);
-    expect(gameController.getWinner()).toBe(null);
-    expect(gameController.playRound(0, 2)).toBe(true);
-    expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
-  });
-
-  test('after winning the game, no more shots can be made', () => {
-    expect.assertions(1);
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 0, 2, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 0, 2, 'h');
-    gameController.startGame();
-    gameController.playRound(0, 0);
-    gameController.playRound(1, 0);
-    gameController.playRound(0, 2);
-    try {
-      gameController.playRound(3, 0);
-    } catch (error) {
-      expect(error.message).toBe('Game not active');
-    }
-  });
-
-  test('creating players when players already exist clears the existing players', () => {
-    const gameController = GameController();
-    gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.createPlayers('Player 3', true, 'Player 4', true);
-    expect(gameController.getPlayers()[0].getName()).toBe('Player 3');
-    expect(gameController.getPlayers()[0].getIsAi()).toBe(true);
-    expect(gameController.getPlayers()[1].getName()).toBe('Player 4');
-    expect(gameController.getPlayers()[1].getIsAi()).toBe(true);
-  });
-
   test('placing random ships to a specified player board', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
@@ -255,5 +172,86 @@ describe('GameController tests', () => {
     expect(() => gameController.placeRandomShips(3)).toThrow(
       'Invalid player index'
     );
+  });
+
+  test('make a shot and hit the opponents ship', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
+    expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(false);
+
+    gameController.playRound(0, 0);
+    expect(gameController.getGameState()).toBe(GameState.shotReceived);
+    expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
+    expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(true);
+
+    expect(gameController.getActivePlayer()).toBe(
+      gameController.getPlayers()[0]
+    );
+  });
+
+  test('make a shot and miss the opponents ship', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    gameController.playRound(9, 9);
+    expect(gameController.getGameState()).toBe(GameState.shotReceived);
+    expect(gameController.getActivePlayer()).toBe(
+      gameController.getPlayers()[1]
+    );
+  });
+
+  test('make a shot when the game is not active', () => {
+    const gameController = GameController();
+    expect(() => gameController.playRound(0, 0)).toThrow('Game not active');
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    expect(() => gameController.playRound(0, 0)).toThrow('Game not active');
+  });
+
+  test('make a shot when the shot has not been primed', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    gameController.playRound(0, 0);
+    expect(() => gameController.playRound(1, 0)).toThrow('Shot not primed');
+  });
+
+  test('sinking all the ships wins the game', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
+    gameController.startGame();
+    expect(gameController.getWinner()).toBe(null);
+    expect(gameController.playRound(0, 0)).toBe(false);
+    expect(gameController.getWinner()).toBe(null);
+    expect(gameController.playRound(1, 0)).toBe(false);
+    expect(gameController.getWinner()).toBe(null);
+    expect(gameController.playRound(0, 2)).toBe(true);
+    expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
+  });
+
+  test('after winning the game, no more shots can be made', () => {
+    expect.assertions(1);
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
+    gameController.startGame();
+    gameController.playRound(0, 0);
+    gameController.playRound(1, 0);
+    gameController.playRound(0, 2);
+    expect(() => gameController.playRound(3, 0)).toThrow('Game not active');
   });
 });
