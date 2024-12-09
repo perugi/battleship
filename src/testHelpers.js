@@ -35,9 +35,4 @@ function countHitsOnBoard(gameboard) {
     );
 }
 
-const delay = (ms) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
-export { countShips, countShipCells, countHitsOnBoard, delay };
+export { countShips, countShipCells, countHitsOnBoard };

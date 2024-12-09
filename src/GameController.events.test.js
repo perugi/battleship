@@ -1,7 +1,7 @@
 import Events from '@perugi/events';
 import GameController from './GameController';
 import GameState from './GameState';
-import { countShips, delay } from './testHelpers';
+import { countShips } from './testHelpers';
 
 describe('GameController events API', () => {
   test('create the players after receiving the createPlayers event', () => {
@@ -274,7 +274,7 @@ describe('GameController events API', () => {
     events.emit('shoot', { x: 1, y: 1 });
     events.emit('restartGame');
     expect(fn).toHaveBeenLastCalledWith({
-      gameState: GameState.gameStarted,
+      gameState: GameState.placingShips,
       shot: null,
       player1: gameController.getPlayers()[0],
       player2: gameController.getPlayers()[1],
@@ -367,7 +367,7 @@ describe('GameController events API', () => {
     });
   });
 
-  test('when the game is over, this is reflected in the gameStateChange event', async () => {
+  test('when the game is over, this is reflected in the gameStateChange event', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -399,11 +399,8 @@ describe('GameController events API', () => {
     });
     events.emit('startGame');
     events.emit('shoot', { x: 0, y: 0 });
-    await delay(0);
     events.emit('shoot', { x: 1, y: 0 });
-    await delay(0);
     events.emit('shoot', { x: 0, y: 2 });
-    await delay(0);
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,
       shot: null,
@@ -414,7 +411,7 @@ describe('GameController events API', () => {
     });
   });
 
-  test('AI plays after the player misses', async () => {
+  test('AI plays after the player misses', () => {
     const events = Events();
     const gameController = GameController(events);
     const fn = jest.fn();
@@ -433,7 +430,6 @@ describe('GameController events API', () => {
     });
     events.emit('startGame');
     events.emit('shoot', { x: 5, y: 5 });
-    await delay(1100);
     expect(fn.mock.calls.length).toBeGreaterThan(1);
     expect(gameController.getActivePlayer()).toBe(
       gameController.getPlayers()[0]

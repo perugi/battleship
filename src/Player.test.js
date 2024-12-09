@@ -150,12 +150,12 @@ describe('Player tests', () => {
     expect(computer.getShotsReceived()[0][0]).toBe(true);
   });
 
-  test('AI player can automatically attack', async () => {
+  test('AI player can automatically attack', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     computer.setOpponent(player);
     expect(countHitsOnBoard(player)).toBe(0);
-    await computer.shootAuto(0);
+    computer.shootAuto(0);
     expect(countHitsOnBoard(player)).toBe(1);
   });
 
@@ -175,27 +175,27 @@ describe('Player tests', () => {
     }).toThrow('No opponent set');
   });
 
-  test('when AI shoots, if no opponents is set, exception is thrown', async () => {
+  test('when AI shoots, if no opponents is set, exception is thrown', () => {
     expect.assertions(1);
     const player = Player('Player', true);
     try {
-      await player.shootAuto(0);
+      player.shootAuto(0);
     } catch (error) {
       expect(error.message).toBe('No opponent set');
     }
   });
 
-  test('When AI cannot find an empty space to shoot, exception is thrown', async () => {
+  test('When AI cannot find an empty space to shoot, exception is thrown', () => {
     //   expect.assertions(2);
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     computer.setOpponent(player);
     for (let i = 0; i < 100; i++) {
-      await computer.shootAuto(0);
+      computer.shootAuto(0);
     }
     expect(countHitsOnBoard(player)).toBe(100);
     try {
-      await computer.shootAuto(0);
+      computer.shootAuto(0);
     } catch (error) {
       expect(error.message).toBe('No empty spaces left');
     }

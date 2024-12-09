@@ -7,9 +7,7 @@ const GameController = (events) => {
   let winner = null;
   let gameState = GameState.gameSetup;
 
-  // TODO change this to the original array after testing
-  // const SHIP_LENGTHS = [5, 4, 3, 3, 2];
-  const SHIP_LENGTHS = [3, 2, 1];
+  const SHIP_LENGTHS = [5, 4, 3, 3, 2];
 
   const updateGameState = (shot) => {
     if (events) {
@@ -105,14 +103,14 @@ const GameController = (events) => {
     updateGameState();
   };
 
-  const shoot = async (x, y) => {
+  const shoot = (x, y) => {
     const shootingPlayer = activePlayer;
     let shipHit;
     let hitX;
     let hitY;
 
     if (activePlayer.getIsAi()) {
-      [shipHit, hitX, hitY] = await activePlayer.shootAuto();
+      [shipHit, hitX, hitY] = activePlayer.shootAuto();
     } else {
       [shipHit, hitX, hitY] = activePlayer.shoot(x, y);
     }
@@ -143,7 +141,7 @@ const GameController = (events) => {
     return false;
   };
 
-  const playRound = async (x, y) => {
+  const playRound = (x, y) => {
     /* 
     A round represents a single human player action (shot).
     This has different consequence in single player and multiplayer:
@@ -161,15 +159,14 @@ const GameController = (events) => {
       throw new Error('Game not active');
 
     gameState = GameState.shotReceived;
-
-    await shoot(x, y);
+    shoot(x, y);
 
     if (checkIfGameOver()) {
       return true;
     }
 
     while (activePlayer.getIsAi()) {
-      await shoot();
+      shoot();
 
       if (checkIfGameOver()) {
         return true;
@@ -179,8 +176,17 @@ const GameController = (events) => {
     return false;
   };
 
-  const shootEvent = async (data) => {
-    await playRound(data.x, data.y);
+  const shootEvent = (data) => {
+    playRound(data.x, data.y);
+  };
+
+  const restartGame = () => {
+    createPlayers(
+      players[0].getName(),
+      players[0].getIsAi(),
+      players[1].getName(),
+      players[1].getIsAi()
+    );
   };
 
   if (events) {
@@ -188,14 +194,7 @@ const GameController = (events) => {
     events.on('placeShip', placeShipEvent);
     events.on('placeRandomShips', placeRandomShipsEvent);
     events.on('startGame', startGame);
-    events.on('restartGame', () =>
-      createPlayers(
-        players[0].getName(),
-        players[0].getIsAi(),
-        players[1].getName(),
-        players[1].getIsAi()
-      )
-    );
+    events.on('restartGame', restartGame);
     events.on('shoot', shootEvent);
     events.on('placingPlayer2', placingPlayer2Event);
   }
@@ -206,6 +205,7 @@ const GameController = (events) => {
     createPlayers,
     startGame,
     playRound,
+    restartGame,
     getPlayers: () => players,
     getActivePlayer: () => activePlayer,
     getWinner: () => winner,

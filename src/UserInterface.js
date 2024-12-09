@@ -1,6 +1,11 @@
 import GameState from './GameState';
 
 const UserInterface = (events) => {
+  const delay = (ms) =>
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+
   const renderGameboard = (player, gameboardDiv, showShips) => {
     gameboardDiv.innerHTML = '';
 
@@ -136,15 +141,15 @@ const UserInterface = (events) => {
     pauseModal.style.display = 'flex';
   };
 
-  const renderGameboards = (data) => {
+  const renderGameboards = (player, opponent, activePlayer) => {
     document.querySelector('#content').innerHTML = `
-        <div><span id="next-player">${data.activePlayer.getName()}</span>'s turn</div>
+        <div><span id="active-player">${activePlayer.getName()}</span>'s turn</div>
         <div>
-          <h1> Player Board [${data.player1.getName()}] </h1>
+          <h1> Player Board [${player.getName()}] </h1>
           <div id="player-gameboard"></div>
         </div>
         <div>
-          <h1> Opponents Board [${data.player2.getName()}] </h1>
+          <h1> Opponents Board [${opponent.getName()}] </h1>
         <div id="opponent-gameboard"></div>
         <button id="pause-game">Pause Game</button>
     `;
@@ -152,9 +157,9 @@ const UserInterface = (events) => {
     const playerGameboard = document.querySelector('#player-gameboard');
     const opponentGameboard = document.querySelector('#opponent-gameboard');
 
-    renderGameboard(data.player1, playerGameboard, true);
+    renderGameboard(player, playerGameboard, true);
 
-    renderGameboard(data.player2, opponentGameboard, false);
+    renderGameboard(opponent, opponentGameboard, false);
     [...opponentGameboard.children].forEach((cell) => {
       cell.addEventListener('click', shoot);
     });
@@ -163,25 +168,24 @@ const UserInterface = (events) => {
     pauseButton.addEventListener('click', renderPauseScreen);
   };
 
-  const renderShot = (data) => {
-    const gameboardDiv = document.querySelector(
-      `#${
-        data.shot.shootingPlayer === data.player1 ? 'opponent' : 'player'
-      }-gameboard`
-    );
-
-    if (data.shot.shootingPlayer === data.player1) {
-      renderGameboard(data.player2, gameboardDiv, false);
-
-      [...gameboardDiv.children].forEach((cell) => {
-        cell.addEventListener('click', shoot);
-      });
-    } else {
-      renderGameboard(data.player1, gameboardDiv, true);
+  const renderShot = async (data) => {
+    if (data.shot.shootingPlayer.getIsAi()) {
+      await delay(1000);
     }
 
-    const nextPlayer = document.querySelector('#next-player');
-    nextPlayer.textContent = data.activePlayer.getName();
+    if (data.activePlayer.getIsAi()) {
+      renderGameboards(
+        data.activePlayer.getOpponent(),
+        data.activePlayer,
+        data.activePlayer
+      );
+    } else {
+      renderGameboards(
+        data.activePlayer,
+        data.activePlayer.getOpponent(),
+        data.activePlayer
+      );
+    }
   };
 
   const renderEndScreen = (data) => {
@@ -198,7 +202,7 @@ const UserInterface = (events) => {
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
     } else if (data.gameState === GameState.gameStarted) {
-      renderGameboards(data);
+      renderGameboards(data.player1, data.player2, data.activePlayer);
     } else if (data.gameState === GameState.shotReceived) {
       renderShot(data);
     } else if (data.gameState === GameState.gameOver) {
@@ -211,7 +215,7 @@ const UserInterface = (events) => {
       '#game-over-to-main-menu'
     );
     gameOverToMainMenuButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       renderMainMenu();
     });
@@ -220,7 +224,7 @@ const UserInterface = (events) => {
       '#pause-to-main-menu'
     );
     pausedToMainMenuButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       renderMainMenu();
     });
@@ -235,7 +239,7 @@ const UserInterface = (events) => {
       '#pause-to-ship-place'
     );
     pausedToShipPlaceButton.addEventListener('click', () => {
-      const modal = document.querySelector('#pause-modal');
+      const modal = document.querySelector('.pause.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
@@ -244,7 +248,7 @@ const UserInterface = (events) => {
       '#game-over-to-ship-place'
     );
     gameOverToShipPlaceButton.addEventListener('click', () => {
-      const modal = document.querySelector('#game-over-modal');
+      const modal = document.querySelector('.game-over.modal');
       modal.style.display = 'none';
       events.emit('restartGame');
     });
