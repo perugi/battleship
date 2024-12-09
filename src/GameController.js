@@ -24,11 +24,31 @@ const GameController = (events) => {
     }
   };
 
-  const placingPlayer2Event = () => {
-    if (gameState === GameState.placingShips && !players[1].getIsAi()) {
-      [, activePlayer] = players;
-      updateGameState();
-    }
+  const createPlayers = (
+    player1Name,
+    player1IsAi,
+    player2Name,
+    player2IsAi
+  ) => {
+    winner = null;
+    players = [];
+    players.push(Player(player1Name, player1IsAi));
+    players.push(Player(player2Name, player2IsAi));
+    players[0].setOpponent(players[1]);
+    players[1].setOpponent(players[0]);
+    [activePlayer] = players;
+
+    gameState = GameState.placingShips;
+    updateGameState();
+  };
+
+  const createPlayersEvent = (data) => {
+    createPlayers(
+      data.player1Name,
+      data.player1IsAi,
+      data.player2Name,
+      data.player2IsAi
+    );
   };
 
   const placeShip = (playerIndex, shipLength, x, y, direction) => {
@@ -65,22 +85,11 @@ const GameController = (events) => {
     placeRandomShips(players.indexOf(activePlayer));
   };
 
-  const createPlayers = (
-    player1Name,
-    player1IsAi,
-    player2Name,
-    player2IsAi
-  ) => {
-    winner = null;
-    players = [];
-    players.push(Player(player1Name, player1IsAi));
-    players.push(Player(player2Name, player2IsAi));
-    players[0].setOpponent(players[1]);
-    players[1].setOpponent(players[0]);
-    [activePlayer] = players;
-
-    gameState = GameState.placingShips;
-    updateGameState();
+  const placingPlayer2Event = () => {
+    if (gameState === GameState.placingShips && !players[1].getIsAi()) {
+      [, activePlayer] = players;
+      updateGameState();
+    }
   };
 
   const startGame = () => {
@@ -94,15 +103,6 @@ const GameController = (events) => {
     gameState = GameState.gameStarted;
     [activePlayer] = players;
     updateGameState();
-  };
-
-  const createPlayersEvent = (data) => {
-    createPlayers(
-      data.player1Name,
-      data.player1IsAi,
-      data.player2Name,
-      data.player2IsAi
-    );
   };
 
   const shoot = async (x, y) => {
