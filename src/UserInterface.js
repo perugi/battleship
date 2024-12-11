@@ -7,6 +7,7 @@ const UserInterface = (events) => {
     });
 
   const renderGameboard = (player, gameboardDiv, showShips) => {
+    // eslint-disable-next-line no-param-reassign
     gameboardDiv.innerHTML = '';
 
     player.getShips().forEach((row, rowIndex) => {
@@ -87,6 +88,25 @@ const UserInterface = (events) => {
     });
   };
 
+  const passTurn = () => {
+    const passTurnModal = document.querySelector('.pass-turn.modal');
+
+    events.emit('primeShot');
+    passTurnModal.style.display = 'none';
+    document.removeEventListener('keydown', passTurn);
+  };
+
+  const renderPassTurnScreen = (data) => {
+    const passTurnModal = document.querySelector('.pass-turn.modal');
+
+    const nextPlayer = passTurnModal.querySelector('#next-player');
+    nextPlayer.textContent = data.activePlayer.getName();
+
+    passTurnModal.style.display = 'flex';
+
+    document.addEventListener('keydown', passTurn);
+  };
+
   const renderShipPlacing = (data) => {
     const content = document.querySelector('#content');
 
@@ -159,6 +179,7 @@ const UserInterface = (events) => {
 
     renderGameboard(player, playerGameboard, true);
 
+    // TODO prevent interactivity when waiting for AI moves.
     renderGameboard(opponent, opponentGameboard, false);
     [...opponentGameboard.children].forEach((cell) => {
       cell.addEventListener('click', shoot);
@@ -168,23 +189,44 @@ const UserInterface = (events) => {
     pauseButton.addEventListener('click', renderPauseScreen);
   };
 
-  const renderShot = async (data) => {
-    if (data.shot.shootingPlayer.getIsAi()) {
+  const renderShot1Player = async (data) => {
+    if (data.shot && data.shot.shootingPlayer.getIsAi()) {
+      // Delay rendering of the AI shot in order to simulate AI thinking.
       await delay(1000);
     }
 
+    renderGameboards(data.player1, data.player2, data.activePlayer);
+
+    // In a singleplayer game, the shot is autmatically primed and,
+    // on AI moves, taken.
+    events.emit('primeShot');
     if (data.activePlayer.getIsAi()) {
+      events.emit('shoot');
+    }
+  };
+
+  const renderShot2Players = async (data) => {
+    if (data.shot) {
       renderGameboards(
-        data.activePlayer.getOpponent(),
-        data.activePlayer,
-        data.activePlayer
+        data.shot.shootingPlayer,
+        data.shot.shootingPlayer.getOpponent(),
+        data.shot.shootingPlayer
       );
+
+      if (data.activePlayer !== data.shot.shootingPlayer) {
+        // Active player is not the one who shot - The turn needs to be passed,
+        // so we wait for 1 second for the player to observe his shot and render the pass turn screen.
+        await delay(1000);
+        renderPassTurnScreen(data);
+      } else {
+        // This case covers if the shot was a hit - we just prime the next one.
+        events.emit('primeShot');
+      }
     } else {
-      renderGameboards(
-        data.activePlayer,
-        data.activePlayer.getOpponent(),
-        data.activePlayer
-      );
+      // This is the case when the game is started and the method is called
+      // without any shot data. We show the pass screen in order to not reveal the
+      // opponent ships.
+      renderPassTurnScreen(data);
     }
   };
 
@@ -201,10 +243,20 @@ const UserInterface = (events) => {
       renderMainMenu();
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
-    } else if (data.gameState === GameState.gameStarted) {
-      renderGameboards(data.player1, data.player2, data.activePlayer);
     } else if (data.gameState === GameState.shotReceived) {
-      renderShot(data);
+      if (data.player2.getIsAi()) {
+        renderShot1Player(data);
+      } else {
+        renderShot2Players(data);
+      }
+    } else if (data.gameState === GameState.shotPrimed) {
+      if (!data.player2.getIsAi()) {
+        renderGameboards(
+          data.activePlayer,
+          data.activePlayer.getOpponent(),
+          data.activePlayer
+        );
+      }
     } else if (data.gameState === GameState.gameOver) {
       renderEndScreen(data);
     }
