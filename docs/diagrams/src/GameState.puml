@@ -3,8 +3,9 @@
 [*] --> gameSetup
 gameSetup --> placingShips: createPlayers()
 placingShips --> placingShips: placeShip(),\nplaceRandomShips()
-placingShips --> gameStarted: startGame()
-gameStarted --> shotReceived: playRound()
+placingShips --> shotReceived: startGame()
+shotReceived --> shotPrimed: primeShot()
+shotPrimed --> shotReceived: makeShot()
 shotReceived --> gameOver: checkIfGameOver() === true 
 gameOver --> gameSetup
 
