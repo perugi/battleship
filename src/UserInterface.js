@@ -161,7 +161,12 @@ const UserInterface = (events) => {
     pauseModal.style.display = 'flex';
   };
 
-  const renderGameboards = (player, opponent, activePlayer) => {
+  const renderGameboards = (
+    player,
+    opponent,
+    activePlayer,
+    allowShooting = false
+  ) => {
     document.querySelector('#content').innerHTML = `
         <div><span id="active-player">${activePlayer.getName()}</span>'s turn</div>
         <div>
@@ -179,47 +184,67 @@ const UserInterface = (events) => {
 
     renderGameboard(player, playerGameboard, true);
 
-    // TODO prevent interactivity when waiting for AI moves.
     renderGameboard(opponent, opponentGameboard, false);
-    [...opponentGameboard.children].forEach((cell) => {
-      cell.addEventListener('click', shoot);
-    });
+    if (allowShooting) {
+      [...opponentGameboard.children].forEach((cell) => {
+        cell.addEventListener('click', shoot);
+      });
+    }
 
     const pauseButton = document.querySelector('#pause-game');
     pauseButton.addEventListener('click', renderPauseScreen);
   };
 
   const renderShot1Player = async (data) => {
-    if (data.shot && data.shot.shootingPlayer.getIsAi()) {
-      // Delay rendering of the AI shot in order to simulate AI thinking.
-      await delay(1000);
-    }
+    if (data.shot) {
+      if (data.shot.shootingPlayer.getIsAi()) {
+        // Delay rendering of the AI shot in order to simulate AI thinking.
+        await delay(1000);
+      }
 
-    renderGameboards(data.player1, data.player2, data.activePlayer);
+      if (data.activePlayer.getIsAi()) {
+        renderGameboards(data.player1, data.player2, data.activePlayer, false);
+      } else {
+        renderGameboards(data.player1, data.player2, data.activePlayer, true);
+      }
 
-    // In a singleplayer game, the shot is autmatically primed and,
-    // on AI moves, taken.
-    events.emit('primeShot');
-    if (data.activePlayer.getIsAi()) {
-      events.emit('shoot');
+      // In a singleplayer game, the shot is automatically primed and, on AI moves, taken.
+      events.emit('primeShot');
+      if (data.activePlayer.getIsAi()) {
+        events.emit('shoot');
+      }
+    } else {
+      // This is the case when the game is started and the method is called
+      // without any shot data. We render the gameboards interactively to allow
+      // the player to shoot and prime the shot.
+      events.emit('primeShot');
+      renderGameboards(data.player1, data.player2, data.activePlayer, true);
     }
   };
 
   const renderShot2Players = async (data) => {
     if (data.shot) {
-      renderGameboards(
-        data.shot.shootingPlayer,
-        data.shot.shootingPlayer.getOpponent(),
-        data.shot.shootingPlayer
-      );
-
       if (data.activePlayer !== data.shot.shootingPlayer) {
         // Active player is not the one who shot - The turn needs to be passed,
-        // so we wait for 1 second for the player to observe his shot and render the pass turn screen.
+        // so we render the gameboard without interactivity, wait for 1 second
+        // for the player to observe his shot and then render the pass turn screen.
+        renderGameboards(
+          data.shot.shootingPlayer,
+          data.shot.shootingPlayer.getOpponent(),
+          data.shot.shootingPlayer,
+          false
+        );
         await delay(1000);
         renderPassTurnScreen(data);
       } else {
-        // This case covers if the shot was a hit - we just prime the next one.
+        // This case covers if the shot was a hit - we just render the shot and
+        // prime the next one.
+        renderGameboards(
+          data.shot.shootingPlayer,
+          data.shot.shootingPlayer.getOpponent(),
+          data.shot.shootingPlayer,
+          true
+        );
         events.emit('primeShot');
       }
     } else {
@@ -254,7 +279,8 @@ const UserInterface = (events) => {
         renderGameboards(
           data.activePlayer,
           data.activePlayer.getOpponent(),
-          data.activePlayer
+          data.activePlayer,
+          true
         );
       }
     } else if (data.gameState === GameState.gameOver) {
