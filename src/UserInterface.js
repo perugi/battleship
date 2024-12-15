@@ -113,6 +113,7 @@ const UserInterface = (events) => {
     content.innerHTML = `
         <h1> Player Board [${data.activePlayer.getName()}] </h1>
         <div id="player-gameboard"></div>
+        <button id="place-to-main-menu">Main Menu</button>
         <button id="place-random">Place Ships Randomly</button>
     `;
 
@@ -122,6 +123,11 @@ const UserInterface = (events) => {
     const placeRandomShipsButton = document.querySelector('#place-random');
     placeRandomShipsButton.addEventListener('click', () => {
       events.emit('placeRandomShips');
+    });
+
+    const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
+    placeToMainMenuButton.addEventListener('click', () => {
+      renderMainMenu();
     });
 
     if (!data.player2.getIsAi() && data.activePlayer === data.player1) {
