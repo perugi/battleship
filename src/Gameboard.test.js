@@ -2,7 +2,7 @@ import Gameboard from './Gameboard';
 import { countShips, countShipCells } from './testHelpers';
 
 describe('Gameboard tests', () => {
-  test('create an empty board', () => {
+  it('creates an empty gameboard at insantiation', () => {
     const gameboard = Gameboard(10);
     const ships = gameboard.getShips();
     const shotsReceived = gameboard.getShotsReceived();
@@ -15,7 +15,15 @@ describe('Gameboard tests', () => {
     expect(gameboard.getDimension()).toBe(10);
   });
 
-  test('creating a board with dimension less than 1 throws an error', () => {
+  it('throws when creating a gameboard with invalid dimension', () => {
+    expect(() => {
+      Gameboard('a');
+    }).toThrow('Gameboard dimension must be an integer');
+
+    expect(() => {
+      Gameboard(1.2);
+    }).toThrow('Gameboard dimension must be an integer');
+
     expect(() => {
       Gameboard(0);
     }).toThrow('Gameboard dimension must be greater than 0');
@@ -25,7 +33,7 @@ describe('Gameboard tests', () => {
     }).toThrow('Gameboard dimension must be greater than 0');
   });
 
-  test('create a board with a single ship', () => {
+  it('places a single ship', () => {
     const gameboard = Gameboard(5);
     gameboard.placeShip(1, 0, 0, 'v');
     // In this test, we also test that all the other coordinates stay null.
@@ -42,7 +50,7 @@ describe('Gameboard tests', () => {
     }
   });
 
-  test('create a board with multiple ships', () => {
+  it('places multiple ships', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -52,31 +60,34 @@ describe('Gameboard tests', () => {
     expect(ships[0][3]).toBe(ships[0][2]);
   });
 
-  test('placing a ship out of bounds throws an error', () => {
+  it('throws when placing a ship out of bounds', () => {
     const gameboard = Gameboard(10);
     expect(() => {
       gameboard.placeShip(1, -1, 0, 'v');
-    }).toThrow('Ship out of bounds');
+    }).toThrow('Placed ship out of bounds');
     expect(() => {
       gameboard.placeShip(1, 0, -1, 'v');
-    }).toThrow('Ship out of bounds');
+    }).toThrow('Placed ship out of bounds');
     expect(() => {
       gameboard.placeShip(1, 10, 0, 'v');
-    }).toThrow('Ship out of bounds');
+    }).toThrow('Placed ship out of bounds');
     expect(() => {
       gameboard.placeShip(2, 9, 0, 'h');
-    }).toThrow('Ship out of bounds');
+    }).toThrow('Placed ship out of bounds');
   });
 
-  test('placing a ship on top of another ship throws an error', () => {
+  it('throws when placing a ship on top of another ship', () => {
     const gameboard = Gameboard(10);
-    gameboard.placeShip(1, 0, 0, 'v');
+    gameboard.placeShip(1, 2, 0, 'v');
     expect(() => {
-      gameboard.placeShip(2, 0, 0, 'v');
+      gameboard.placeShip(1, 2, 0, 'v');
+    }).toThrow('Placed ship collides or adjacent to an existing ship');
+    expect(() => {
+      gameboard.placeShip(3, 0, 0, 'h');
     }).toThrow('Placed ship collides or adjacent to an existing ship');
   });
 
-  test('placing a ship directly adjacent to another ship throws an error', () => {
+  it('throws when placing a ship directly adjacent to another ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 1, 1, 'v');
     expect(() => {
@@ -110,17 +121,20 @@ describe('Gameboard tests', () => {
     }).toThrow('Placed ship collides or adjacent to an existing ship');
   });
 
-  test('placing a ship with an invalid length throws an error', () => {
+  it('throws when placing a ship with an invalid origin', () => {
     const gameboard = Gameboard(10);
     expect(() => {
-      gameboard.placeShip(0, 0, 0, 'v');
-    }).toThrow('Ship length must be greater than 0');
+      gameboard.placeShip(1, 'a', 0, 'v');
+    }).toThrow('Ship origin X/Y must be an integer');
     expect(() => {
-      gameboard.placeShip(-1, 0, 0, 'v');
-    }).toThrow('Ship length must be greater than 0');
+      gameboard.placeShip(1, 1.2, 0, 'v');
+    }).toThrow('Ship origin X/Y must be an integer');
+    expect(() => {
+      gameboard.placeShip(1, 0, 'a', 'v');
+    }).toThrow('Ship origin X/Y must be an integer');
   });
 
-  test('placing a ship with an invalid direction throws an error', () => {
+  it('throws when placing a ship with an invalid direction', () => {
     const gameboard = Gameboard(10);
     expect(() => {
       gameboard.placeShip(1, 0, 0, 'x');
@@ -130,7 +144,7 @@ describe('Gameboard tests', () => {
     }).toThrow('Direction must be either "v" or "h"');
   });
 
-  test('remove a ship', () => {
+  it('removes a ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -140,7 +154,7 @@ describe('Gameboard tests', () => {
     expect(ships[0][2].getLength()).toBe(2);
   });
 
-  test('remove a large ship, place another one in its previous spot', () => {
+  it('removes a large ship, and places another one in its previous spot', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -153,7 +167,7 @@ describe('Gameboard tests', () => {
     expect(gameboard.getShips()[0][2].getLength()).toBe(2);
   });
 
-  test('make an attack and hit a ship', () => {
+  it('receives an attack, hitting and sinking a small ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
@@ -163,7 +177,7 @@ describe('Gameboard tests', () => {
     expect(gameboard.getShotsReceived()[0][0]).toBe(true);
   });
 
-  test('sink a large ship', () => {
+  it('receives multiple attacks, hitting and sinking a large ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(2, 0, 0, 'h');
     expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
@@ -179,7 +193,7 @@ describe('Gameboard tests', () => {
     expect(gameboard.getShotsReceived()[0][1]).toBe(true);
   });
 
-  test('make an attack and miss', () => {
+  it('receives an attack, missing any ships', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     expect(gameboard.getShips()[0][0].isSunk()).toBe(false);
@@ -189,31 +203,31 @@ describe('Gameboard tests', () => {
     expect(gameboard.getShotsReceived()[0][1]).toBe(true);
   });
 
-  test('attacking the same coordinate twice throws an error', () => {
+  it('throws when attacking the same coordinates twice', () => {
     const gameboard = Gameboard(10);
     gameboard.receiveAttack(0, 0);
     expect(() => {
       gameboard.receiveAttack(0, 0);
-    }).toThrow('Coordinates already hit');
+    }).toThrow('Attack coordinates already hit');
   });
 
-  test('attack is out of bounds throws an error', () => {
+  it('throws when an attack is out of bounds', () => {
     const gameboard = Gameboard(10);
     expect(() => {
       gameboard.receiveAttack(10, 0);
-    }).toThrow('Coordinates out of bounds');
+    }).toThrow('Attack coordinates out of bounds');
     expect(() => {
       gameboard.receiveAttack(0, 10);
-    }).toThrow('Coordinates out of bounds');
+    }).toThrow('Attack coordinates out of bounds');
     expect(() => {
       gameboard.receiveAttack(-1, 0);
-    }).toThrow('Coordinates out of bounds');
+    }).toThrow('Attack coordinates out of bounds');
     expect(() => {
       gameboard.receiveAttack(0, -1);
-    }).toThrow('Coordinates out of bounds');
+    }).toThrow('Attack coordinates out of bounds');
   });
 
-  test('return allSunk as true when all ships are sunk', () => {
+  it('returns allSunk as true when all ships are sunk', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -226,20 +240,20 @@ describe('Gameboard tests', () => {
     expect(gameboard.allSunk()).toBe(true);
   });
 
-  test('it is possible to randomly place ships', () => {
+  it('places ships randomly', () => {
     const gameboard = Gameboard(10);
     gameboard.placeRandomShips([1, 2, 3, 4, 5]);
     expect(countShips(gameboard)).toBe(5);
     expect(countShipCells(gameboard)).toBe(1 + 2 + 3 + 4 + 5);
   });
 
-  test('randomly placing a ship of length 0 does not place anything', () => {
+  it('does not place any ships when randomly placing a ship list of length 0', () => {
     const gameboard = Gameboard(10);
     gameboard.placeRandomShips([0]);
     expect(countShips(gameboard)).toBe(0);
   });
 
-  test.skip('clear the board', () => {
+  it.skip('clears the board', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(1, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -250,7 +264,7 @@ describe('Gameboard tests', () => {
     expect(countShips(gameboard)).toBe(0);
   });
 
-  test('clear shots received', () => {
+  it('clears shots received', () => {
     const gameboard = Gameboard(10);
     gameboard.receiveAttack(0, 0);
     expect(gameboard.getShotsReceived()[0][0]).toBe(true);

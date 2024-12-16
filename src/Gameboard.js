@@ -1,6 +1,9 @@
 import Ship from './Ship';
 
 const Gameboard = (dimension) => {
+  if (!Number.isInteger(dimension)) {
+    throw new Error('Gameboard dimension must be an integer');
+  }
   if (dimension < 1)
     throw new Error('Gameboard dimension must be greater than 0');
   const placedShips = new Array(dimension)
@@ -46,7 +49,8 @@ const Gameboard = (dimension) => {
   };
 
   const placeShip = (shipLength, originX, originY, dir) => {
-    if (shipLength < 1) throw new Error('Ship length must be greater than 0');
+    if (!Number.isInteger(originX) || !Number.isInteger(originY)) throw new Error('Ship origin X/Y must be an integer');
+
     if (dir !== 'v' && dir !== 'h')
       throw new Error('Direction must be either "v" or "h"');
 
@@ -56,12 +60,12 @@ const Gameboard = (dimension) => {
       originX >= dimension ||
       originY >= dimension
     )
-      throw new Error('Ship out of bounds');
+      throw new Error('Placed ship out of bounds');
     if (dir === 'h') {
       if (originX + shipLength > dimension)
-        throw new Error('Ship out of bounds');
+        throw new Error('Placed ship out of bounds');
     } else if (originY + shipLength > dimension)
-      throw new Error('Ship out of bounds');
+      throw new Error('Placed ship out of bounds');
 
     const newShipCoords = calculateShipCoordinates(
       shipLength,
@@ -134,8 +138,8 @@ const Gameboard = (dimension) => {
 
   const receiveAttack = (x, y) => {
     if (x < 0 || x >= dimension || y < 0 || y >= dimension)
-      throw new Error('Coordinates out of bounds');
-    if (shotsReceived[y][x]) throw new Error('Coordinates already hit');
+      throw new Error('Attack coordinates out of bounds');
+    if (shotsReceived[y][x]) throw new Error('Attack coordinates already hit');
 
     shotsReceived[y][x] = true;
 
