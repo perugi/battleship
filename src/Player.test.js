@@ -2,19 +2,19 @@ import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
 describe('Player tests', () => {
-  test('Instantiate human player with name', () => {
+  it('instantiates a human player with a name', () => {
     const player = Player('Player', false);
     expect(player.getName()).toBe('Player');
     expect(player.getIsAi()).toBe(false);
   });
 
-  test('Instantiate AI player with name', () => {
+  it('instantiates an AI player with a name', () => {
     const player = Player('Computer', true);
     expect(player.getName()).toBe('Computer');
     expect(player.getIsAi()).toBe(true);
   });
 
-  test('Default gameboard is 10x10 and empty', () => {
+  it('instantiates a player with a default gameboard of 10x10 and empty', () => {
     const player = Player('Player', false);
     expect(player.getShips().length).toBe(10);
     expect(
@@ -25,7 +25,7 @@ describe('Player tests', () => {
     ).toBe(true);
   });
 
-  test('Set players opponent', () => {
+  it('sets the players opponent', () => {
     const player = Player('Player', false);
     const opponent = Player('Computer', true);
     expect(player.getOpponent()).toBe(null);
@@ -33,7 +33,7 @@ describe('Player tests', () => {
     expect(player.getOpponent()).toBe(opponent);
   });
 
-  test('Print player data', () => {
+  it('prints player data', () => {
     const player = Player('Player', false);
     expect(player.toString()).toBe(`
   Name: Player, isAi: false
@@ -140,7 +140,7 @@ describe('Player tests', () => {
 `);
   });
 
-  test('human player can manually attack', () => {
+  it('allows a manual attack', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     player.setOpponent(computer);
@@ -150,7 +150,7 @@ describe('Player tests', () => {
     expect(computer.getShotsReceived()[0][0]).toBe(true);
   });
 
-  test('AI player can automatically attack', () => {
+  it('allows an auto attack', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     computer.setOpponent(player);
@@ -159,7 +159,7 @@ describe('Player tests', () => {
     expect(countHitsOnBoard(player)).toBe(1);
   });
 
-  test('hitting an opponent ship returns true and shot coords, missing returns false and shot coords', () => {
+  it('returns true and shot coords when shot is a hit and returns false and shot coords when shot is a miss', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     player.setOpponent(computer);
@@ -168,24 +168,22 @@ describe('Player tests', () => {
     expect(player.shoot(1, 0)).toEqual([false, 1, 0]);
   });
 
-  test('when human shoots, if no opponents is set, exception is thrown', () => {
+  it('throws when human shoots if no opponent is set', () => {
     const player = Player('Player', false);
     expect(() => {
       player.shoot(0, 0);
     }).toThrow('No opponent set');
   });
 
-  test('when AI shoots, if no opponents is set, exception is thrown', () => {
+  it('throws when AI shoots if no opponent is set', () => {
     expect.assertions(1);
     const player = Player('Player', true);
-    try {
+    expect(() => {
       player.shootAuto(0);
-    } catch (error) {
-      expect(error.message).toBe('No opponent set');
-    }
+    }).toThrow('No opponent set');
   });
 
-  test('When AI cannot find an empty space to shoot, exception is thrown', () => {
+  it('throws when AI cannot find an empty space to shoot', () => {
     //   expect.assertions(2);
     const computer = Player('Computer', true);
     const player = Player('Player', false);
