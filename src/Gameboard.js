@@ -49,7 +49,8 @@ const Gameboard = (dimension) => {
   };
 
   const placeShip = (shipLength, originX, originY, dir) => {
-    if (!Number.isInteger(originX) || !Number.isInteger(originY)) throw new Error('Ship origin X/Y must be an integer');
+    if (!Number.isInteger(originX) || !Number.isInteger(originY))
+      throw new Error('Ship origin X/Y must be an integer');
 
     if (dir !== 'v' && dir !== 'h')
       throw new Error('Direction must be either "v" or "h"');
