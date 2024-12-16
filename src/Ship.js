@@ -1,4 +1,7 @@
 const Ship = (length) => {
+  if (!Number.isInteger(length)) {
+    throw new Error('Ship length must be an integer');
+  }
   if (length < 1) {
     throw new Error('Ship length must be greater than 0');
   }

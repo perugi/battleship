@@ -1,12 +1,12 @@
 import Ship from './Ship';
 
 describe('Ship tests', () => {
-  test('Ship length', () => {
+  it('applies the correct length at instantiation', () => {
     const ship = Ship(3);
     expect(ship.getLength()).toBe(3);
   });
 
-  test('Ship isSunk', () => {
+  it('sinks when receiving number of hits equaling its length', () => {
     const ship = Ship(3);
     expect(ship.isSunk()).toBe(false);
     ship.hit();
@@ -17,17 +17,26 @@ describe('Ship tests', () => {
     expect(ship.isSunk()).toBe(true);
   });
 
-  test('Hit sunken ship', () => {
+  it('throws when trying to hit a sunken ship', () => {
     const ship = Ship(1);
     ship.hit();
     expect(() => {
       ship.hit();
-    }).toThrow();
+    }).toThrow('Ship is already sunken');
   });
 
-  test('Ship zero length', () => {
+  it('throws when creating a ship with invalid length', () => {
     expect(() => {
       Ship(0);
-    }).toThrow();
+    }).toThrow('Ship length must be greater than 0');
+    expect(() => {
+      Ship(-1);
+    }).toThrow('Ship length must be greater than 0');
+    expect(() => {
+      Ship(1.2);
+    }).toThrow('Ship length must be an integer');
+    expect(() => {
+      Ship('a');
+    }).toThrow('Ship length must be an integer');
   });
 });
