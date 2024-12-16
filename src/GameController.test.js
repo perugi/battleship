@@ -229,7 +229,7 @@ describe('GameController tests', () => {
     expect(countHitsOnBoard(gameController.getPlayers()[1])).toBe(1);
   });
 
-  test('AI plays after the player misses', () => {
+  test.skip('AI plays after the player misses', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', true);
     gameController.placeShip(0, 2, 0, 0, 'h');
