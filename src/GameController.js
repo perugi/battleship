@@ -52,7 +52,11 @@ const GameController = (events) => {
   const placeShip = (playerIndex, shipLength, x, y, direction) => {
     if (gameState !== GameState.placingShips)
       throw new Error('Not in placing ships state');
-    if (playerIndex < 0 || playerIndex > players.length - 1)
+    if (
+      !Number.isInteger(playerIndex) ||
+      playerIndex < 0 ||
+      playerIndex > players.length - 1
+    )
       throw new Error('Invalid player index');
 
     players[playerIndex].placeShip(shipLength, x, y, direction);
@@ -72,7 +76,11 @@ const GameController = (events) => {
   const placeRandomShips = (playerIndex) => {
     if (gameState !== GameState.placingShips)
       throw new Error('Not in placing ships state');
-    if (playerIndex < 0 || playerIndex > players.length - 1)
+    if (
+      !Number.isInteger(playerIndex) ||
+      playerIndex < 0 ||
+      playerIndex > players.length - 1
+    )
       throw new Error('Invalid player index');
 
     players[playerIndex].placeRandomShips(SHIP_LENGTHS);
@@ -119,7 +127,7 @@ const GameController = (events) => {
     let hitX;
     let hitY;
 
-    if (activePlayer.getIsAi()) {
+    if (x === null || y === null) {
       [shipHit, hitX, hitY] = activePlayer.shootAuto();
     } else {
       [shipHit, hitX, hitY] = activePlayer.shoot(x, y);
@@ -151,7 +159,7 @@ const GameController = (events) => {
     return false;
   };
 
-  const makeShot = (x, y) => {
+  const makeShot = (x = null, y = null) => {
     /* A human shot is represented by the presence of x and y.
     If x and y are not present, it is an AI shot. */
 
