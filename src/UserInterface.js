@@ -107,15 +107,23 @@ const UserInterface = (events) => {
     document.addEventListener('keydown', passTurn);
   };
 
+  const renderUnplacedShips = (player, unplacedShipsDiv) => {
+    unplacedShipsDiv.innerHTML = '';
+  };
+
   const renderShipPlacing = (data) => {
     const content = document.querySelector('#content');
 
     content.innerHTML = `
         <h1> Player Board [${data.activePlayer.getName()}] </h1>
+        <div id="unplaced-ships"></div>
         <div id="player-gameboard"></div>
         <button id="place-to-main-menu">Main Menu</button>
         <button id="place-random">Place Ships Randomly</button>
     `;
+
+    const unplacedShipsDiv = document.querySelector('#unplaced-ships');
+    renderUnplacedShips(data.activePlayer, unplacedShipsDiv);
 
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
