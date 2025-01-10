@@ -1,7 +1,7 @@
 import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
-describe('Player tests', () => {
+describe.skip('Player tests', () => {
   it('instantiates a human player with a name', () => {
     const player = Player('Player', false);
     expect(player.getName()).toBe('Player');

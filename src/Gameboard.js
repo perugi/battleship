@@ -1,17 +1,46 @@
 import Ship from './Ship';
 
-const Gameboard = (dimension) => {
+const Gameboard = (dimension, shipLengths) => {
+  const DEFAULT_SHIP_LENGTHS = [2, 2, 3, 4, 5];
+  let unplacedShips;
+
   if (!Number.isInteger(dimension)) {
     throw new Error('Gameboard dimension must be an integer');
   }
   if (dimension < 1)
     throw new Error('Gameboard dimension must be greater than 0');
+
+  if (shipLengths === undefined) {
+    unplacedShips = [...DEFAULT_SHIP_LENGTHS];
+  } else {
+    if (!Array.isArray(shipLengths)) {
+      throw new Error('shipLengths must be an array');
+    }
+    if (shipLengths.length === 0) {
+      throw new Error('shipLengths must not be empty');
+    }
+    if (
+      shipLengths.some(
+        (length) =>
+          !Number.isInteger(length) || length < 1 || length > dimension
+      )
+    ) {
+      throw new Error(
+        'shipLengths must be an array of integers between 1 and dimension'
+      );
+    }
+
+    unplacedShips = shipLengths.toSorted((a, b) => a - b);
+  }
+
   const placedShips = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(null));
+
   const shotsReceived = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(false));
+
   const adjacents = new Array(dimension)
     .fill(false)
     .map(() => new Array(dimension).fill(false).map(() => new Set()));
@@ -49,6 +78,11 @@ const Gameboard = (dimension) => {
   };
 
   const placeShip = (shipLength, originX, originY, dir) => {
+    if (!unplacedShips.includes(shipLength))
+      throw new Error(
+        `There are no ships of length ${shipLength} available for placement`
+      );
+
     if (!Number.isInteger(originX) || !Number.isInteger(originY))
       throw new Error('Ship origin X/Y must be an integer');
 
@@ -85,6 +119,8 @@ const Gameboard = (dimension) => {
       placedShips[y][x] = ship;
       modifyAdjacents(x, y, ship, 'add');
     });
+
+    unplacedShips.splice(unplacedShips.indexOf(shipLength), 1);
   };
 
   const removeShip = (shipLength, originX, originY, dir) => {
@@ -95,6 +131,9 @@ const Gameboard = (dimension) => {
         modifyAdjacents(x, y, ship, 'remove');
       }
     );
+
+    unplacedShips.push(shipLength);
+    unplacedShips.sort((a, b) => a - b);
   };
 
   const clearShotsReceived = () => {
@@ -115,10 +154,10 @@ const Gameboard = (dimension) => {
     }
   };
 
-  const placeRandomShips = (shipLengths) => {
+  const placeRandomShips = (randomShipLengths) => {
     clearBoard();
 
-    shipLengths.forEach((shipLength) => {
+    randomShipLengths.forEach((shipLength) => {
       if (shipLength > 0) {
         let placed = false;
         while (!placed) {
@@ -188,6 +227,7 @@ const Gameboard = (dimension) => {
 
   return {
     getDimension: () => dimension,
+    getUnplacedShips: () => unplacedShips,
     getShips: () => placedShips,
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,

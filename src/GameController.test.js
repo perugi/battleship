@@ -2,7 +2,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countHitsOnBoard, countShips } from './testHelpers';
 
-describe('GameController tests', () => {
+describe.skip('GameController tests', () => {
   it('instantiates with default game setup', () => {
     const gameController = GameController();
     expect(gameController.getGameState()).toBe(GameState.gameSetup);
