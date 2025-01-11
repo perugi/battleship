@@ -3,7 +3,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips } from './testHelpers';
 
-describe.skip('GameController events API', () => {
+describe('GameController events API', () => {
   it('creates the players after receiving the createPlayers event', () => {
     const events = Events();
     const gameController = GameController(events);
@@ -395,7 +395,7 @@ describe.skip('GameController events API', () => {
       direction: 'h',
     });
     events.emit('placeShip', {
-      shipLength: 1,
+      shipLength: 2,
       x: 0,
       y: 2,
       direction: 'h',
@@ -407,6 +407,8 @@ describe.skip('GameController events API', () => {
     events.emit('shoot', { x: 1, y: 0 });
     events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 2 });
+    events.emit('primeShot');
+    events.emit('shoot', { x: 1, y: 2 });
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,
       shot: null,

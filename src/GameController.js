@@ -7,7 +7,8 @@ const GameController = (events) => {
   let winner = null;
   let gameState = GameState.gameSetup;
 
-  const SHIP_LENGTHS = [5, 4, 3, 3, 2];
+  const DIMENSION = 10;
+  const SHIP_LENGTHS = [2, 2, 3, 4, 5];
 
   const updateGameState = (shot) => {
     if (events) {
@@ -30,8 +31,8 @@ const GameController = (events) => {
   ) => {
     winner = null;
     players = [];
-    players.push(Player(player1Name, player1IsAi));
-    players.push(Player(player2Name, player2IsAi));
+    players.push(Player(player1Name, player1IsAi, DIMENSION, SHIP_LENGTHS));
+    players.push(Player(player2Name, player2IsAi, DIMENSION, SHIP_LENGTHS));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
     [activePlayer] = players;
@@ -83,7 +84,7 @@ const GameController = (events) => {
     )
       throw new Error('Invalid player index');
 
-    players[playerIndex].placeRandomShips(SHIP_LENGTHS);
+    players[playerIndex].placeRandomShips();
     updateGameState();
   };
 

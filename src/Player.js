@@ -1,9 +1,7 @@
 import Gameboard from './Gameboard';
 
-const DIMENSION = 10;
-
-const Player = (name, isAi) => {
-  const gameboard = new Gameboard(DIMENSION);
+const Player = (name, isAi, dimension, shipLengths) => {
+  const gameboard = new Gameboard(dimension, shipLengths);
 
   let opponent = null;
 
@@ -22,8 +20,8 @@ const Player = (name, isAi) => {
 
     const emptySpaces = [];
     const opponentShotsReceived = opponent.getShotsReceived();
-    for (let i = 0; i < DIMENSION; i++) {
-      for (let j = 0; j < DIMENSION; j++) {
+    for (let i = 0; i < dimension; i++) {
+      for (let j = 0; j < dimension; j++) {
         if (opponentShotsReceived[j][i] === false) {
           emptySpaces.push([i, j]);
         }

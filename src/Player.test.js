@@ -1,15 +1,15 @@
 import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
-describe.skip('Player tests', () => {
+describe('Player tests', () => {
   it('instantiates a human player with a name', () => {
-    const player = Player('Player', false);
+    const player = Player('Player', false, 10);
     expect(player.getName()).toBe('Player');
     expect(player.getIsAi()).toBe(false);
   });
 
   it('instantiates an AI player with a name', () => {
-    const player = Player('Computer', true);
+    const player = Player('Computer', true, 10);
     expect(player.getName()).toBe('Computer');
     expect(player.getIsAi()).toBe(true);
   });
@@ -60,16 +60,16 @@ describe.skip('Player tests', () => {
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
 `);
-    player.placeShip(1, 0, 0, 'v');
+    player.placeShip(2, 0, 0, 'v');
     expect(player.toString()).toBe(`
   Name: Player, isAi: false
 
   Gameboard:
    O | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-   . | . |   |   |   |   |   |   |   |   |
+   O | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
@@ -93,9 +93,9 @@ describe.skip('Player tests', () => {
   Gameboard:
    X | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-   . | . |   |   |   |   |   |   |   |   |
+   O | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
@@ -119,9 +119,9 @@ describe.skip('Player tests', () => {
   Gameboard:
    X | - |   |   |   |   |   |   |   |   |
   ----------------------------------------
-   . | . |   |   |   |   |   |   |   |   |
+   O | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
-     |   |   |   |   |   |   |   |   |   |
+   . | . |   |   |   |   |   |   |   |   |
   ----------------------------------------
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
@@ -151,8 +151,8 @@ describe.skip('Player tests', () => {
   });
 
   it('allows an auto attack', () => {
-    const computer = Player('Computer', true);
-    const player = Player('Player', false);
+    const computer = Player('Computer', true, 10);
+    const player = Player('Player', false, 10);
     computer.setOpponent(player);
     expect(countHitsOnBoard(player)).toBe(0);
     computer.shootAuto(0);
@@ -163,7 +163,7 @@ describe.skip('Player tests', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     player.setOpponent(computer);
-    computer.placeShip(1, 0, 0, 'h');
+    computer.placeShip(2, 0, 0, 'v');
     expect(player.shoot(0, 0)).toEqual([true, 0, 0]);
     expect(player.shoot(1, 0)).toEqual([false, 1, 0]);
   });
@@ -177,7 +177,7 @@ describe.skip('Player tests', () => {
 
   it('throws when AI shoots if no opponent is set', () => {
     expect.assertions(1);
-    const player = Player('Player', true);
+    const player = Player('Player', true, 10);
     expect(() => {
       player.shootAuto(0);
     }).toThrow('No opponent set');
@@ -185,8 +185,8 @@ describe.skip('Player tests', () => {
 
   it('throws when AI cannot find an empty space to shoot', () => {
     //   expect.assertions(2);
-    const computer = Player('Computer', true);
-    const player = Player('Player', false);
+    const computer = Player('Computer', true, 10);
+    const player = Player('Player', false, 10);
     computer.setOpponent(player);
     for (let i = 0; i < 100; i++) {
       computer.shootAuto(0);

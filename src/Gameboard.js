@@ -1,6 +1,6 @@
 import Ship from './Ship';
 
-const Gameboard = (dimension, shipLengths = [2, 2, 3, 4, 5]) => {
+const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   if (!Number.isInteger(dimension)) {
     throw new Error('Gameboard dimension must be an integer');
   }

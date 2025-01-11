@@ -2,7 +2,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countHitsOnBoard, countShips } from './testHelpers';
 
-describe.skip('GameController tests', () => {
+describe('GameController tests', () => {
   it('instantiates with default game setup', () => {
     const gameController = GameController();
     expect(gameController.getGameState()).toBe(GameState.gameSetup);
@@ -272,9 +272,9 @@ describe.skip('GameController tests', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(0, 2, 0, 2, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 0, 2, 'h');
+    gameController.placeShip(1, 2, 0, 2, 'h');
     gameController.startGame();
     expect(gameController.getWinner()).toBe(null);
     gameController.primeShot();
@@ -284,7 +284,10 @@ describe.skip('GameController tests', () => {
     expect(gameController.makeShot(1, 0)).toBe(false);
     expect(gameController.getWinner()).toBe(null);
     gameController.primeShot();
-    expect(gameController.makeShot(0, 2)).toBe(true);
+    expect(gameController.makeShot(0, 2)).toBe(false);
+    expect(gameController.getWinner()).toBe(null);
+    gameController.primeShot();
+    expect(gameController.makeShot(1, 2)).toBe(true);
     expect(gameController.getWinner()).toBe(gameController.getPlayers()[0]);
   });
 
@@ -293,9 +296,9 @@ describe.skip('GameController tests', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(0, 2, 0, 2, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 1, 0, 2, 'h');
+    gameController.placeShip(1, 2, 0, 2, 'h');
     gameController.startGame();
     gameController.primeShot();
     gameController.makeShot(0, 0);
@@ -303,6 +306,8 @@ describe.skip('GameController tests', () => {
     gameController.makeShot(1, 0);
     gameController.primeShot();
     gameController.makeShot(0, 2);
+    gameController.primeShot();
+    gameController.makeShot(1, 2);
     expect(() => gameController.primeShot()).toThrow(
       'Not in shotReceived state'
     );
