@@ -33,6 +33,10 @@ main {
 
 #unplaced-ships {
   margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 235px;
 }
 
 .unplaced-ship {
@@ -41,10 +45,10 @@ main {
   .cell {
     height: 40px;
     width: 40px;
-    margin: -1px 0 0 0;
+    margin: 0 0 0 -1px;
   }
 
-  margin-bottom: 10px;
+  margin: 5px 0 5px 0;
 }
 
 #player-gameboard,
