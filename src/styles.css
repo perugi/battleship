@@ -1,4 +1,4 @@
-* {
+html {
   box-sizing: border-box;
 }
 
@@ -27,12 +27,36 @@ main {
   display: none;
 }
 
+#ship-placing-area {
+  display: flex;
+}
+
+#unplaced-ships {
+  margin-right: 40px;
+}
+
+.unplaced-ship {
+  display: flex;
+
+  .cell {
+    height: 40px;
+    width: 40px;
+    margin: -1px 0 0 0;
+  }
+
+  margin-bottom: 10px;
+}
+
 #player-gameboard,
 #opponent-gameboard {
   display: grid;
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
+}
 
+.unplaced-ship,
+#player-gameboard,
+#opponent-gameboard {
   .cell {
     border: 1px solid var(--text-color);
     display: flex;
@@ -43,6 +67,10 @@ main {
 
 #player-gameboard,
 #opponent-gameboard {
+  .cell {
+    margin: -1px 0 0 -1px;
+  }
+
   .adjacent {
     background-color: lightgray;
   }

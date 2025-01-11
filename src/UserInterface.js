@@ -109,6 +109,17 @@ const UserInterface = (events) => {
 
   const renderUnplacedShips = (player, unplacedShipsDiv) => {
     unplacedShipsDiv.innerHTML = '';
+
+    player.getUnplacedShips().forEach((shipLength) => {
+      const shipElement = document.createElement('div');
+      shipElement.classList.add('unplaced-ship');
+      for (let i = 0; i < shipLength; i++) {
+        const cellElement = document.createElement('div');
+        cellElement.classList.add('cell');
+        shipElement.appendChild(cellElement);
+      }
+      unplacedShipsDiv.appendChild(shipElement);
+    });
   };
 
   const renderShipPlacing = (data) => {
@@ -116,8 +127,10 @@ const UserInterface = (events) => {
 
     content.innerHTML = `
         <h1> Player Board [${data.activePlayer.getName()}] </h1>
-        <div id="unplaced-ships"></div>
-        <div id="player-gameboard"></div>
+        <div id="ship-placing-area">
+          <div id="unplaced-ships"></div>
+          <div id="player-gameboard"></div>
+        </div>
         <button id="place-to-main-menu">Main Menu</button>
         <button id="place-random">Place Ships Randomly</button>
     `;
