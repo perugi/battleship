@@ -1,37 +1,29 @@
 import Ship from './Ship';
 
-const Gameboard = (dimension, shipLengths) => {
-  const DEFAULT_SHIP_LENGTHS = [2, 2, 3, 4, 5];
-  let unplacedShips;
-
+const Gameboard = (dimension, shipLengths = [2, 2, 3, 4, 5]) => {
   if (!Number.isInteger(dimension)) {
     throw new Error('Gameboard dimension must be an integer');
   }
   if (dimension < 1)
     throw new Error('Gameboard dimension must be greater than 0');
 
-  if (shipLengths === undefined) {
-    unplacedShips = [...DEFAULT_SHIP_LENGTHS];
-  } else {
-    if (!Array.isArray(shipLengths)) {
-      throw new Error('shipLengths must be an array');
-    }
-    if (shipLengths.length === 0) {
-      throw new Error('shipLengths must not be empty');
-    }
-    if (
-      shipLengths.some(
-        (length) =>
-          !Number.isInteger(length) || length < 1 || length > dimension
-      )
-    ) {
-      throw new Error(
-        'shipLengths must be an array of integers between 1 and dimension'
-      );
-    }
-
-    unplacedShips = shipLengths.toSorted((a, b) => a - b);
+  if (!Array.isArray(shipLengths)) {
+    throw new Error('shipLengths must be an array');
   }
+  if (shipLengths.length === 0) {
+    throw new Error('shipLengths must not be empty');
+  }
+  if (
+    shipLengths.some(
+      (length) => !Number.isInteger(length) || length < 1 || length > dimension
+    )
+  ) {
+    throw new Error(
+      'shipLengths must be an array of integers between 1 and dimension'
+    );
+  }
+
+  let unplacedShips = shipLengths.toSorted((a, b) => a - b);
 
   const placedShips = new Array(dimension)
     .fill(false)
@@ -152,12 +144,14 @@ const Gameboard = (dimension, shipLengths) => {
         adjacents[y][x].clear();
       }
     }
+
+    unplacedShips = shipLengths.toSorted((a, b) => a - b);
   };
 
-  const placeRandomShips = (randomShipLengths) => {
+  const placeRandomShips = () => {
     clearBoard();
 
-    randomShipLengths.forEach((shipLength) => {
+    shipLengths.forEach((shipLength) => {
       if (shipLength > 0) {
         let placed = false;
         while (!placed) {
@@ -232,6 +226,7 @@ const Gameboard = (dimension, shipLengths) => {
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,
     clearShotsReceived,
+    clearBoard,
     placeShip,
     removeShip,
     placeRandomShips,

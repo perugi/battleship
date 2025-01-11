@@ -299,18 +299,12 @@ describe('Gameboard tests', () => {
 
   it('places ships randomly', () => {
     const gameboard = Gameboard(10);
-    gameboard.placeRandomShips([2, 2, 3, 4, 5]);
+    gameboard.placeRandomShips();
     expect(countShips(gameboard)).toBe(5);
     expect(countShipCells(gameboard)).toBe(2 + 2 + 3 + 4 + 5);
   });
 
-  it('does not place any ships when randomly placing a ship list of length 0', () => {
-    const gameboard = Gameboard(10);
-    gameboard.placeRandomShips([0]);
-    expect(countShips(gameboard)).toBe(0);
-  });
-
-  it.skip('clears the board', () => {
+  it('clears the board', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(2, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
@@ -319,6 +313,8 @@ describe('Gameboard tests', () => {
     expect(countShips(gameboard)).toBe(0);
     gameboard.clearBoard();
     expect(countShips(gameboard)).toBe(0);
+    gameboard.placeShip(2, 0, 0, 'v');
+    expect(countShips(gameboard)).toBe(1);
   });
 
   it('clears shots received', () => {
