@@ -6,6 +6,41 @@ const UserInterface = (events) => {
       setTimeout(resolve, ms);
     });
 
+  let isDraggingShip = false;
+  let selectedShip = null;
+
+  const dragStartCoords = { x: 0, y: 0 };
+
+  document.addEventListener('mousedown', (e) => {
+    if (
+      e.target.classList.contains('cell') &&
+      e.target.parentNode.classList.contains('unplaced-ship')
+    ) {
+      selectedShip = e.target.parentNode;
+      selectedShip.style.position = 'relative';
+      isDraggingShip = true;
+      dragStartCoords.x = e.clientX;
+      dragStartCoords.y = e.clientY;
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDraggingShip) {
+      selectedShip.style.top = `${e.clientY - dragStartCoords.y}px`;
+      selectedShip.style.left = `${e.clientX - dragStartCoords.x}px`;
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDraggingShip) {
+      selectedShip.style.position = 'static';
+      isDraggingShip = false;
+      selectedShip.style.top = 0;
+      selectedShip.style.left = 0;
+      selectedShip = null;
+    }
+  });
+
   const renderGameboard = (player, gameboardDiv, showShips) => {
     // eslint-disable-next-line no-param-reassign
     gameboardDiv.innerHTML = '';

@@ -41,17 +41,17 @@ main {
 
 .unplaced-ship {
   display: flex;
+  margin: 5px 0 5px 0;
 
   .cell {
     height: 40px;
     width: 40px;
+    background-color: gray;;
   }
 
   .cell:not(:first-child) {
     margin-left: -1px;
   }
-
-  margin: 5px 0 5px 0;
 }
 
 #player-gameboard,
