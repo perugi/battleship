@@ -129,6 +129,7 @@ const UserInterface = (events) => {
     events.emit('primeShot');
     passTurnModal.style.display = 'none';
     document.removeEventListener('keydown', passTurn);
+    document.removeEventListener('click', passTurn);
   };
 
   const renderPassTurnScreen = (data) => {
@@ -140,6 +141,7 @@ const UserInterface = (events) => {
     passTurnModal.style.display = 'flex';
 
     document.addEventListener('keydown', passTurn);
+    document.addEventListener('click', passTurn);
   };
 
   const renderUnplacedShips = (player, unplacedShipsDiv) => {
