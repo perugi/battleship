@@ -1,14 +1,15 @@
 import Player from './Player';
 import GameState from './GameState';
 
-const GameController = (events) => {
+const GameController = (
+  events,
+  dimension = 10,
+  shipLengths = [2, 2, 3, 4, 5]
+) => {
   let players = [];
   let activePlayer = null;
   let winner = null;
   let gameState = GameState.gameSetup;
-
-  const DIMENSION = 10;
-  const SHIP_LENGTHS = [2, 2, 3, 4, 5];
 
   const updateGameState = (shot) => {
     if (events) {
@@ -31,8 +32,8 @@ const GameController = (events) => {
   ) => {
     winner = null;
     players = [];
-    players.push(Player(player1Name, player1IsAi, DIMENSION, SHIP_LENGTHS));
-    players.push(Player(player2Name, player2IsAi, DIMENSION, SHIP_LENGTHS));
+    players.push(Player(player1Name, player1IsAi, dimension, shipLengths));
+    players.push(Player(player2Name, player2IsAi, dimension, shipLengths));
     players[0].setOpponent(players[1]);
     players[1].setOpponent(players[0]);
     [activePlayer] = players;
@@ -113,6 +114,13 @@ const GameController = (events) => {
 
     if (players[1].getIsAi()) {
       placeRandomShips(1);
+    }
+
+    if (
+      players[0].getUnplacedShips().length > 0 ||
+      players[1].getUnplacedShips().length > 0
+    ) {
+      throw new Error('Not all ships have been placed');
     }
 
     // We go to shotReceived and not shotPrimed, because we want the players to

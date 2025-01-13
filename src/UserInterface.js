@@ -199,6 +199,11 @@ const UserInterface = (events) => {
       placePlayer2Button.addEventListener('click', () => {
         events.emit('placingPlayer2');
       });
+      if (data.activePlayer.getUnplacedShips().length === 0) {
+        placePlayer2Button.disabled = false;
+      } else {
+        placePlayer2Button.disabled = true;
+      }
       content.appendChild(placePlayer2Button);
     } else {
       const startButton = document.createElement('button');
@@ -207,6 +212,11 @@ const UserInterface = (events) => {
       startButton.addEventListener('click', () => {
         events.emit('startGame');
       });
+      if (data.activePlayer.getUnplacedShips().length === 0) {
+        startButton.disabled = false;
+      } else {
+        startButton.disabled = true;
+      }
       content.appendChild(startButton);
     }
   };

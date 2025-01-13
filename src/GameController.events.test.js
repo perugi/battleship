@@ -183,9 +183,50 @@ describe('GameController events API', () => {
     });
   });
 
-  it('starts the game after receiving the startGame event in a single player game', () => {
+  it('clears ships after receiving the clearShips event', () => {
     const events = Events();
     const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placeShip', {
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('placeShip', {
+      shipLength: 2,
+      x: 0,
+      y: 2,
+      direction: 'h',
+    });
+    expect(countShips(gameController.getPlayers()[0])).toBe(2);
+    events.emit('clearShips');
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    events.emit('placingPlayer2');
+    events.emit('placeShip', {
+      shipLength: 2,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    expect(countShips(gameController.getPlayers()[1])).toBe(1);
+    events.emit('clearShips');
+    expect(countShips(gameController.getPlayers()[1])).toBe(0);
+  });
+
+  // Since the controller will not allow us to start the game if there are no
+  // unplaced ships, you will notice that in the test from here on the controller
+  // is instantiated with a reduced amount of ships, just to make it easier to test.
+  it('starts the game after receiving the startGame event in a single player game', () => {
+    const events = Events();
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -213,7 +254,7 @@ describe('GameController events API', () => {
 
   it('starts the game after receiving the startGame event in a 2-player game', () => {
     const events = Events();
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -248,7 +289,7 @@ describe('GameController events API', () => {
 
   it('restarts the game after receiving the restartGame event', () => {
     const events = Events();
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -286,7 +327,7 @@ describe('GameController events API', () => {
 
   it('emits a gameStateChange event when a shot hits', () => {
     const events = Events();
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -329,7 +370,7 @@ describe('GameController events API', () => {
 
   it('emits a gameStateChange event when a shot misses', () => {
     const events = Events();
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -372,7 +413,7 @@ describe('GameController events API', () => {
 
   it('emits a gameStateChange event when the game is over', () => {
     const events = Events();
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
@@ -394,21 +435,11 @@ describe('GameController events API', () => {
       y: 0,
       direction: 'h',
     });
-    events.emit('placeShip', {
-      shipLength: 2,
-      x: 0,
-      y: 2,
-      direction: 'h',
-    });
     events.emit('startGame');
     events.emit('primeShot');
     events.emit('shoot', { x: 0, y: 0 });
     events.emit('primeShot');
     events.emit('shoot', { x: 1, y: 0 });
-    events.emit('primeShot');
-    events.emit('shoot', { x: 0, y: 2 });
-    events.emit('primeShot');
-    events.emit('shoot', { x: 1, y: 2 });
     expect(fn).toHaveBeenLastCalledWith({
       gameState: GameState.gameOver,
       shot: null,
@@ -422,7 +453,7 @@ describe('GameController events API', () => {
   it('makes AI shot after the player misses', () => {
     const events = Events();
     // eslint-disable-next-line no-unused-vars
-    const gameController = GameController(events);
+    const gameController = GameController(events, 10, [2]);
     const fn = jest.fn();
     events.on('gameStateChange', fn);
     events.emit('createPlayers', {
