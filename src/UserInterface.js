@@ -168,6 +168,7 @@ const UserInterface = (events) => {
         </div>
         <button id="place-to-main-menu">Main Menu</button>
         <button id="place-random">Place Ships Randomly</button>
+        <button id="clear-ships">Clear Ships</button>
     `;
 
     const unplacedShipsDiv = document.querySelector('#unplaced-ships');
@@ -176,14 +177,19 @@ const UserInterface = (events) => {
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
+    const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
+    placeToMainMenuButton.addEventListener('click', () => {
+      renderMainMenu();
+    });
+
     const placeRandomShipsButton = document.querySelector('#place-random');
     placeRandomShipsButton.addEventListener('click', () => {
       events.emit('placeRandomShips');
     });
 
-    const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
-    placeToMainMenuButton.addEventListener('click', () => {
-      renderMainMenu();
+    const clearShipsButton = document.querySelector('#clear-ships');
+    clearShipsButton.addEventListener('click', () => {
+      events.emit('clearShips');
     });
 
     if (!data.player2.getIsAi() && data.activePlayer === data.player1) {

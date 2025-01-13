@@ -136,7 +136,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     }
   };
 
-  const clearBoard = () => {
+  const clearShips = () => {
     for (let x = 0; x < dimension; x++) {
       for (let y = 0; y < dimension; y++) {
         placedShips[y][x] = null;
@@ -149,7 +149,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   };
 
   const placeRandomShips = () => {
-    clearBoard();
+    clearShips();
 
     shipLengths.forEach((shipLength) => {
       if (shipLength > 0) {
@@ -226,7 +226,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,
     clearShotsReceived,
-    clearBoard,
+    clearShips,
     placeShip,
     removeShip,
     placeRandomShips,

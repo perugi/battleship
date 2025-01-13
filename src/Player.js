@@ -50,6 +50,7 @@ const Player = (name, isAi, dimension, shipLengths) => {
   return {
     getShotsReceived: () => gameboard.getShotsReceived(),
     clearShotsReceived: () => gameboard.clearShotsReceived(),
+    clearShips: () => gameboard.clearShips(),
     getShips: () => gameboard.getShips(),
     getAdjacents: () => gameboard.getAdjacents(),
     getUnplacedShips: () => gameboard.getUnplacedShips(),

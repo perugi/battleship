@@ -150,22 +150,22 @@ describe('GameController tests', () => {
 
   it('throws when placing random ships when not in placing ships state', () => {
     const gameController = GameController();
-    expect(() => gameController.placeRandomShips([1])).toThrow(
+    expect(() => gameController.placeRandomShips(1)).toThrow(
       'Not in placing ships state'
     );
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     gameController.placeShip(0, 2, 0, 0, 'h');
     gameController.placeShip(1, 2, 0, 0, 'h');
     gameController.startGame();
-    expect(() => gameController.placeRandomShips([1])).toThrow(
+    expect(() => gameController.placeRandomShips(1)).toThrow(
       'Not in placing ships state'
     );
     gameController.primeShot();
-    expect(() => gameController.placeRandomShips([1])).toThrow(
+    expect(() => gameController.placeRandomShips(1)).toThrow(
       'Not in placing ships state'
     );
     gameController.makeShot(0, 0);
-    expect(() => gameController.placeRandomShips([1])).toThrow(
+    expect(() => gameController.placeRandomShips(1)).toThrow(
       'Not in placing ships state'
     );
   });
@@ -181,6 +181,52 @@ describe('GameController tests', () => {
     );
     expect(() => gameController.placeRandomShips(3)).toThrow(
       'Invalid player index'
+    );
+  });
+
+  it('clears ships when placing in a single player game', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Computer', true);
+    gameController.placeRandomShips(0);
+    expect(countShips(gameController.getPlayers()[0])).toBe(5);
+    gameController.clearShips(0);
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+  });
+
+  it('clears ships when placing in a multi player game', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeRandomShips(0);
+    gameController.placeRandomShips(1);
+    expect(countShips(gameController.getPlayers()[0])).toBe(5);
+    expect(countShips(gameController.getPlayers()[1])).toBe(5);
+    gameController.clearShips(0);
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    expect(countShips(gameController.getPlayers()[1])).toBe(5);
+    gameController.clearShips(1);
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    expect(countShips(gameController.getPlayers()[1])).toBe(0);
+  });
+
+  it('throws when trying to clear ships when not in placingShips state', () => {
+    const gameController = GameController();
+    expect(() => gameController.clearShips(0)).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.startGame();
+    expect(() => gameController.clearShips(0)).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.primeShot();
+    expect(() => gameController.clearShips(0)).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.makeShot(0, 0);
+    expect(() => gameController.clearShips(0)).toThrow(
+      'Not in placing ships state'
     );
   });
 

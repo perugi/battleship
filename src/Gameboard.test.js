@@ -309,9 +309,9 @@ describe('Gameboard tests', () => {
     gameboard.placeShip(2, 0, 0, 'v');
     gameboard.placeShip(2, 2, 0, 'h');
     expect(countShips(gameboard)).toBe(2);
-    gameboard.clearBoard();
+    gameboard.clearShips();
     expect(countShips(gameboard)).toBe(0);
-    gameboard.clearBoard();
+    gameboard.clearShips();
     expect(countShips(gameboard)).toBe(0);
     gameboard.placeShip(2, 0, 0, 'v');
     expect(countShips(gameboard)).toBe(1);

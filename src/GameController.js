@@ -50,7 +50,7 @@ const GameController = (events) => {
     );
   };
 
-  const placeShip = (playerIndex, shipLength, x, y, direction) => {
+  const checkPlayerIndexAndPlacingShipsState = (playerIndex) => {
     if (gameState !== GameState.placingShips)
       throw new Error('Not in placing ships state');
     if (
@@ -59,6 +59,10 @@ const GameController = (events) => {
       playerIndex > players.length - 1
     )
       throw new Error('Invalid player index');
+  };
+
+  const placeShip = (playerIndex, shipLength, x, y, direction) => {
+    checkPlayerIndexAndPlacingShipsState(playerIndex);
 
     players[playerIndex].placeShip(shipLength, x, y, direction);
     updateGameState();
@@ -75,14 +79,7 @@ const GameController = (events) => {
   };
 
   const placeRandomShips = (playerIndex) => {
-    if (gameState !== GameState.placingShips)
-      throw new Error('Not in placing ships state');
-    if (
-      !Number.isInteger(playerIndex) ||
-      playerIndex < 0 ||
-      playerIndex > players.length - 1
-    )
-      throw new Error('Invalid player index');
+    checkPlayerIndexAndPlacingShipsState(playerIndex);
 
     players[playerIndex].placeRandomShips();
     updateGameState();
@@ -97,6 +94,17 @@ const GameController = (events) => {
       [, activePlayer] = players;
       updateGameState();
     }
+  };
+
+  const clearShips = (playerIndex) => {
+    checkPlayerIndexAndPlacingShipsState(playerIndex);
+
+    players[playerIndex].clearShips();
+    updateGameState();
+  };
+
+  const clearShipsEvent = () => {
+    clearShips(players.indexOf(activePlayer));
   };
 
   const startGame = () => {
@@ -194,6 +202,7 @@ const GameController = (events) => {
     events.on('createPlayers', createPlayersEvent);
     events.on('placeShip', placeShipEvent);
     events.on('placeRandomShips', placeRandomShipsEvent);
+    events.on('clearShips', clearShipsEvent);
     events.on('startGame', startGame);
     events.on('restartGame', restartGame);
     events.on('primeShot', primeShot);
@@ -204,6 +213,7 @@ const GameController = (events) => {
   return {
     placeRandomShips,
     placeShip,
+    clearShips,
     createPlayers,
     startGame,
     primeShot,
