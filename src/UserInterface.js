@@ -1,6 +1,9 @@
 import GameState from './GameState';
 
 const UserInterface = (events) => {
+
+  const CELL_SIZE_PX = 40;
+
   const delay = (ms) =>
     new Promise((resolve) => {
       setTimeout(resolve, ms);
@@ -162,8 +165,9 @@ const UserInterface = (events) => {
     const dragStartCoords = { x: 0, y: 0 };
 
     const continueDragging = (e) => {
-      draggedShip.style.top = `${e.clientY - dragStartCoords.y}px`;
-      draggedShip.style.left = `${e.clientX - dragStartCoords.x}px`;
+      draggedShip.style.top = `${e.clientY - CELL_SIZE_PX/2 - dragStartCoords.y}px`;
+      draggedShip.style.left = `${e.clientX - CELL_SIZE_PX/2 - dragStartCoords.x}px`;
+
 
       legalShipPlacements.forEach((legalShipPlacement) => {
         if (
@@ -198,13 +202,15 @@ const UserInterface = (events) => {
         e.target.classList.contains('cell') &&
         e.target.parentNode.classList.contains('unplaced-ship')
       ) {
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        
         draggedShip = e.target.parentNode;
         draggedShip.style.position = 'relative';
-        dragStartCoords.x = e.clientX;
-        dragStartCoords.y = e.clientY;
+
+        const rect = draggedShip.getBoundingClientRect();
+        dragStartCoords.y = rect.top;
+        dragStartCoords.x = rect.left;
+
+        draggedShip.style.top = `${e.clientY - CELL_SIZE_PX/2 - dragStartCoords.y}px`;
+        draggedShip.style.left = `${e.clientX - CELL_SIZE_PX/2 - dragStartCoords.x}px`;
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
