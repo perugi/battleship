@@ -97,6 +97,10 @@ main {
   .sunk {
     background-color: rgb(128, 28, 28);
   }
+
+  .legal-ship-placement {
+    background-color: lightgreen;
+  }
 }
 
 .modal {

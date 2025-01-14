@@ -6,41 +6,6 @@ const UserInterface = (events) => {
       setTimeout(resolve, ms);
     });
 
-  let isDraggingShip = false;
-  let selectedShip = null;
-
-  const dragStartCoords = { x: 0, y: 0 };
-
-  document.addEventListener('mousedown', (e) => {
-    if (
-      e.target.classList.contains('cell') &&
-      e.target.parentNode.classList.contains('unplaced-ship')
-    ) {
-      selectedShip = e.target.parentNode;
-      selectedShip.style.position = 'relative';
-      isDraggingShip = true;
-      dragStartCoords.x = e.clientX;
-      dragStartCoords.y = e.clientY;
-    }
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (isDraggingShip) {
-      selectedShip.style.top = `${e.clientY - dragStartCoords.y}px`;
-      selectedShip.style.left = `${e.clientX - dragStartCoords.x}px`;
-    }
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (isDraggingShip) {
-      selectedShip.style.position = 'static';
-      isDraggingShip = false;
-      selectedShip.style.top = 0;
-      selectedShip.style.left = 0;
-      selectedShip = null;
-    }
-  });
-
   const renderGameboard = (player, gameboardDiv, showShips) => {
     // eslint-disable-next-line no-param-reassign
     gameboardDiv.innerHTML = '';
@@ -49,6 +14,7 @@ const UserInterface = (events) => {
       row.forEach((ship, colIndex) => {
         const cellElement = document.createElement('div');
         cellElement.classList.add('cell');
+        cellElement.classList.add('gameboard-cell');
         cellElement.setAttribute('data-row', rowIndex);
         cellElement.setAttribute('data-col', colIndex);
 
@@ -178,6 +144,74 @@ const UserInterface = (events) => {
 
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
+
+    const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
+    const legalShipPlacements = [];
+    gameboardCells.forEach((cell) => {
+      const rect = cell.getBoundingClientRect();
+      legalShipPlacements.push({
+        cell,
+        top: rect.top,
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+      });
+    });
+
+    let draggedShip = null;
+    const dragStartCoords = { x: 0, y: 0 };
+
+    const continueDragging = (e) => {
+      draggedShip.style.top = `${e.clientY - dragStartCoords.y}px`;
+      draggedShip.style.left = `${e.clientX - dragStartCoords.x}px`;
+
+      legalShipPlacements.forEach((legalShipPlacement) => {
+        if (
+          e.clientX > legalShipPlacement.left &&
+          e.clientX < legalShipPlacement.right &&
+          e.clientY > legalShipPlacement.top &&
+          e.clientY < legalShipPlacement.bottom
+        ) {
+          legalShipPlacement.cell.classList.add('legal-ship-placement');
+        } else {
+          legalShipPlacement.cell.classList.remove('legal-ship-placement');
+        }
+      });
+    };
+
+    const endDragging = (e) => {
+      document.removeEventListener('mousemove', continueDragging);
+      document.removeEventListener('mouseup', endDragging);
+
+      draggedShip.style.position = 'static';
+      draggedShip.style.top = 0;
+      draggedShip.style.left = 0;
+      draggedShip = null;
+
+      legalShipPlacements.forEach((legalShipPlacement) => {
+        legalShipPlacement.cell.classList.remove('legal-ship-placement');
+      });
+    };
+
+    const startDragging = (e) => {
+      if (
+        e.target.classList.contains('cell') &&
+        e.target.parentNode.classList.contains('unplaced-ship')
+      ) {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        
+        draggedShip = e.target.parentNode;
+        draggedShip.style.position = 'relative';
+        dragStartCoords.x = e.clientX;
+        dragStartCoords.y = e.clientY;
+
+        document.addEventListener('mousemove', continueDragging);
+        document.addEventListener('mouseup', endDragging);
+      }
+    };
+
+    document.addEventListener('mousedown', startDragging);
 
     const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
     placeToMainMenuButton.addEventListener('click', () => {
