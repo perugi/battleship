@@ -119,11 +119,8 @@ const UserInterface = (events) => {
       const shipElement = document.createElement('div');
       shipElement.classList.add('unplaced-ship');
       shipElement.setAttribute('data-length', shipLength);
-      for (let i = 0; i < shipLength; i++) {
-        const cellElement = document.createElement('div');
-        cellElement.classList.add('cell');
-        shipElement.appendChild(cellElement);
-      }
+      shipElement.style.height = `${CELL_SIZE_PX}px`;
+      shipElement.style.width = `${shipLength * CELL_SIZE_PX}px`;
       unplacedShipsDiv.appendChild(shipElement);
     });
   };
@@ -147,8 +144,6 @@ const UserInterface = (events) => {
 
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
-
-    // playerGameboardDiv.style.position = 'relative';
 
     const shipPlacementIndicator = document.createElement('div');
     shipPlacementIndicator.classList.add('ship-placement-indicator');
@@ -187,6 +182,7 @@ const UserInterface = (events) => {
           e.clientY < legalShipPlacement.bottom
         ) {
           shipPlacementIndicator.style.display = 'block';
+          draggedShip.style.borderStyle = 'none';
           shipPlacementIndicator.style.top = `${legalShipPlacement.top}px`;
           shipPlacementIndicator.style.left = `${legalShipPlacement.left}px`;
           legalShipPlacement.cell.classList.add('legal-ship-placement');
@@ -196,6 +192,7 @@ const UserInterface = (events) => {
 
       if (!shipPlacementIndicatorDisplayed) {
         shipPlacementIndicator.style.display = 'none';
+        draggedShip.style.borderStyle = 'solid';
       }
     };
 
@@ -208,17 +205,12 @@ const UserInterface = (events) => {
       draggedShip.style.left = 0;
       draggedShip = null;
 
-      legalShipPlacements.forEach((legalShipPlacement) => {
-        legalShipPlacement.cell.classList.remove('legal-ship-placement');
-      });
+      shipPlacementIndicator.style.display = 'none';
     };
 
     const startDragging = (e) => {
-      if (
-        e.target.classList.contains('cell') &&
-        e.target.parentNode.classList.contains('unplaced-ship')
-      ) {
-        draggedShip = e.target.parentNode;
+      if (e.target.classList.contains('unplaced-ship')) {
+        draggedShip = e.target;
         draggedShip.style.position = 'relative';
 
         const rect = draggedShip.getBoundingClientRect();
@@ -233,7 +225,7 @@ const UserInterface = (events) => {
         }px`;
 
         shipPlacementIndicator.style.width = `${
-          draggedShip.dataset.length * CELL_SIZE_PX
+          draggedShip.dataset.length * CELL_SIZE_PX - 1
         }px`;
 
         document.addEventListener('mousemove', continueDragging);
