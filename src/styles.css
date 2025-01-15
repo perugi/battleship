@@ -10,6 +10,7 @@ html {
 
 :root {
   --text-color: #000000;
+  --cell-size: 40px;
 }
 
 body {
@@ -44,9 +45,9 @@ main {
   margin: 5px 0 5px 0;
 
   .cell {
-    height: 40px;
-    width: 40px;
-    background-color: gray;;
+    height: var(--cell-size);
+    width: var(--cell-size);
+    background-color: gray;
   }
 
   .cell:not(:first-child) {
@@ -57,8 +58,8 @@ main {
 #player-gameboard,
 #opponent-gameboard {
   display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
+  grid-template-columns: repeat(10, var(--cell-size));
+  grid-template-rows: repeat(10, var(--cell-size));
 }
 
 .unplaced-ship,
@@ -70,6 +71,14 @@ main {
     justify-content: center;
     align-items: center;
   }
+}
+
+.ship-placement-indicator {
+  display: none;
+  position: absolute;
+  height: var(--cell-size);
+  width: var(--cell-size);
+  border: 2px solid lightgreen;
 }
 
 #player-gameboard,
@@ -96,10 +105,6 @@ main {
 
   .sunk {
     background-color: rgb(128, 28, 28);
-  }
-
-  .legal-ship-placement {
-    background-color: lightgreen;
   }
 }
 

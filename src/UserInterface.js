@@ -1,7 +1,6 @@
 import GameState from './GameState';
 
 const UserInterface = (events) => {
-
   const CELL_SIZE_PX = 40;
 
   const delay = (ms) =>
@@ -119,6 +118,7 @@ const UserInterface = (events) => {
     player.getUnplacedShips().forEach((shipLength) => {
       const shipElement = document.createElement('div');
       shipElement.classList.add('unplaced-ship');
+      shipElement.setAttribute('data-length', shipLength);
       for (let i = 0; i < shipLength; i++) {
         const cellElement = document.createElement('div');
         cellElement.classList.add('cell');
@@ -148,6 +148,12 @@ const UserInterface = (events) => {
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
+    // playerGameboardDiv.style.position = 'relative';
+
+    const shipPlacementIndicator = document.createElement('div');
+    shipPlacementIndicator.classList.add('ship-placement-indicator');
+    playerGameboardDiv.appendChild(shipPlacementIndicator);
+
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
     const legalShipPlacements = [];
     gameboardCells.forEach((cell) => {
@@ -165,10 +171,14 @@ const UserInterface = (events) => {
     const dragStartCoords = { x: 0, y: 0 };
 
     const continueDragging = (e) => {
-      draggedShip.style.top = `${e.clientY - CELL_SIZE_PX/2 - dragStartCoords.y}px`;
-      draggedShip.style.left = `${e.clientX - CELL_SIZE_PX/2 - dragStartCoords.x}px`;
+      draggedShip.style.top = `${
+        e.clientY - CELL_SIZE_PX / 2 - dragStartCoords.y
+      }px`;
+      draggedShip.style.left = `${
+        e.clientX - CELL_SIZE_PX / 2 - dragStartCoords.x
+      }px`;
 
-
+      let shipPlacementIndicatorDisplayed = false;
       legalShipPlacements.forEach((legalShipPlacement) => {
         if (
           e.clientX > legalShipPlacement.left &&
@@ -176,11 +186,17 @@ const UserInterface = (events) => {
           e.clientY > legalShipPlacement.top &&
           e.clientY < legalShipPlacement.bottom
         ) {
+          shipPlacementIndicator.style.display = 'block';
+          shipPlacementIndicator.style.top = `${legalShipPlacement.top}px`;
+          shipPlacementIndicator.style.left = `${legalShipPlacement.left}px`;
           legalShipPlacement.cell.classList.add('legal-ship-placement');
-        } else {
-          legalShipPlacement.cell.classList.remove('legal-ship-placement');
+          shipPlacementIndicatorDisplayed = true;
         }
       });
+
+      if (!shipPlacementIndicatorDisplayed) {
+        shipPlacementIndicator.style.display = 'none';
+      }
     };
 
     const endDragging = (e) => {
@@ -209,8 +225,16 @@ const UserInterface = (events) => {
         dragStartCoords.y = rect.top;
         dragStartCoords.x = rect.left;
 
-        draggedShip.style.top = `${e.clientY - CELL_SIZE_PX/2 - dragStartCoords.y}px`;
-        draggedShip.style.left = `${e.clientX - CELL_SIZE_PX/2 - dragStartCoords.x}px`;
+        draggedShip.style.top = `${
+          e.clientY - CELL_SIZE_PX / 2 - dragStartCoords.y
+        }px`;
+        draggedShip.style.left = `${
+          e.clientX - CELL_SIZE_PX / 2 - dragStartCoords.x
+        }px`;
+
+        shipPlacementIndicator.style.width = `${
+          draggedShip.dataset.length * CELL_SIZE_PX
+        }px`;
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
