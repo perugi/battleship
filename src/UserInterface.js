@@ -164,8 +164,10 @@ const UserInterface = (events) => {
 
     let draggedShip = null;
     const dragStartCoords = { x: 0, y: 0 };
+    let draggedShipBackgroundColor = null;
 
     const continueDragging = (e) => {
+
       draggedShip.style.top = `${
         e.clientY - CELL_SIZE_PX / 2 - dragStartCoords.y
       }px`;
@@ -183,6 +185,7 @@ const UserInterface = (events) => {
         ) {
           shipPlacementIndicator.style.display = 'block';
           draggedShip.style.borderStyle = 'none';
+          draggedShip.style.backgroundColor = 'rgba(0, 0, 0, 0)';
           shipPlacementIndicator.style.top = `${legalShipPlacement.top}px`;
           shipPlacementIndicator.style.left = `${legalShipPlacement.left}px`;
           legalShipPlacement.cell.classList.add('legal-ship-placement');
@@ -193,6 +196,7 @@ const UserInterface = (events) => {
       if (!shipPlacementIndicatorDisplayed) {
         shipPlacementIndicator.style.display = 'none';
         draggedShip.style.borderStyle = 'solid';
+        draggedShip.style.backgroundColor = draggedShipBackgroundColor;
       }
     };
 
@@ -212,6 +216,7 @@ const UserInterface = (events) => {
       if (e.target.classList.contains('unplaced-ship')) {
         draggedShip = e.target;
         draggedShip.style.position = 'relative';
+        draggedShipBackgroundColor = draggedShip.style.backgroundColor;
 
         const rect = draggedShip.getBoundingClientRect();
         dragStartCoords.y = rect.top;
@@ -225,7 +230,7 @@ const UserInterface = (events) => {
         }px`;
 
         shipPlacementIndicator.style.width = `${
-          draggedShip.dataset.length * CELL_SIZE_PX - 1
+          draggedShip.dataset.length * CELL_SIZE_PX + 1
         }px`;
 
         document.addEventListener('mousemove', continueDragging);
