@@ -150,24 +150,14 @@ const UserInterface = (events) => {
     playerGameboardDiv.appendChild(shipPlacementIndicator);
 
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
-    const legalShipPlacements = [];
-    gameboardCells.forEach((cell) => {
-      const rect = cell.getBoundingClientRect();
-      legalShipPlacements.push({
-        cell,
-        top: rect.top,
-        bottom: rect.bottom,
-        left: rect.left,
-        right: rect.right,
-      });
-    });
+    const legalShipPlacements = new Set();
+    const adjacents = data.activePlayer.getAdjacents();
 
     let draggedShip = null;
     const dragStartCoords = { x: 0, y: 0 };
     let draggedShipBackgroundColor = null;
 
     const continueDragging = (e) => {
-
       draggedShip.style.top = `${
         e.clientY - CELL_SIZE_PX / 2 - dragStartCoords.y
       }px`;
@@ -210,13 +200,47 @@ const UserInterface = (events) => {
       draggedShip = null;
 
       shipPlacementIndicator.style.display = 'none';
+
+      legalShipPlacements.clear();
     };
 
+    const generateLegalShipPlacements = (draggedShipLength) => {
+      // To generate a list of legal ship placements, we iterate over all of
+      // the gameboard cells, checking if the ship could be placed there,
+      // by looking at all cells that would compose it. For all cells, if the
+      // adjacents array for that cell location is an empty set, it's
+      // valid potential placement.
+      gameboardCells.forEach((cell) => {
+        const cellCol = parseInt(cell.getAttribute('data-col'), 10);
+        const cellRow = parseInt(cell.getAttribute('data-row'), 10);
+
+        const potentialPlacementAdjacents = [];
+
+        // Ship would go out of bounds, cannot be a legal placement.
+        if (cellCol + draggedShipLength > adjacents.length) return;
+
+        for (let i = 0; i < draggedShipLength; i++) {
+          potentialPlacementAdjacents.push(adjacents[cellRow][cellCol + i]);
+        }
+
+        if (potentialPlacementAdjacents.every((adjacent) => !adjacent.size)) {
+          const cellRect = cell.getBoundingClientRect();
+          legalShipPlacements.add({
+            cell,
+            top: cellRect.top,
+            bottom: cellRect.bottom,
+            left: cellRect.left,
+            right: cellRect.right,
+          });
+        }
+      });
+    };
     const startDragging = (e) => {
       if (e.target.classList.contains('unplaced-ship')) {
         draggedShip = e.target;
         draggedShip.style.position = 'relative';
         draggedShipBackgroundColor = draggedShip.style.backgroundColor;
+        const draggedShipLength = parseInt(draggedShip.dataset.length, 10);
 
         const rect = draggedShip.getBoundingClientRect();
         dragStartCoords.y = rect.top;
@@ -230,8 +254,10 @@ const UserInterface = (events) => {
         }px`;
 
         shipPlacementIndicator.style.width = `${
-          draggedShip.dataset.length * CELL_SIZE_PX + 1
+          draggedShipLength * CELL_SIZE_PX + 1
         }px`;
+
+        generateLegalShipPlacements(draggedShipLength);
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
