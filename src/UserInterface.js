@@ -220,6 +220,12 @@ const UserInterface = (events) => {
       }
     };
 
+    const rotateShipKey = (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        rotateShip();
+      }
+    };
+
     const endDragging = () => {
       if (legalPlacementCoords) {
         const shipLength = parseInt(draggedShip.dataset.length, 10);
@@ -233,6 +239,8 @@ const UserInterface = (events) => {
 
       document.removeEventListener('mousemove', continueDragging);
       document.removeEventListener('mouseup', endDragging);
+      document.removeEventListener('keydown', rotateShipKey);
+      document.removeEventListener('wheel', rotateShip);
 
       if (draggedShipRotation === 'v') {
         rotateShip();
@@ -325,11 +333,7 @@ const UserInterface = (events) => {
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
-        document.addEventListener('keydown', (keyEvent) => {
-          if (keyEvent.key === 'r' || keyEvent.key === 'R') {
-            rotateShip();
-          }
-        });
+        document.addEventListener('keydown', rotateShipKey);
         document.addEventListener('wheel', rotateShip);
       }
     };
