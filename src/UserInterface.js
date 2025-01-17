@@ -151,7 +151,7 @@ const UserInterface = (events) => {
     playerGameboardDiv.appendChild(shipPlacementIndicator);
 
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
-    const legalShipPlacements = new Set();
+    const legalShipPlacementsHV = { h: null, v: null };
     const adjacents = data.activePlayer.getAdjacents();
 
     let draggedShip = null;
@@ -168,8 +168,10 @@ const UserInterface = (events) => {
         e.clientX - CELL_SIZE_PX / 2 - dragStartCoords.x
       }px`;
 
+      const draggedLegalShipPlacements =
+        legalShipPlacementsHV[draggedShipRotation];
       legalPlacementCoords = null;
-      legalShipPlacements.forEach((legalShipPlacement) => {
+      draggedLegalShipPlacements.forEach((legalShipPlacement) => {
         if (
           e.clientX > legalShipPlacement.left &&
           e.clientX < legalShipPlacement.right &&
@@ -217,7 +219,8 @@ const UserInterface = (events) => {
 
       shipPlacementIndicator.style.display = 'none';
 
-      legalShipPlacements.clear();
+      legalShipPlacementsHV.h = null;
+      legalShipPlacementsHV.v = null;
     };
 
     const rotateShip = () => {
@@ -242,12 +245,16 @@ const UserInterface = (events) => {
       }
     };
 
-    const generateLegalShipPlacements = (draggedShipLength) => {
+    const generateLegalShipPlacements = (
+      draggedShipLength,
+      generateRotation
+    ) => {
       // To generate a list of legal ship placements, we iterate over all of
       // the gameboard cells, checking if the ship could be placed there,
       // by looking at all cells that would compose it. For all cells, if the
       // adjacents array for that cell location is an empty set, it's
       // valid potential placement.
+      const legalShipPlacements = new Set();
       gameboardCells.forEach((cell) => {
         const cellCol = parseInt(cell.getAttribute('data-col'), 10);
         const cellRow = parseInt(cell.getAttribute('data-row'), 10);
@@ -255,10 +262,16 @@ const UserInterface = (events) => {
         const potentialPlacementAdjacents = [];
 
         // Ship would go out of bounds, cannot be a legal placement.
-        if (cellCol + draggedShipLength > adjacents.length) return;
+        if (generateRotation === 'h') {
+          if (cellCol + draggedShipLength > adjacents.length) return;
+        } else if (cellRow + draggedShipLength > adjacents.length) return;
 
         for (let i = 0; i < draggedShipLength; i++) {
-          potentialPlacementAdjacents.push(adjacents[cellRow][cellCol + i]);
+          if (generateRotation === 'h') {
+            potentialPlacementAdjacents.push(adjacents[cellRow][cellCol + i]);
+          } else {
+            potentialPlacementAdjacents.push(adjacents[cellRow + i][cellCol]);
+          }
         }
 
         if (potentialPlacementAdjacents.every((adjacent) => !adjacent.size)) {
@@ -272,6 +285,8 @@ const UserInterface = (events) => {
           });
         }
       });
+
+      return legalShipPlacements;
     };
 
     const startDragging = (e) => {
@@ -297,7 +312,14 @@ const UserInterface = (events) => {
           draggedShipLength * CELL_SIZE_PX + 1
         }px`;
 
-        generateLegalShipPlacements(draggedShipLength);
+        legalShipPlacementsHV.h = generateLegalShipPlacements(
+          draggedShipLength,
+          'h'
+        );
+        legalShipPlacementsHV.v = generateLegalShipPlacements(
+          draggedShipLength,
+          'v'
+        );
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
