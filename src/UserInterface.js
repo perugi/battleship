@@ -153,11 +153,12 @@ const UserInterface = (events) => {
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
     const legalShipPlacements = new Set();
     const adjacents = data.activePlayer.getAdjacents();
-    let legalPlacementCoords = null;
 
     let draggedShip = null;
     const dragStartCoords = { x: 0, y: 0 };
     let draggedShipBackgroundColor = null;
+    let legalPlacementCoords = null;
+    let draggedShipRotation = 'h';
 
     const continueDragging = (e) => {
       draggedShip.style.top = `${
@@ -202,7 +203,7 @@ const UserInterface = (events) => {
           shipLength,
           x: legalPlacementCoords.col,
           y: legalPlacementCoords.row,
-          direction: 'h',
+          direction: draggedShipRotation,
         });
       }
 
@@ -217,6 +218,28 @@ const UserInterface = (events) => {
       shipPlacementIndicator.style.display = 'none';
 
       legalShipPlacements.clear();
+    };
+
+    const rotateShip = () => {
+      draggedShipRotation = draggedShipRotation === 'h' ? 'v' : 'h';
+
+      const draggedShipLength = parseInt(draggedShip.dataset.length, 10);
+
+      if (draggedShipRotation === 'h') {
+        draggedShip.style.height = `${CELL_SIZE_PX}px`;
+        draggedShip.style.width = `${draggedShipLength * CELL_SIZE_PX}px`;
+        shipPlacementIndicator.style.height = `${CELL_SIZE_PX + 1}px`;
+        shipPlacementIndicator.style.width = `${
+          draggedShipLength * CELL_SIZE_PX + 1
+        }px`;
+      } else {
+        draggedShip.style.height = `${draggedShipLength * CELL_SIZE_PX}px`;
+        draggedShip.style.width = `${CELL_SIZE_PX}px`;
+        shipPlacementIndicator.style.height = `${
+          draggedShipLength * CELL_SIZE_PX + 1
+        }px`;
+        shipPlacementIndicator.style.width = `${CELL_SIZE_PX + 1}px`;
+      }
     };
 
     const generateLegalShipPlacements = (draggedShipLength) => {
@@ -250,9 +273,11 @@ const UserInterface = (events) => {
         }
       });
     };
+
     const startDragging = (e) => {
       if (e.target.classList.contains('unplaced-ship')) {
         draggedShip = e.target;
+        draggedShipRotation = 'h';
         draggedShip.style.position = 'relative';
         draggedShipBackgroundColor = draggedShip.style.backgroundColor;
         const draggedShipLength = parseInt(draggedShip.dataset.length, 10);
@@ -276,6 +301,12 @@ const UserInterface = (events) => {
 
         document.addEventListener('mousemove', continueDragging);
         document.addEventListener('mouseup', endDragging);
+        document.addEventListener('keydown', (keyEvent) => {
+          if (keyEvent.key === 'r' || keyEvent.key === 'R') {
+            rotateShip();
+          }
+        });
+        document.addEventListener('wheel', rotateShip);
       }
     };
 
