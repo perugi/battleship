@@ -113,6 +113,7 @@ const UserInterface = (events) => {
   };
 
   const renderUnplacedShips = (player, unplacedShipsDiv) => {
+    // eslint-disable-next-line no-param-reassign
     unplacedShipsDiv.innerHTML = '';
 
     player.getUnplacedShips().forEach((shipLength) => {
@@ -152,6 +153,7 @@ const UserInterface = (events) => {
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
     const legalShipPlacements = new Set();
     const adjacents = data.activePlayer.getAdjacents();
+    let legalPlacementCoords = null;
 
     let draggedShip = null;
     const dragStartCoords = { x: 0, y: 0 };
@@ -165,7 +167,7 @@ const UserInterface = (events) => {
         e.clientX - CELL_SIZE_PX / 2 - dragStartCoords.x
       }px`;
 
-      let shipPlacementIndicatorDisplayed = false;
+      legalPlacementCoords = null;
       legalShipPlacements.forEach((legalShipPlacement) => {
         if (
           e.clientX > legalShipPlacement.left &&
@@ -179,18 +181,31 @@ const UserInterface = (events) => {
           shipPlacementIndicator.style.top = `${legalShipPlacement.top}px`;
           shipPlacementIndicator.style.left = `${legalShipPlacement.left}px`;
           legalShipPlacement.cell.classList.add('legal-ship-placement');
-          shipPlacementIndicatorDisplayed = true;
+          legalPlacementCoords = {
+            row: parseInt(legalShipPlacement.cell.dataset.row, 10),
+            col: parseInt(legalShipPlacement.cell.dataset.col, 10),
+          };
         }
       });
 
-      if (!shipPlacementIndicatorDisplayed) {
+      if (!legalPlacementCoords) {
         shipPlacementIndicator.style.display = 'none';
         draggedShip.style.borderStyle = 'solid';
         draggedShip.style.backgroundColor = draggedShipBackgroundColor;
       }
     };
 
-    const endDragging = (e) => {
+    const endDragging = () => {
+      if (legalPlacementCoords) {
+        const shipLength = parseInt(draggedShip.dataset.length, 10);
+        events.emit('placeShip', {
+          shipLength,
+          x: legalPlacementCoords.col,
+          y: legalPlacementCoords.row,
+          direction: 'h',
+        });
+      }
+
       document.removeEventListener('mousemove', continueDragging);
       document.removeEventListener('mouseup', endDragging);
 
