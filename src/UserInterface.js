@@ -198,31 +198,6 @@ const UserInterface = (events) => {
       }
     };
 
-    const endDragging = () => {
-      if (legalPlacementCoords) {
-        const shipLength = parseInt(draggedShip.dataset.length, 10);
-        events.emit('placeShip', {
-          shipLength,
-          x: legalPlacementCoords.col,
-          y: legalPlacementCoords.row,
-          direction: draggedShipRotation,
-        });
-      }
-
-      document.removeEventListener('mousemove', continueDragging);
-      document.removeEventListener('mouseup', endDragging);
-
-      draggedShip.style.position = 'static';
-      draggedShip.style.top = 0;
-      draggedShip.style.left = 0;
-      draggedShip = null;
-
-      shipPlacementIndicator.style.display = 'none';
-
-      legalShipPlacementsHV.h = null;
-      legalShipPlacementsHV.v = null;
-    };
-
     const rotateShip = () => {
       draggedShipRotation = draggedShipRotation === 'h' ? 'v' : 'h';
 
@@ -243,6 +218,34 @@ const UserInterface = (events) => {
         }px`;
         shipPlacementIndicator.style.width = `${CELL_SIZE_PX + 1}px`;
       }
+    };
+
+    const endDragging = () => {
+      if (legalPlacementCoords) {
+        const shipLength = parseInt(draggedShip.dataset.length, 10);
+        events.emit('placeShip', {
+          shipLength,
+          x: legalPlacementCoords.col,
+          y: legalPlacementCoords.row,
+          direction: draggedShipRotation,
+        });
+      }
+
+      document.removeEventListener('mousemove', continueDragging);
+      document.removeEventListener('mouseup', endDragging);
+
+      if (draggedShipRotation === 'v') {
+        rotateShip();
+      }
+      draggedShip.style.position = 'static';
+      draggedShip.style.top = 0;
+      draggedShip.style.left = 0;
+      draggedShip = null;
+
+      shipPlacementIndicator.style.display = 'none';
+
+      legalShipPlacementsHV.h = null;
+      legalShipPlacementsHV.v = null;
     };
 
     const generateLegalShipPlacements = (
@@ -292,7 +295,6 @@ const UserInterface = (events) => {
     const startDragging = (e) => {
       if (e.target.classList.contains('unplaced-ship')) {
         draggedShip = e.target;
-        draggedShipRotation = 'h';
         draggedShip.style.position = 'relative';
         draggedShipBackgroundColor = draggedShip.style.backgroundColor;
         const draggedShipLength = parseInt(draggedShip.dataset.length, 10);
