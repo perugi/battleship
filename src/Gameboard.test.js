@@ -13,7 +13,13 @@ describe('Gameboard tests', () => {
       }
     }
     expect(gameboard.getDimension()).toBe(10);
-    expect(gameboard.getUnplacedShips()).toEqual([2, 2, 3, 4, 5]);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      { length: 2, placed: false },
+      { length: 2, placed: false },
+      { length: 3, placed: false },
+      { length: 4, placed: false },
+      { length: 5, placed: false },
+    ]);
   });
 
   it('throws when creating a gameboard with invalid dimension', () => {
@@ -36,7 +42,12 @@ describe('Gameboard tests', () => {
 
   it('correctly applies the number of ships at instantiation, if it is passed', () => {
     const gameboard = Gameboard(10, [2]);
-    expect(gameboard.getUnplacedShips()).toEqual([2]);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      {
+        length: 2,
+        placed: false,
+      },
+    ]);
   });
 
   it('throws at invalid ship lengths at instantiation', () => {
@@ -88,7 +99,13 @@ describe('Gameboard tests', () => {
         expect(ships[i][j]).toBe(null);
       }
     }
-    expect(gameboard.getUnplacedShips()).toEqual([2, 3, 4, 5]);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      { length: 2, placed: true },
+      { length: 2, placed: false },
+      { length: 3, placed: false },
+      { length: 4, placed: false },
+      { length: 5, placed: false },
+    ]);
   });
 
   it('places multiple ships', () => {
@@ -99,7 +116,13 @@ describe('Gameboard tests', () => {
     expect(ships[0][0].getLength()).toBe(2);
     expect(ships[0][2].getLength()).toBe(2);
     expect(ships[0][3]).toBe(ships[0][2]);
-    expect(gameboard.getUnplacedShips()).toEqual([3, 4, 5]);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      { length: 2, placed: true },
+      { length: 2, placed: true },
+      { length: 3, placed: false },
+      { length: 4, placed: false },
+      { length: 5, placed: false },
+    ]);
   });
 
   it('throws when trying to place a ship that is not available for placing', () => {
@@ -210,6 +233,17 @@ describe('Gameboard tests', () => {
     }).toThrow('Direction must be either "v" or "h"');
   });
 
+  it('shows all ships have been placed', () => {
+    const gameboard = Gameboard(10, [2, 2]);
+    expect(gameboard.getAllShipsPlaced()).toBe(false);
+    gameboard.placeShip(2, 0, 0, 'v');
+    expect(gameboard.getAllShipsPlaced()).toBe(false);
+    gameboard.placeShip(2, 2, 0, 'h');
+    expect(gameboard.getAllShipsPlaced()).toBe(true);
+    gameboard.removeShip(2, 0, 0, 'v');
+    expect(gameboard.getAllShipsPlaced()).toBe(false);
+  })
+
   it('removes a ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(2, 0, 0, 'v');
@@ -218,6 +252,13 @@ describe('Gameboard tests', () => {
     const ships = gameboard.getShips();
     expect(ships[0][0]).toBe(null);
     expect(ships[0][2].getLength()).toBe(2);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      { length: 2, placed: false },
+      { length: 2, placed: true },
+      { length: 3, placed: false },
+      { length: 4, placed: false },
+      { length: 5, placed: false },
+    ]);
   });
 
   it('removes a large ship, and places another one in its previous spot', () => {
@@ -232,6 +273,21 @@ describe('Gameboard tests', () => {
     gameboard.placeShip(2, 2, 0, 'h');
     expect(gameboard.getShips()[0][2].getLength()).toBe(2);
   });
+
+  it('throws when tryint to remove a ship that does not exist', () => {
+    const gameboard = Gameboard(10);
+    expect(() => {
+      gameboard.removeShip(6, 0, 0, 'v');
+    }).toThrow('There are no placed ships of length 6 to remove');
+  });
+
+  it('throws when trying to remove a ship that is not placed', () => {
+    const gameboard = Gameboard(10);
+    expect(() => {
+      gameboard.removeShip(2, 0, 0, 'v');
+    }).toThrow('There are no placed ships of length 2 to remove');
+  });
+
   it('receives multiple attacks, hitting and sinking a ship', () => {
     const gameboard = Gameboard(10);
     gameboard.placeShip(2, 0, 0, 'h');
@@ -313,6 +369,13 @@ describe('Gameboard tests', () => {
     expect(countShips(gameboard)).toBe(0);
     gameboard.clearShips();
     expect(countShips(gameboard)).toBe(0);
+    expect(gameboard.getPlacingStatus()).toEqual([
+      { length: 2, placed: false },
+      { length: 2, placed: false },
+      { length: 3, placed: false },
+      { length: 4, placed: false },
+      { length: 5, placed: false }
+    ])
     gameboard.placeShip(2, 0, 0, 'v');
     expect(countShips(gameboard)).toBe(1);
   });

@@ -23,7 +23,9 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     );
   }
 
-  let unplacedShips = shipLengths.toSorted((a, b) => a - b);
+  const placingStatus = shipLengths
+    .toSorted((a, b) => a - b)
+    .map((length) => ({ length, placed: false }));
 
   const placedShips = new Array(dimension)
     .fill(false)
@@ -70,10 +72,15 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   };
 
   const placeShip = (shipLength, originX, originY, dir) => {
-    if (!unplacedShips.includes(shipLength))
+    const shipToBePlaced = placingStatus.find(
+      (status) => status.length === shipLength && !status.placed
+    );
+
+    if (!shipToBePlaced) {
       throw new Error(
         `There are no ships of length ${shipLength} available for placement`
       );
+    }
 
     if (!Number.isInteger(originX) || !Number.isInteger(originY))
       throw new Error('Ship origin X/Y must be an integer');
@@ -112,10 +119,20 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       modifyAdjacents(x, y, ship, 'add');
     });
 
-    unplacedShips.splice(unplacedShips.indexOf(shipLength), 1);
+    shipToBePlaced.placed = true;
   };
 
   const removeShip = (shipLength, originX, originY, dir) => {
+    const shipToBeRemoved = placingStatus.find(
+      (status) => status.length === shipLength && status.placed
+    );
+
+    if (!shipToBeRemoved) {
+      throw new Error(
+        `There are no placed ships of length ${shipLength} to remove`
+      );
+    }
+
     calculateShipCoordinates(shipLength, originX, originY, dir).forEach(
       ([x, y]) => {
         const ship = placedShips[y][x];
@@ -124,8 +141,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       }
     );
 
-    unplacedShips.push(shipLength);
-    unplacedShips.sort((a, b) => a - b);
+    shipToBeRemoved.placed = false;
   };
 
   const clearShotsReceived = () => {
@@ -145,7 +161,9 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       }
     }
 
-    unplacedShips = shipLengths.toSorted((a, b) => a - b);
+    placingStatus.forEach((status) => {
+      status.placed = false;
+    });
   };
 
   const placeRandomShips = () => {
@@ -221,7 +239,8 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
 
   return {
     getDimension: () => dimension,
-    getUnplacedShips: () => unplacedShips,
+    getPlacingStatus: () => placingStatus,
+    getAllShipsPlaced: () => placingStatus.every((status) => status.placed),
     getShips: () => placedShips,
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,

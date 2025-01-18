@@ -117,8 +117,8 @@ const GameController = (
     }
 
     if (
-      players[0].getUnplacedShips().length > 0 ||
-      players[1].getUnplacedShips().length > 0
+      !players[0].getAllShipsPlaced() ||
+      !players[1].getAllShipsPlaced()
     ) {
       throw new Error('Not all ships have been placed');
     }
