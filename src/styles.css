@@ -40,12 +40,30 @@ main {
   width: 235px;
 }
 
-.unplaced-ship {
+.ship-placing {
   margin: 5px 0 5px 0;
   border: 2px solid black;
   background-color: rgba(0, 0, 0, 0.2);
   height: var(--cell-size);
   width: var(--cell-size);
+}
+
+.ship-placing.placed {
+  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+#dragged-ship {
+  display: none;
+  position: absolute;
+  border: 2px solid black;
+  background-color: rgba(0, 0, 0, 0.2);
+  height: var(--cell-size);
+  width: var(--cell-size);
+}
+
+#dragged-ship.dragging {
+  display: block;
 }
 
 .ship-placement-indicator {
@@ -55,6 +73,10 @@ main {
   width: calc(var(--cell-size) + 1px);
   border: 2px solid lightgreen;
   background-color: rgba(144, 238, 144, 0.5);
+}
+
+.ship-placement-indicator.active {
+  display: block;
 }
 
 #player-gameboard,
