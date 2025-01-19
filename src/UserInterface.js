@@ -355,19 +355,13 @@ const UserInterface = (events) => {
       events.emit('clearShips');
     });
 
+    const continueButton = document.createElement('button');
     if (!data.player2.getIsAi() && data.activePlayer === data.player1) {
-      const placePlayer2Button = document.createElement('button');
-      placePlayer2Button.textContent = 'Confirm';
-      placePlayer2Button.classList.add('place-player-2');
-      placePlayer2Button.addEventListener('click', () => {
+      continueButton.textContent = 'Confirm';
+      continueButton.classList.add('place-player-2');
+      continueButton.addEventListener('click', () => {
         events.emit('placingPlayer2');
       });
-      if (data.activePlayer.getUnplacedShips().length === 0) {
-        placePlayer2Button.disabled = false;
-      } else {
-        placePlayer2Button.disabled = true;
-      }
-      content.appendChild(placePlayer2Button);
     } else {
       const startButton = document.createElement('button');
       startButton.textContent = 'Start Game';
@@ -375,13 +369,13 @@ const UserInterface = (events) => {
       startButton.addEventListener('click', () => {
         events.emit('startGame');
       });
-      if (data.activePlayer.getUnplacedShips().length === 0) {
-        startButton.disabled = false;
-      } else {
-        startButton.disabled = true;
-      }
-      content.appendChild(startButton);
     }
+    if (data.activePlayer.getAllShipsPlaced()) {
+      continueButton.disabled = false;
+    } else {
+      continueButton.disabled = true;
+    }
+    content.appendChild(continueButton);
   };
 
   const shoot = (event) => {
