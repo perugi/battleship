@@ -122,6 +122,7 @@ const UserInterface = (events) => {
       if (status.placed) {
         shipElement.classList.add('placed');
       }
+      // TODO fix here when placing ships using index (add index as attribute).
       shipElement.setAttribute('data-length', status.length);
       shipElement.style.height = `${CELL_SIZE_PX}px`;
       shipElement.style.width = `${status.length * CELL_SIZE_PX}px`;
@@ -227,6 +228,7 @@ const UserInterface = (events) => {
     const endDragging = () => {
       if (legalPlacementCoords) {
         const shipLength = parseInt(selectedShip.dataset.length, 10);
+        // TODO fix here when placing ships using index
         events.emit('placeShip', {
           shipLength,
           x: legalPlacementCoords.col,

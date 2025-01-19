@@ -2,6 +2,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countHitsOnBoard, countShips } from './testHelpers';
 
+// TODO modify all tests where ships are placed
 describe('GameController tests', () => {
   it('instantiates with default game setup', () => {
     const gameController = GameController();

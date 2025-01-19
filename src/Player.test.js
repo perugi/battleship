@@ -1,6 +1,7 @@
 import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
+// TODO modify all tests where ships are placed
 describe('Player tests', () => {
   it('instantiates a human player with a name', () => {
     const player = Player('Player', false, 10);

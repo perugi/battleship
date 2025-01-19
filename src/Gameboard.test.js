@@ -1,6 +1,7 @@
 import Gameboard from './Gameboard';
 import { countShips, countShipCells } from './testHelpers';
 
+// TODO modify all tests where ships are placed
 describe('Gameboard tests', () => {
   it('creates an empty gameboard at instantiation', () => {
     const gameboard = Gameboard(10);

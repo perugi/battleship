@@ -71,6 +71,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     }
   };
 
+  // TODO fix here when placing ships using index
   const placeShip = (shipLength, originX, originY, dir) => {
     const shipToBePlaced = placingStatus.find(
       (status) => status.length === shipLength && !status.placed
@@ -169,6 +170,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   const placeRandomShips = () => {
     clearShips();
 
+    // TODO fix here when placing ships using index.
     shipLengths.forEach((shipLength) => {
       if (shipLength > 0) {
         let placed = false;

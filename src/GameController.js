@@ -62,6 +62,7 @@ const GameController = (
       throw new Error('Invalid player index');
   };
 
+  // TODO fix this when placing ships using index
   const placeShip = (playerIndex, shipLength, x, y, direction) => {
     checkPlayerIndexAndPlacingShipsState(playerIndex);
 
@@ -69,6 +70,7 @@ const GameController = (
     updateGameState();
   };
 
+  // TODO fix this when placing ships using index
   const placeShipEvent = (data) => {
     placeShip(
       players.indexOf(activePlayer),

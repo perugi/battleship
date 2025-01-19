@@ -3,6 +3,7 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips } from './testHelpers';
 
+// TODO modify all tests where ships are placed
 describe('GameController events API', () => {
   it('creates the players after receiving the createPlayers event', () => {
     const events = Events();
