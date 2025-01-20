@@ -62,19 +62,17 @@ const GameController = (
       throw new Error('Invalid player index');
   };
 
-  // TODO fix this when placing ships using index
-  const placeShip = (playerIndex, shipLength, x, y, direction) => {
+  const placeShip = (playerIndex, shipIndex, x, y, direction) => {
     checkPlayerIndexAndPlacingShipsState(playerIndex);
 
-    players[playerIndex].placeShip(shipLength, x, y, direction);
+    players[playerIndex].placeShip(shipIndex, x, y, direction);
     updateGameState();
   };
 
-  // TODO fix this when placing ships using index
   const placeShipEvent = (data) => {
     placeShip(
       players.indexOf(activePlayer),
-      data.shipLength,
+      data.shipIndex,
       data.x,
       data.y,
       data.direction
@@ -118,10 +116,7 @@ const GameController = (
       placeRandomShips(1);
     }
 
-    if (
-      !players[0].getAllShipsPlaced() ||
-      !players[1].getAllShipsPlaced()
-    ) {
+    if (!players[0].getAllShipsPlaced() || !players[1].getAllShipsPlaced()) {
       throw new Error('Not all ships have been placed');
     }
 

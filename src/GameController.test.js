@@ -2,7 +2,6 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countHitsOnBoard, countShips } from './testHelpers';
 
-// TODO modify all tests where ships are placed
 describe('GameController tests', () => {
   it('instantiates with default game setup', () => {
     const gameController = GameController();
@@ -48,10 +47,10 @@ describe('GameController tests', () => {
   it('starts a new single player game after creating two players', () => {
     const gameController = GameController(null, 10, [2]);
     gameController.createPlayers('Player 1', false, 'Computer', true);
-    gameController.placeShip(0, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
     expect(gameController.getPlayers()[1].getShips()[0][0]).toBe(null);
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     expect(gameController.getPlayers()[0].getShips()[0][0].getLength()).toBe(2);
     expect(gameController.getPlayers()[1].getShips()[0][0].getLength()).toBe(2);
     gameController.startGame();
@@ -67,8 +66,8 @@ describe('GameController tests', () => {
       'Not in placingShips state'
     );
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     expect(() => gameController.startGame()).toThrow(
       'Not in placingShips state'
@@ -86,8 +85,8 @@ describe('GameController tests', () => {
   it('goes back to ship placing with same players at restart', () => {
     const gameController = GameController(null, 10, [2]);
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
 
     gameController.startGame();
     gameController.primeShot();
@@ -108,22 +107,22 @@ describe('GameController tests', () => {
 
   it('throws when placing ships when not in placingShips state', () => {
     const gameController = GameController(null, 10, [2]);
-    expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(0, 0, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
-    expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(0, 0, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
     gameController.primeShot();
-    expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(0, 0, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
     gameController.makeShot(0, 0);
-    expect(() => gameController.placeShip(0, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(0, 0, 0, 0, 'h')).toThrow(
       'Not in placing ships state'
     );
   });
@@ -131,13 +130,13 @@ describe('GameController tests', () => {
   it('throws when placing ships with an invalid player', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    expect(() => gameController.placeShip('a', 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip('a', 0, 0, 0, 'h')).toThrow(
       'Invalid player index'
     );
-    expect(() => gameController.placeShip(-1, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(-1, 0, 0, 0, 'h')).toThrow(
       'Invalid player index'
     );
-    expect(() => gameController.placeShip(3, 2, 0, 0, 'h')).toThrow(
+    expect(() => gameController.placeShip(3, 0, 0, 0, 'h')).toThrow(
       'Invalid player index'
     );
   });
@@ -158,8 +157,8 @@ describe('GameController tests', () => {
       'Not in placing ships state'
     );
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     expect(() => gameController.placeRandomShips(1)).toThrow(
       'Not in placing ships state'
@@ -218,8 +217,8 @@ describe('GameController tests', () => {
       'Not in placing ships state'
     );
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     expect(() => gameController.clearShips(0)).toThrow(
       'Not in placing ships state'
@@ -243,8 +242,8 @@ describe('GameController tests', () => {
     expect(() => gameController.primeShot()).toThrow(
       'Not in shotReceived state'
     );
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     gameController.primeShot();
     expect(() => gameController.primeShot()).toThrow(
@@ -255,8 +254,8 @@ describe('GameController tests', () => {
   it('allows the player to make a shot, hitting the opponents ship', () => {
     const gameController = GameController(null, 10, [2]);
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     expect(gameController.getPlayers()[0].getShotsReceived()[0][0]).toBe(false);
     expect(gameController.getPlayers()[1].getShotsReceived()[0][0]).toBe(false);
@@ -275,8 +274,8 @@ describe('GameController tests', () => {
   it('allows the player to make a shot, missing the opponents ship', () => {
     const gameController = GameController(null, 10, [2]);
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     gameController.primeShot();
     gameController.makeShot(9, 9);
@@ -291,8 +290,8 @@ describe('GameController tests', () => {
   it('makes AI shot after the player misses', () => {
     const gameController = GameController(null, 10, [2]);
     gameController.createPlayers('Player 1', false, 'Player 2', true);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     while (
       gameController.getActivePlayer() === gameController.getPlayers()[0]
@@ -312,8 +311,8 @@ describe('GameController tests', () => {
     expect(() => gameController.makeShot(0, 0)).toThrow('Not primed for shot');
     gameController.createPlayers('Player 1', false, 'Player 2', false);
     expect(() => gameController.makeShot(0, 0)).toThrow('Not primed for shot');
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
     gameController.startGame();
     expect(() => gameController.makeShot(1, 0)).toThrow('Not primed for shot');
   });
@@ -321,10 +320,10 @@ describe('GameController tests', () => {
   it('gets winner after sinking all the ships', () => {
     const gameController = GameController(null, 10, [2, 2]);
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 2, 0, 2, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 2, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
     expect(gameController.getWinner()).toBe(null);
     gameController.primeShot();
@@ -345,10 +344,10 @@ describe('GameController tests', () => {
     expect.assertions(2);
     const gameController = GameController(null, 10, [2, 2]);
     gameController.createPlayers('Player 1', false, 'Player 2', false);
-    gameController.placeShip(0, 2, 0, 0, 'h');
-    gameController.placeShip(0, 2, 0, 2, 'h');
-    gameController.placeShip(1, 2, 0, 0, 'h');
-    gameController.placeShip(1, 2, 0, 2, 'h');
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(0, 1, 0, 2, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
+    gameController.placeShip(1, 1, 0, 2, 'h');
     gameController.startGame();
     gameController.primeShot();
     gameController.makeShot(0, 0);

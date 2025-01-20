@@ -3,7 +3,6 @@ import GameController from './GameController';
 import GameState from './GameState';
 import { countShips } from './testHelpers';
 
-// TODO modify all tests where ships are placed
 describe('GameController events API', () => {
   it('creates the players after receiving the createPlayers event', () => {
     const events = Events();
@@ -40,7 +39,7 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -119,7 +118,7 @@ describe('GameController events API', () => {
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -196,13 +195,13 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 1,
       x: 0,
       y: 2,
       direction: 'h',
@@ -212,7 +211,7 @@ describe('GameController events API', () => {
     expect(countShips(gameController.getPlayers()[0])).toBe(0);
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -237,7 +236,7 @@ describe('GameController events API', () => {
       player2IsAi: true,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -265,14 +264,14 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -300,14 +299,14 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -338,14 +337,14 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -381,14 +380,14 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -424,14 +423,14 @@ describe('GameController events API', () => {
       player2IsAi: false,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
     });
     events.emit('placingPlayer2');
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',
@@ -464,7 +463,7 @@ describe('GameController events API', () => {
       player2IsAi: true,
     });
     events.emit('placeShip', {
-      shipLength: 2,
+      shipIndex: 0,
       x: 0,
       y: 0,
       direction: 'h',

@@ -1,7 +1,6 @@
 import Player from './Player';
 import { countHitsOnBoard } from './testHelpers';
 
-// TODO modify all tests where ships are placed
 describe('Player tests', () => {
   it('instantiates a human player with a name', () => {
     const player = Player('Player', false, 10);
@@ -61,7 +60,7 @@ describe('Player tests', () => {
      |   |   |   |   |   |   |   |   |   |
   ----------------------------------------
 `);
-    player.placeShip(2, 0, 0, 'v');
+    player.placeShip(0, 0, 0, 'v');
     expect(player.toString()).toBe(`
   Name: Player, isAi: false
 
@@ -164,7 +163,7 @@ describe('Player tests', () => {
     const computer = Player('Computer', true);
     const player = Player('Player', false);
     player.setOpponent(computer);
-    computer.placeShip(2, 0, 0, 'v');
+    computer.placeShip(0, 0, 0, 'v');
     expect(player.shoot(0, 0)).toEqual([true, 0, 0]);
     expect(player.shoot(1, 0)).toEqual([false, 1, 0]);
   });
