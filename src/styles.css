@@ -40,7 +40,7 @@ main {
   width: 235px;
 }
 
-.ship-placing {
+.unplaced-ship {
   margin: 5px 0 5px 0;
   border: 2px solid black;
   background-color: rgba(0, 0, 0, 0.2);
@@ -48,7 +48,14 @@ main {
   width: var(--cell-size);
 }
 
-.ship-placing.placed {
+.placed-ship {
+  position: absolute;
+  border: 2px solid black;
+  height: calc(var(--cell-size) + 1px);
+  width: calc(var(--cell-size) + 1px);
+}
+
+.unplaced-ship.hidden {
   border-color: transparent;
   background-color: rgba(0, 0, 0, 0);
 }

@@ -51,6 +51,38 @@ const UserInterface = (events) => {
         gameboardDiv.appendChild(cellElement);
       });
     });
+
+    if (showShips) {
+      player.getPlacingStatus().forEach((ship) => {
+        if (ship.placed) {
+          const placedShipElement = document.createElement('div');
+          placedShipElement.classList.add('placed-ship');
+          placedShipElement.setAttribute('data-length', ship.length);
+          if (ship.dir === 'h') {
+            placedShipElement.style.height = `${CELL_SIZE_PX + 1}px`;
+            placedShipElement.style.width = `${
+              ship.length * CELL_SIZE_PX + 1
+            }px`;
+          } else {
+            placedShipElement.style.height = `${
+              ship.length * CELL_SIZE_PX + 1
+            }px`;
+            placedShipElement.style.width = `${CELL_SIZE_PX + 1}px`;
+          }
+
+          // Find the cell that is the origin of the placed ship in order to position
+          // the ship element correctly.
+          const originCell = document.querySelector(
+            `[data-row="${ship.origin.y}"][data-col="${ship.origin.x}"]`
+          );
+          const originRect = originCell.getBoundingClientRect();
+          placedShipElement.style.top = `${originRect.top}px`;
+          placedShipElement.style.left = `${originRect.left}px`;
+
+          gameboardDiv.appendChild(placedShipElement);
+        }
+      });
+    }
   };
 
   const renderMainMenu = () => {
@@ -117,16 +149,16 @@ const UserInterface = (events) => {
     unplacedShipsDiv.innerHTML = '';
 
     player.getPlacingStatus().forEach((status, index) => {
-      const shipElement = document.createElement('div');
-      shipElement.classList.add('ship-placing');
+      const unplacedShipElement = document.createElement('div');
+      unplacedShipElement.classList.add('unplaced-ship');
       if (status.placed) {
-        shipElement.classList.add('placed');
+        unplacedShipElement.classList.add('hidden');
       }
-      shipElement.setAttribute('data-length', status.length);
-      shipElement.setAttribute('data-index', index);
-      shipElement.style.height = `${CELL_SIZE_PX}px`;
-      shipElement.style.width = `${status.length * CELL_SIZE_PX}px`;
-      unplacedShipsDiv.appendChild(shipElement);
+      unplacedShipElement.setAttribute('data-length', status.length);
+      unplacedShipElement.setAttribute('data-index', index);
+      unplacedShipElement.style.height = `${CELL_SIZE_PX}px`;
+      unplacedShipElement.style.width = `${status.length * CELL_SIZE_PX}px`;
+      unplacedShipsDiv.appendChild(unplacedShipElement);
     });
   };
 
@@ -233,7 +265,7 @@ const UserInterface = (events) => {
           direction: draggedShipRotation,
         });
       } else {
-        selectedShip.classList.remove('placed');
+        selectedShip.classList.remove('hidden');
       }
 
       document.removeEventListener('mousemove', continueDragging);
@@ -300,7 +332,7 @@ const UserInterface = (events) => {
       e.preventDefault();
 
       selectedShip = e.target;
-      selectedShip.classList.add('placed');
+      selectedShip.classList.add('hidden');
       draggedShip.classList.add('dragging');
       const selectedShipLength = parseInt(selectedShip.dataset.length, 10);
 
@@ -321,7 +353,6 @@ const UserInterface = (events) => {
         'v'
       );
 
-      // document.removeEventListener('mousedown', startDragging);
       document.addEventListener('mousemove', continueDragging);
       document.addEventListener('mouseup', endDragging);
       document.addEventListener('keydown', rotateShipKey);
@@ -329,7 +360,7 @@ const UserInterface = (events) => {
     };
 
     const unplacedShips = document.querySelectorAll(
-      '.ship-placing:not(.placed)'
+      '.unplaced-ship:not(.hidden)'
     );
     unplacedShips.forEach((ship) => {
       ship.addEventListener('mousedown', startDragging);
