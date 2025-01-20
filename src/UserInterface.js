@@ -165,7 +165,6 @@ const UserInterface = (events) => {
     let legalPlacementCoords = null;
 
     const continueDragging = (e) => {
-      console.log('continue');
       draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
       draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
 
@@ -298,38 +297,43 @@ const UserInterface = (events) => {
     };
 
     const startDragging = (e) => {
-      if (e.target.classList.contains('ship-placing')) {
-        console.log('start');
-        selectedShip = e.target;
-        selectedShip.classList.add('placed');
-        draggedShip.classList.add('dragging');
-        const selectedShipLength = parseInt(selectedShip.dataset.length, 10);
+      e.preventDefault();
 
-        draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
-        draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
+      selectedShip = e.target;
+      selectedShip.classList.add('placed');
+      draggedShip.classList.add('dragging');
+      const selectedShipLength = parseInt(selectedShip.dataset.length, 10);
 
-        draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
-        shipPlacementIndicator.style.width = `${
-          selectedShipLength * CELL_SIZE_PX + 1
-        }px`;
+      draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
+      draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
 
-        legalShipPlacementsHV.h = generateLegalShipPlacements(
-          selectedShipLength,
-          'h'
-        );
-        legalShipPlacementsHV.v = generateLegalShipPlacements(
-          selectedShipLength,
-          'v'
-        );
+      draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
+      shipPlacementIndicator.style.width = `${
+        selectedShipLength * CELL_SIZE_PX + 1
+      }px`;
 
-        document.addEventListener('mousemove', continueDragging);
-        document.addEventListener('mouseup', endDragging);
-        document.addEventListener('keydown', rotateShipKey);
-        document.addEventListener('wheel', rotateShip);
-      }
+      legalShipPlacementsHV.h = generateLegalShipPlacements(
+        selectedShipLength,
+        'h'
+      );
+      legalShipPlacementsHV.v = generateLegalShipPlacements(
+        selectedShipLength,
+        'v'
+      );
+
+      // document.removeEventListener('mousedown', startDragging);
+      document.addEventListener('mousemove', continueDragging);
+      document.addEventListener('mouseup', endDragging);
+      document.addEventListener('keydown', rotateShipKey);
+      document.addEventListener('wheel', rotateShip);
     };
 
-    document.addEventListener('mousedown', startDragging);
+    const unplacedShips = document.querySelectorAll(
+      '.ship-placing:not(.placed)'
+    );
+    unplacedShips.forEach((ship) => {
+      ship.addEventListener('mousedown', startDragging);
+    });
 
     const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
     placeToMainMenuButton.addEventListener('click', () => {
@@ -354,10 +358,9 @@ const UserInterface = (events) => {
         events.emit('placingPlayer2');
       });
     } else {
-      const startButton = document.createElement('button');
-      startButton.textContent = 'Start Game';
-      startButton.classList.add('start-game');
-      startButton.addEventListener('click', () => {
+      continueButton.textContent = 'Start Game';
+      continueButton.classList.add('start-game');
+      continueButton.addEventListener('click', () => {
         events.emit('startGame');
       });
     }
