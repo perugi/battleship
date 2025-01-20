@@ -24,10 +24,10 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     );
   }
 
-  const placingStatus = shipLengths
+  const shipStatus = shipLengths
     .toSorted((a, b) => a - b)
     .map((length) => ({
-      length,
+      ship: Ship(length),
       placed: false,
       origin: { x: null, y: null },
       dir: null,
@@ -82,13 +82,13 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       throw new Error('Ship index must be an integer');
     }
 
-    if (shipIndex < 0 || shipIndex >= placingStatus.length) {
+    if (shipIndex < 0 || shipIndex >= shipStatus.length) {
       throw new Error(
         `There are no ships of index ${shipIndex} available for placement`
       );
     }
 
-    const shipToBePlaced = placingStatus[shipIndex];
+    const shipToBePlaced = shipStatus[shipIndex];
 
     if (shipToBePlaced.placed) {
       throw new Error(`Ship of index ${shipIndex} has already been placed`);
@@ -108,13 +108,13 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     )
       throw new Error('Placed ship out of bounds');
     if (dir === 'h') {
-      if (originX + shipToBePlaced.length > dimension)
+      if (originX + shipToBePlaced.ship.getLength() > dimension)
         throw new Error('Placed ship out of bounds');
-    } else if (originY + shipToBePlaced.length > dimension)
+    } else if (originY + shipToBePlaced.ship.getLength() > dimension)
       throw new Error('Placed ship out of bounds');
 
     const newShipCoords = calculateShipCoordinates(
-      shipToBePlaced.length,
+      shipToBePlaced.ship.getLength(),
       originX,
       originY,
       dir
@@ -125,10 +125,9 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       }
     });
 
-    const ship = Ship(shipToBePlaced.length);
     newShipCoords.forEach(([x, y]) => {
-      placedShips[y][x] = ship;
-      modifyAdjacents(x, y, ship, 'add');
+      placedShips[y][x] = shipToBePlaced.ship;
+      modifyAdjacents(x, y, shipToBePlaced.ship, 'add');
     });
 
     shipToBePlaced.placed = true;
@@ -142,10 +141,10 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       throw new Error('Ship index must be an integer');
     }
 
-    if (shipIndex < 0 || shipIndex >= placingStatus.length) {
+    if (shipIndex < 0 || shipIndex >= shipStatus.length) {
       throw new Error(`There are no ships of index ${shipIndex} to remove`);
     }
-    const shipToBeRemoved = placingStatus[shipIndex];
+    const shipToBeRemoved = shipStatus[shipIndex];
 
     if (!shipToBeRemoved.placed) {
       throw new Error(
@@ -154,14 +153,13 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
     }
 
     calculateShipCoordinates(
-      shipToBeRemoved.length,
+      shipToBeRemoved.ship.getLength(),
       shipToBeRemoved.origin.x,
       shipToBeRemoved.origin.y,
       shipToBeRemoved.dir
     ).forEach(([x, y]) => {
-      const ship = placedShips[y][x];
       placedShips[y][x] = null;
-      modifyAdjacents(x, y, ship, 'remove');
+      modifyAdjacents(x, y, shipToBeRemoved.ship, 'remove');
     });
 
     shipToBeRemoved.placed = false;
@@ -187,7 +185,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
       }
     }
 
-    placingStatus.forEach((status) => {
+    shipStatus.forEach((status) => {
       status.placed = false;
       status.origin.x = null;
       status.origin.y = null;
@@ -198,8 +196,8 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   const placeRandomShips = () => {
     clearShips();
 
-    placingStatus.forEach((ship, index) => {
-      if (ship.length > 0) {
+    shipStatus.forEach((status, index) => {
+      if (status.ship.getLength() > 0) {
         let placed = false;
         while (!placed) {
           const x = Math.floor(Math.random() * dimension);
@@ -207,7 +205,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
           const dir = Math.random() < 0.5 ? 'h' : 'v';
           try {
             placeShip(index, x, y, dir);
-            ship.placed = true;
+            status.placed = true;
             placed = true;
           } catch (e) {
             // If a collision or out of bounds occurs, do nothing and try to place
@@ -235,6 +233,7 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
   };
 
   const allSunk = () =>
+    // TODO can change to looking at shipStatus
     placedShips.every((row) =>
       row.every((el) => el === null || el.isSunk() === true)
     );
@@ -269,8 +268,8 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
 
   return {
     getDimension: () => dimension,
-    getPlacingStatus: () => placingStatus,
-    getAllShipsPlaced: () => placingStatus.every((status) => status.placed),
+    getShipStatus: () => shipStatus,
+    getAllShipsPlaced: () => shipStatus.every((status) => status.placed),
     getShips: () => placedShips,
     getShotsReceived: () => shotsReceived,
     getAdjacents: () => adjacents,

@@ -52,37 +52,43 @@ const UserInterface = (events) => {
       });
     });
 
-    if (showShips) {
-      player.getPlacingStatus().forEach((ship) => {
-        if (ship.placed) {
-          const placedShipElement = document.createElement('div');
-          placedShipElement.classList.add('placed-ship');
-          placedShipElement.setAttribute('data-length', ship.length);
-          if (ship.dir === 'h') {
-            placedShipElement.style.height = `${CELL_SIZE_PX + 1}px`;
-            placedShipElement.style.width = `${
-              ship.length * CELL_SIZE_PX + 1
-            }px`;
-          } else {
-            placedShipElement.style.height = `${
-              ship.length * CELL_SIZE_PX + 1
-            }px`;
-            placedShipElement.style.width = `${CELL_SIZE_PX + 1}px`;
-          }
+    const renderShipOnBoard = (status) => {
+      const shipElement = document.createElement('div');
+      shipElement.classList.add('placed-ship');
+      shipElement.setAttribute('data-length', status.ship.getLength());
+      if (status.dir === 'h') {
+        shipElement.style.height = `${CELL_SIZE_PX + 1}px`;
+        shipElement.style.width = `${
+          status.ship.getLength() * CELL_SIZE_PX + 1
+        }px`;
+      } else {
+        shipElement.style.height = `${
+          status.ship.getLength() * CELL_SIZE_PX + 1
+        }px`;
+        shipElement.style.width = `${CELL_SIZE_PX + 1}px`;
+      }
 
-          // Find the cell that is the origin of the placed ship in order to position
-          // the ship element correctly.
-          const originCell = document.querySelector(
-            `[data-row="${ship.origin.y}"][data-col="${ship.origin.x}"]`
-          );
-          const originRect = originCell.getBoundingClientRect();
-          placedShipElement.style.top = `${originRect.top}px`;
-          placedShipElement.style.left = `${originRect.left}px`;
+      // Find the cell that is the origin of the ship in order to position
+      // the ship element correctly.
+      const originCell = gameboardDiv.querySelector(
+        `[data-row="${status.origin.y}"][data-col="${status.origin.x}"]`
+      );
+      const originRect = originCell.getBoundingClientRect();
+      shipElement.style.top = `${originRect.top}px`;
+      shipElement.style.left = `${originRect.left}px`;
 
-          gameboardDiv.appendChild(placedShipElement);
-        }
-      });
-    }
+      gameboardDiv.appendChild(shipElement);
+    };
+
+    player.getShipStatus().forEach((status) => {
+      if (showShips && status.placed) {
+        renderShipOnBoard(status);
+      }
+
+      if (!showShips && status.ship.isSunk()) {
+        renderShipOnBoard(status);
+      }
+    });
   };
 
   const renderMainMenu = () => {
@@ -148,16 +154,20 @@ const UserInterface = (events) => {
     // eslint-disable-next-line no-param-reassign
     unplacedShipsDiv.innerHTML = '';
 
-    player.getPlacingStatus().forEach((status, index) => {
+    player.getShipStatus().forEach((status, index) => {
+      console.log(status);
+      console.log(status.ship.getLength());
       const unplacedShipElement = document.createElement('div');
       unplacedShipElement.classList.add('unplaced-ship');
       if (status.placed) {
         unplacedShipElement.classList.add('hidden');
       }
-      unplacedShipElement.setAttribute('data-length', status.length);
+      unplacedShipElement.setAttribute('data-length', status.ship.getLength());
       unplacedShipElement.setAttribute('data-index', index);
       unplacedShipElement.style.height = `${CELL_SIZE_PX}px`;
-      unplacedShipElement.style.width = `${status.length * CELL_SIZE_PX}px`;
+      unplacedShipElement.style.width = `${
+        status.ship.getLength() * CELL_SIZE_PX
+      }px`;
       unplacedShipsDiv.appendChild(unplacedShipElement);
     });
   };

@@ -53,7 +53,7 @@ const Player = (name, isAi, dimension, shipLengths) => {
     clearShips: () => gameboard.clearShips(),
     getShips: () => gameboard.getShips(),
     getAdjacents: () => gameboard.getAdjacents(),
-    getPlacingStatus: () => gameboard.getPlacingStatus(),
+    getShipStatus: () => gameboard.getShipStatus(),
     getAllShipsPlaced: () => gameboard.getAllShipsPlaced(),
     placeShip: (...args) => gameboard.placeShip(...args),
     removeShip: (...args) => gameboard.removeShip(...args),

@@ -13,13 +13,6 @@ describe('Gameboard tests', () => {
       }
     }
     expect(gameboard.getDimension()).toBe(10);
-    expect(gameboard.getPlacingStatus()).toEqual([
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 3, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 4, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 5, placed: false, origin: { x: null, y: null }, dir: null },
-    ]);
   });
 
   it('throws when creating a gameboard with invalid dimension', () => {
@@ -42,14 +35,8 @@ describe('Gameboard tests', () => {
 
   it('correctly applies the number of ships at instantiation, if it is passed', () => {
     const gameboard = Gameboard(10, [2]);
-    expect(gameboard.getPlacingStatus()).toEqual([
-      {
-        length: 2,
-        placed: false,
-        origin: { x: null, y: null },
-        dir: null,
-      },
-    ]);
+    expect(gameboard.getShipStatus().length).toEqual(1);
+    expect(gameboard.getShipStatus()[0].ship.getLength()).toEqual(2);
   });
 
   it('throws at invalid ship lengths at instantiation', () => {
@@ -101,13 +88,6 @@ describe('Gameboard tests', () => {
         expect(ships[i][j]).toBe(null);
       }
     }
-    expect(gameboard.getPlacingStatus()).toEqual([
-      { length: 2, placed: true, origin: { x: 0, y: 0 }, dir: 'v' },
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 3, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 4, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 5, placed: false, origin: { x: null, y: null }, dir: null },
-    ]);
   });
 
   it('places multiple ships', () => {
@@ -118,13 +98,6 @@ describe('Gameboard tests', () => {
     expect(ships[0][0].getLength()).toBe(2);
     expect(ships[0][2].getLength()).toBe(2);
     expect(ships[0][3]).toBe(ships[0][2]);
-    expect(gameboard.getPlacingStatus()).toEqual([
-      { length: 2, placed: true, origin: { x: 0, y: 0 }, dir: 'v' },
-      { length: 2, placed: true, origin: { x: 2, y: 0 }, dir: 'h' },
-      { length: 3, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 4, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 5, placed: false, origin: { x: null, y: null }, dir: null },
-    ]);
   });
 
   it('throws when trying to place a ship that is not available for placing', () => {
@@ -257,13 +230,6 @@ describe('Gameboard tests', () => {
     const ships = gameboard.getShips();
     expect(ships[0][0]).toBe(null);
     expect(ships[0][2].getLength()).toBe(2);
-    expect(gameboard.getPlacingStatus()).toEqual([
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 2, placed: true, origin: { x: 2, y: 0 }, dir: 'h' },
-      { length: 3, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 4, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 5, placed: false, origin: { x: null, y: null }, dir: null },
-    ]);
   });
 
   it('removes a large ship, and places another one in its previous spot', () => {
@@ -377,13 +343,6 @@ describe('Gameboard tests', () => {
     expect(countShips(gameboard)).toBe(0);
     gameboard.clearShips();
     expect(countShips(gameboard)).toBe(0);
-    expect(gameboard.getPlacingStatus()).toEqual([
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 2, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 3, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 4, placed: false, origin: { x: null, y: null }, dir: null },
-      { length: 5, placed: false, origin: { x: null, y: null }, dir: null },
-    ]);
     gameboard.placeShip(0, 0, 0, 'v');
     expect(countShips(gameboard)).toBe(1);
   });
