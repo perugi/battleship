@@ -27,6 +27,38 @@ describe('GameController events API', () => {
     });
   });
 
+  it('removes a ship from player 1 after receiving the removeShip event', () => {
+    const events = Events();
+    const gameController = GameController(events);
+    const fn = jest.fn();
+    events.on('gameStateChange', fn);
+    events.emit('createPlayers', {
+      player1Name: 'Player 1',
+      player1IsAi: false,
+      player2Name: 'Player 2',
+      player2IsAi: false,
+    });
+    events.emit('placeShip', {
+      shipIndex: 0,
+      x: 0,
+      y: 0,
+      direction: 'h',
+    });
+    events.emit('removeShip', {
+      shipIndex: 0,
+    });
+    expect(fn).toHaveBeenLastCalledWith({
+      gameState: GameState.placingShips,
+      shot: null,
+      player1: gameController.getPlayers()[0],
+      player2: gameController.getPlayers()[1],
+      activePlayer: gameController.getPlayers()[0],
+      winner: null,
+    });
+    expect(countShips(gameController.getPlayers()[0])).toBe(0);
+    expect(countShips(gameController.getPlayers()[1])).toBe(0);
+    expect(gameController.getPlayers()[0].getShips()[0][0]).toBe(null);
+  });
   it('places a ship to player 1 after receiving the placeShip event', () => {
     const events = Events();
     const gameController = GameController(events);

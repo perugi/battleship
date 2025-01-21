@@ -187,6 +187,47 @@ describe('GameController tests', () => {
     );
   });
 
+  it('throws when removing ships when not in placingShips state', () => {
+    const gameController = GameController(null, 10, [2]);
+    expect(() => gameController.removeShip(0, 0, 0, 0, 'h')).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
+    gameController.removeShip(0, 0);
+    gameController.removeShip(1, 0);
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    gameController.placeShip(1, 0, 0, 0, 'h');
+    gameController.startGame();
+    expect(() => gameController.removeShip(0, 0)).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.primeShot();
+    expect(() => gameController.removeShip(0, 0)).toThrow(
+      'Not in placing ships state'
+    );
+    gameController.makeShot(0, 0);
+    expect(() => gameController.removeShip(0, 0)).toThrow(
+      'Not in placing ships state'
+    );
+  });
+
+  it('throws when removing ships with an invalid player', () => {
+    const gameController = GameController();
+    gameController.createPlayers('Player 1', false, 'Player 2', false);
+    gameController.placeShip(0, 0, 0, 0, 'h');
+    expect(() => gameController.removeShip('a', 0)).toThrow(
+      'Invalid player index'
+    );
+    expect(() => gameController.removeShip(-1, 0)).toThrow(
+      'Invalid player index'
+    );
+    expect(() => gameController.removeShip(3, 0)).toThrow(
+      'Invalid player index'
+    );
+  });
+
   it('clears ships when placing in a single player game', () => {
     const gameController = GameController();
     gameController.createPlayers('Player 1', false, 'Computer', true);

@@ -26,7 +26,8 @@ const Gameboard = (dimension = 10, shipLengths = [2, 2, 3, 4, 5]) => {
 
   const shipStatus = shipLengths
     .toSorted((a, b) => a - b)
-    .map((length) => ({
+    .map((length, index) => ({
+      index,
       ship: Ship(length),
       placed: false,
       origin: { x: null, y: null },

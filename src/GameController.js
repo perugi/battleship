@@ -97,6 +97,17 @@ const GameController = (
     }
   };
 
+  const removeShip = (playerIndex, shipIndex) => {
+    checkPlayerIndexAndPlacingShipsState(playerIndex);
+
+    players[playerIndex].removeShip(shipIndex);
+    updateGameState();
+  };
+
+  const removeShipEvent = (data) => {
+    removeShip(players.indexOf(activePlayer), data.shipIndex);
+  };
+
   const clearShips = (playerIndex) => {
     checkPlayerIndexAndPlacingShipsState(playerIndex);
 
@@ -206,6 +217,7 @@ const GameController = (
   if (events) {
     events.on('createPlayers', createPlayersEvent);
     events.on('placeShip', placeShipEvent);
+    events.on('removeShip', removeShipEvent);
     events.on('placeRandomShips', placeRandomShipsEvent);
     events.on('clearShips', clearShipsEvent);
     events.on('startGame', startGame);
@@ -218,6 +230,7 @@ const GameController = (
   return {
     placeRandomShips,
     placeShip,
+    removeShip,
     clearShips,
     createPlayers,
     startGame,

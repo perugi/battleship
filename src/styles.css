@@ -56,8 +56,14 @@ main {
 }
 
 .unplaced-ship.hidden {
+  /* We cannot just display: none these elements, because that causes the other
+  unplaced ships to move, so we just make it transparent. */
   border-color: transparent;
   background-color: rgba(0, 0, 0, 0);
+}
+
+.placed-ship.hidden {
+  display: none;
 }
 
 #dragged-ship {

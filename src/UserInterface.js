@@ -56,6 +56,7 @@ const UserInterface = (events) => {
       const shipElement = document.createElement('div');
       shipElement.classList.add('placed-ship');
       shipElement.setAttribute('data-length', status.ship.getLength());
+      shipElement.setAttribute('data-index', status.index);
       if (status.dir === 'h') {
         shipElement.style.height = `${CELL_SIZE_PX + 1}px`;
         shipElement.style.width = `${
@@ -154,16 +155,14 @@ const UserInterface = (events) => {
     // eslint-disable-next-line no-param-reassign
     unplacedShipsDiv.innerHTML = '';
 
-    player.getShipStatus().forEach((status, index) => {
-      console.log(status);
-      console.log(status.ship.getLength());
+    player.getShipStatus().forEach((status) => {
       const unplacedShipElement = document.createElement('div');
       unplacedShipElement.classList.add('unplaced-ship');
       if (status.placed) {
         unplacedShipElement.classList.add('hidden');
       }
       unplacedShipElement.setAttribute('data-length', status.ship.getLength());
-      unplacedShipElement.setAttribute('data-index', index);
+      unplacedShipElement.setAttribute('data-index', status.index);
       unplacedShipElement.style.height = `${CELL_SIZE_PX}px`;
       unplacedShipElement.style.width = `${
         status.ship.getLength() * CELL_SIZE_PX
@@ -205,6 +204,7 @@ const UserInterface = (events) => {
     const draggedShip = document.querySelector('#dragged-ship');
     let draggedShipRotation = 'h';
     let legalPlacementCoords = null;
+    let isMove = false;
 
     const continueDragging = (e) => {
       draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
@@ -267,6 +267,13 @@ const UserInterface = (events) => {
     };
 
     const endDragging = () => {
+      if (isMove) {
+        events.emit('removeShip', {
+          shipIndex: parseInt(selectedShip.dataset.index, 10),
+        });
+        isMove = false;
+      }
+
       if (legalPlacementCoords) {
         events.emit('placeShip', {
           shipIndex: parseInt(selectedShip.dataset.index, 10),
@@ -338,6 +345,20 @@ const UserInterface = (events) => {
       return legalShipPlacements;
     };
 
+    const areCoordsWithinGameboard = (row, col) => {
+      const gameboardDimension = data.activePlayer.getShips().length;
+
+      if (
+        row >= 0 &&
+        row < gameboardDimension &&
+        col >= 0 &&
+        col < gameboardDimension
+      )
+        return true;
+
+      return false;
+    };
+
     const startDragging = (e) => {
       e.preventDefault();
 
@@ -374,6 +395,76 @@ const UserInterface = (events) => {
     );
     unplacedShips.forEach((ship) => {
       ship.addEventListener('mousedown', startDragging);
+    });
+
+    const startMoveDragging = (e, ship) => {
+      isMove = true;
+
+      // The adjacents and playerShips array are temporarily modified and gameboard
+      // rerendered so that the picked up ship disappears and its cells become
+      // valid placements. We are not copying the adjacents, but working on the
+      // actual array, because it's used at start dragging to generate a map of
+      // valid placements.
+      const movedShip = data.activePlayer.getShipStatus()[ship.dataset.index];
+      const tempPlayerShips = data.activePlayer
+        .getShips()
+        .map((row) => [...row]);
+      const tempShipStatus = [...data.activePlayer.getShipStatus()];
+
+      for (let i = -1; i < movedShip.ship.getLength() + 1; i++) {
+        for (let j = -1; j < 2; j++) {
+          if (movedShip.dir === 'v') {
+            if (
+              areCoordsWithinGameboard(
+                movedShip.origin.y + i,
+                movedShip.origin.x + j
+              )
+            ) {
+              adjacents[movedShip.origin.y + i][movedShip.origin.x + j].delete(
+                movedShip.ship
+              );
+              tempPlayerShips[movedShip.origin.y + i][movedShip.origin.x + j] =
+                null;
+            }
+          } else if (
+            areCoordsWithinGameboard(
+              movedShip.origin.y + j,
+              movedShip.origin.x + i
+            )
+          ) {
+            adjacents[movedShip.origin.y + j][movedShip.origin.x + i].delete(
+              movedShip.ship
+            );
+            tempPlayerShips[movedShip.origin.y + j][movedShip.origin.x + i] =
+              null;
+          }
+        }
+      }
+
+      tempShipStatus[ship.dataset.index].placed = false;
+
+      const tempPlayer = {
+        getShips: () => tempPlayerShips,
+        getAdjacents: () => adjacents,
+        getShotsReceived: () => data.activePlayer.getShotsReceived(),
+        getShipStatus: () => tempShipStatus,
+      };
+
+      renderGameboard(tempPlayer, playerGameboardDiv, true);
+
+      // TODO SHIP placement indicator not working.
+      const tempShipPlacementIndicator = document.createElement('div');
+      tempShipPlacementIndicator.classList.add('ship-placement-indicator');
+      playerGameboardDiv.appendChild(tempShipPlacementIndicator);
+
+      startDragging(e);
+    };
+
+    const placedShips = document.querySelectorAll(
+      '#player-gameboard>.placed-ship'
+    );
+    placedShips.forEach((ship) => {
+      ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
     });
 
     const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
