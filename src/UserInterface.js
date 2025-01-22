@@ -192,11 +192,11 @@ const UserInterface = (events) => {
     const playerGameboardDiv = document.querySelector('#player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
-    const shipPlacementIndicator = document.createElement('div');
+    let shipPlacementIndicator = document.createElement('div');
     shipPlacementIndicator.classList.add('ship-placement-indicator');
     playerGameboardDiv.appendChild(shipPlacementIndicator);
 
-    const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
+    let gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
     const legalShipPlacementsHV = { h: null, v: null };
     const tempAdjacents = data.activePlayer
       .getAdjacents()
@@ -336,10 +336,6 @@ const UserInterface = (events) => {
           }
         }
 
-        console.log(data.activePlayer.getAdjacents());
-        console.log(tempAdjacents);
-        console.log(potentialPlacementAdjacents);
-
         if (potentialPlacementAdjacents.every((adjacent) => !adjacent.size)) {
           const cellRect = cell.getBoundingClientRect();
           legalShipPlacements.add({
@@ -465,9 +461,10 @@ const UserInterface = (events) => {
       renderGameboard(tempPlayer, playerGameboardDiv, true);
 
       // TODO SHIP placement indicator not working.
-      const tempShipPlacementIndicator = document.createElement('div');
-      tempShipPlacementIndicator.classList.add('ship-placement-indicator');
-      playerGameboardDiv.appendChild(tempShipPlacementIndicator);
+      shipPlacementIndicator = document.createElement('div');
+      shipPlacementIndicator.classList.add('ship-placement-indicator');
+      playerGameboardDiv.appendChild(shipPlacementIndicator);
+      gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
 
       startDragging(e);
     };
