@@ -198,7 +198,9 @@ const UserInterface = (events) => {
 
     const gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
     const legalShipPlacementsHV = { h: null, v: null };
-    const adjacents = data.activePlayer.getAdjacents();
+    const tempAdjacents = data.activePlayer
+      .getAdjacents()
+      .map((row) => row.map((set) => new Set(set)));
 
     let selectedShip = null;
     const draggedShip = document.querySelector('#dragged-ship');
@@ -319,16 +321,24 @@ const UserInterface = (events) => {
 
         // Ship would go out of bounds, cannot be a legal placement.
         if (generateRotation === 'h') {
-          if (cellCol + draggedShipLength > adjacents.length) return;
-        } else if (cellRow + draggedShipLength > adjacents.length) return;
+          if (cellCol + draggedShipLength > tempAdjacents.length) return;
+        } else if (cellRow + draggedShipLength > tempAdjacents.length) return;
 
         for (let i = 0; i < draggedShipLength; i++) {
           if (generateRotation === 'h') {
-            potentialPlacementAdjacents.push(adjacents[cellRow][cellCol + i]);
+            potentialPlacementAdjacents.push(
+              tempAdjacents[cellRow][cellCol + i]
+            );
           } else {
-            potentialPlacementAdjacents.push(adjacents[cellRow + i][cellCol]);
+            potentialPlacementAdjacents.push(
+              tempAdjacents[cellRow + i][cellCol]
+            );
           }
         }
+
+        console.log(data.activePlayer.getAdjacents());
+        console.log(tempAdjacents);
+        console.log(potentialPlacementAdjacents);
 
         if (potentialPlacementAdjacents.every((adjacent) => !adjacent.size)) {
           const cellRect = cell.getBoundingClientRect();
@@ -409,7 +419,9 @@ const UserInterface = (events) => {
       const tempPlayerShips = data.activePlayer
         .getShips()
         .map((row) => [...row]);
-      const tempShipStatus = [...data.activePlayer.getShipStatus()];
+      const tempShipStatus = data.activePlayer
+        .getShipStatus()
+        .map((status) => ({ ...status }));
 
       for (let i = -1; i < movedShip.ship.getLength() + 1; i++) {
         for (let j = -1; j < 2; j++) {
@@ -420,9 +432,9 @@ const UserInterface = (events) => {
                 movedShip.origin.x + j
               )
             ) {
-              adjacents[movedShip.origin.y + i][movedShip.origin.x + j].delete(
-                movedShip.ship
-              );
+              tempAdjacents[movedShip.origin.y + i][
+                movedShip.origin.x + j
+              ].delete(movedShip.ship);
               tempPlayerShips[movedShip.origin.y + i][movedShip.origin.x + j] =
                 null;
             }
@@ -432,9 +444,9 @@ const UserInterface = (events) => {
               movedShip.origin.x + i
             )
           ) {
-            adjacents[movedShip.origin.y + j][movedShip.origin.x + i].delete(
-              movedShip.ship
-            );
+            tempAdjacents[movedShip.origin.y + j][
+              movedShip.origin.x + i
+            ].delete(movedShip.ship);
             tempPlayerShips[movedShip.origin.y + j][movedShip.origin.x + i] =
               null;
           }
@@ -445,7 +457,7 @@ const UserInterface = (events) => {
 
       const tempPlayer = {
         getShips: () => tempPlayerShips,
-        getAdjacents: () => adjacents,
+        getAdjacents: () => tempAdjacents,
         getShotsReceived: () => data.activePlayer.getShotsReceived(),
         getShipStatus: () => tempShipStatus,
       };
