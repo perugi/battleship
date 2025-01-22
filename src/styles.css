@@ -24,15 +24,15 @@ main {
   flex: auto;
 }
 
-#opponent-setup {
+.opponent-setup {
   display: none;
 }
 
-#ship-placing-area {
+.ship-placing-area {
   display: flex;
 }
 
-#unplaced-ships {
+.unplaced-ships {
   margin-right: 40px;
   display: flex;
   flex-direction: column;
@@ -66,7 +66,7 @@ main {
   display: none;
 }
 
-#dragged-ship {
+.dragged-ship {
   display: none;
   position: absolute;
   border: 2px solid black;
@@ -75,7 +75,7 @@ main {
   width: var(--cell-size);
 }
 
-#dragged-ship.dragging {
+.dragged-ship.dragging {
   display: block;
 }
 
@@ -92,8 +92,8 @@ main {
   display: block;
 }
 
-#player-gameboard,
-#opponent-gameboard {
+.player-gameboard,
+.opponent-gameboard {
   display: grid;
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));

@@ -93,23 +93,23 @@ const UserInterface = (events) => {
   };
 
   const renderMainMenu = () => {
-    document.querySelector('#content').innerHTML = `
+    document.querySelector('.content').innerHTML = `
         <label for="player-name">Player Name:</label>
-        <input type="text" id="player-name" />
+        <input type="text" id="player-name" class="player-name"/>
         <label for "player-ai">Play vs. Computer</label>
-        <input type="checkbox" id="play-vs-ai" checked/>
-        <div id="opponent-setup">
+        <input type="checkbox" id="play-vs-ai" class="play-vs-ai" checked/>
+        <div class="opponent-setup">
           <label for="opponent-name">Opponent Name:</label>
-          <input type="text" id="opponent-name" />
+          <input type="text" id="opponent-name" class="opponent-name"/>
         </div>
-        <button id="create-players">Confirm</button>
+        <button class="create-players">Confirm</button>
     `;
 
-    const createPlayersButton = document.querySelector('#create-players');
+    const createPlayersButton = document.querySelector('.create-players');
     createPlayersButton.addEventListener('click', () => {
-      const playerName = document.querySelector('#player-name').value;
-      const opponentName = document.querySelector('#opponent-name').value;
-      const playVsAi = document.querySelector('#play-vs-ai').checked;
+      const playerName = document.querySelector('.player-name').value;
+      const opponentName = document.querySelector('.opponent-name').value;
+      const playVsAi = document.querySelector('.play-vs-ai').checked;
 
       events.emit('createPlayers', {
         player1Name: playerName,
@@ -119,9 +119,9 @@ const UserInterface = (events) => {
       });
     });
 
-    const playVsAiCheckbox = document.querySelector('#play-vs-ai');
+    const playVsAiCheckbox = document.querySelector('.play-vs-ai');
     playVsAiCheckbox.addEventListener('change', () => {
-      const opponentSetup = document.querySelector('#opponent-setup');
+      const opponentSetup = document.querySelector('.opponent-setup');
       if (playVsAiCheckbox.checked) {
         opponentSetup.style.display = 'none';
       } else {
@@ -142,7 +142,7 @@ const UserInterface = (events) => {
   const renderPassTurnScreen = (data) => {
     const passTurnModal = document.querySelector('.pass-turn.modal');
 
-    const nextPlayer = passTurnModal.querySelector('#next-player');
+    const nextPlayer = passTurnModal.querySelector('.next-player');
     nextPlayer.textContent = data.activePlayer.getName();
 
     passTurnModal.style.display = 'flex';
@@ -172,24 +172,24 @@ const UserInterface = (events) => {
   };
 
   const renderShipPlacing = (data) => {
-    const content = document.querySelector('#content');
+    const content = document.querySelector('.content');
 
     content.innerHTML = `
         <h1> Player Board [${data.activePlayer.getName()}] </h1>
-        <div id="ship-placing-area">
-          <div id="unplaced-ships"></div>
-          <div id="player-gameboard"></div>
+        <div class="ship-placing-area">
+          <div class="unplaced-ships"></div>
+          <div class="player-gameboard"></div>
         </div>
-        <div id="dragged-ship"></div>
-        <button id="place-to-main-menu">Main Menu</button>
-        <button id="place-random">Place Ships Randomly</button>
-        <button id="clear-ships">Clear Ships</button>
+        <div class="dragged-ship"></div>
+        <button class="place-to-main-menu">Main Menu</button>
+        <button class="place-random">Place Ships Randomly</button>
+        <button class="clear-ships">Clear Ships</button>
     `;
 
-    const unplacedShipsDiv = document.querySelector('#unplaced-ships');
+    const unplacedShipsDiv = document.querySelector('.unplaced-ships');
     renderUnplacedShips(data.activePlayer, unplacedShipsDiv);
 
-    const playerGameboardDiv = document.querySelector('#player-gameboard');
+    const playerGameboardDiv = document.querySelector('.player-gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
     let shipPlacementIndicator = document.createElement('div');
@@ -203,7 +203,7 @@ const UserInterface = (events) => {
       .map((row) => row.map((set) => new Set(set)));
 
     let selectedShip = null;
-    const draggedShip = document.querySelector('#dragged-ship');
+    const draggedShip = document.querySelector('.dragged-ship');
     let draggedShipRotation = 'h';
     let legalPlacementCoords = null;
     let isMove = false;
@@ -470,23 +470,27 @@ const UserInterface = (events) => {
     };
 
     const placedShips = document.querySelectorAll(
-      '#player-gameboard>.placed-ship'
+      '.player-gameboard>.placed-ship'
     );
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
     });
 
-    const placeToMainMenuButton = document.querySelector('#place-to-main-menu');
+    const placeToMainMenuButton = document.querySelector(
+      'button.place-to-main-menu'
+    );
     placeToMainMenuButton.addEventListener('click', () => {
       renderMainMenu();
     });
 
-    const placeRandomShipsButton = document.querySelector('#place-random');
+    const placeRandomShipsButton = document.querySelector(
+      'button.place-random'
+    );
     placeRandomShipsButton.addEventListener('click', () => {
       events.emit('placeRandomShips');
     });
 
-    const clearShipsButton = document.querySelector('#clear-ships');
+    const clearShipsButton = document.querySelector('button.clear-ships');
     clearShipsButton.addEventListener('click', () => {
       events.emit('clearShips');
     });
@@ -537,20 +541,20 @@ const UserInterface = (events) => {
     activePlayer,
     allowShooting = false
   ) => {
-    document.querySelector('#content').innerHTML = `
-        <div><span id="active-player">${activePlayer.getName()}</span>'s turn</div>
+    document.querySelector('.content').innerHTML = `
+        <div><span class="active-player">${activePlayer.getName()}</span>'s turn</div>
         <div>
           <h1> Player Board [${player.getName()}] </h1>
-          <div id="player-gameboard"></div>
+          <div class="player-gameboard"></div>
         </div>
         <div>
           <h1> Opponents Board [${opponent.getName()}] </h1>
-        <div id="opponent-gameboard"></div>
-        <button id="pause-game">Pause Game</button>
+        <div class="opponent-gameboard"></div>
+        <button class="pause-game">Pause Game</button>
     `;
 
-    const playerGameboard = document.querySelector('#player-gameboard');
-    const opponentGameboard = document.querySelector('#opponent-gameboard');
+    const playerGameboard = document.querySelector('.player-gameboard');
+    const opponentGameboard = document.querySelector('.opponent-gameboard');
 
     renderGameboard(player, playerGameboard, true);
 
@@ -561,7 +565,7 @@ const UserInterface = (events) => {
       });
     }
 
-    const pauseButton = document.querySelector('#pause-game');
+    const pauseButton = document.querySelector('.pause-game');
     pauseButton.addEventListener('click', renderPauseScreen);
   };
 
@@ -627,7 +631,7 @@ const UserInterface = (events) => {
 
   const renderEndScreen = (data) => {
     const gameOverModal = document.querySelector('.game-over.modal');
-    const winnerName = document.querySelector('#winner-name');
+    const winnerName = document.querySelector('.winner-name');
 
     winnerName.textContent = data.winner.getName();
     gameOverModal.style.display = 'flex';
@@ -660,7 +664,7 @@ const UserInterface = (events) => {
 
   const createEventListeners = () => {
     const gameOverToMainMenuButton = document.querySelector(
-      '#game-over-to-main-menu'
+      '.game-over-to-main-menu.modal-button'
     );
     gameOverToMainMenuButton.addEventListener('click', () => {
       const modal = document.querySelector('.game-over.modal');
@@ -669,7 +673,7 @@ const UserInterface = (events) => {
     });
 
     const pausedToMainMenuButton = document.querySelector(
-      '#pause-to-main-menu'
+      '.pause-to-main-menu.modal-button'
     );
     pausedToMainMenuButton.addEventListener('click', () => {
       const modal = document.querySelector('.pause.modal');
@@ -684,7 +688,7 @@ const UserInterface = (events) => {
     });
 
     const pausedToShipPlaceButton = document.querySelector(
-      '#pause-to-ship-place'
+      '.pause-to-ship-place.modal-button'
     );
     pausedToShipPlaceButton.addEventListener('click', () => {
       const modal = document.querySelector('.pause.modal');
@@ -693,7 +697,7 @@ const UserInterface = (events) => {
     });
 
     const gameOverToShipPlaceButton = document.querySelector(
-      '#game-over-to-ship-place'
+      '.game-over-to-ship-place.modal-button'
     );
     gameOverToShipPlaceButton.addEventListener('click', () => {
       const modal = document.querySelector('.game-over.modal');
