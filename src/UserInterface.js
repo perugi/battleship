@@ -74,9 +74,10 @@ const UserInterface = (events) => {
       const originCell = gameboardDiv.querySelector(
         `[data-row="${status.origin.y}"][data-col="${status.origin.x}"]`
       );
+      const gameboardRect = gameboardDiv.getBoundingClientRect();
       const originRect = originCell.getBoundingClientRect();
-      shipElement.style.top = `${originRect.top}px`;
-      shipElement.style.left = `${originRect.left}px`;
+      shipElement.style.top = `${originRect.top - gameboardRect.top}px`;
+      shipElement.style.left = `${originRect.left - gameboardRect.left}px`;
 
       gameboardDiv.appendChild(shipElement);
     };
@@ -224,8 +225,14 @@ const UserInterface = (events) => {
         ) {
           shipPlacementIndicator.classList.add('active');
           draggedShip.classList.remove('dragging');
-          shipPlacementIndicator.style.top = `${legalShipPlacement.top}px`;
-          shipPlacementIndicator.style.left = `${legalShipPlacement.left}px`;
+          const playerGameboardRect =
+            playerGameboardDiv.getBoundingClientRect();
+          shipPlacementIndicator.style.top = `${
+            legalShipPlacement.top - playerGameboardRect.top
+          }px`;
+          shipPlacementIndicator.style.left = `${
+            legalShipPlacement.left - playerGameboardRect.left
+          }px`;
           legalShipPlacement.cell.classList.add('legal-ship-placement');
           legalPlacementCoords = {
             row: parseInt(legalShipPlacement.cell.dataset.row, 10),

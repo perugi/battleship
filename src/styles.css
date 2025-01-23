@@ -73,6 +73,7 @@ main {
   display: grid;
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
+  position: relative;
 
   .cell {
     border: 1px solid var(--text-color);
