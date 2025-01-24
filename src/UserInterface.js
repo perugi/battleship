@@ -95,10 +95,12 @@ const UserInterface = (events) => {
 
   const renderMainMenu = () => {
     document.querySelector('.content').innerHTML = `
+        <div class="play-vs-ai-div">
+          <label for "player-ai">Play vs. Computer</label>
+          <input type="checkbox" id="play-vs-ai" class="play-vs-ai" checked/>
+        </div>
         <label for="player-name">Player Name:</label>
         <input type="text" id="player-name" class="player-name"/>
-        <label for "player-ai">Play vs. Computer</label>
-        <input type="checkbox" id="play-vs-ai" class="play-vs-ai" checked/>
         <div class="opponent-setup">
           <label for="opponent-name">Opponent Name:</label>
           <input type="text" id="opponent-name" class="opponent-name"/>
@@ -134,7 +136,6 @@ const UserInterface = (events) => {
   const passTurn = () => {
     const passTurnModal = document.querySelector('.pass-turn.modal');
 
-    events.emit('primeShot');
     passTurnModal.style.display = 'none';
     document.removeEventListener('keydown', passTurn);
     document.removeEventListener('click', passTurn);
@@ -467,7 +468,6 @@ const UserInterface = (events) => {
 
       renderGameboard(tempPlayer, playerGameboardDiv, true);
 
-      // TODO SHIP placement indicator not working.
       shipPlacementIndicator = document.createElement('div');
       shipPlacementIndicator.classList.add('ship-placement-indicator');
       playerGameboardDiv.appendChild(shipPlacementIndicator);
@@ -506,13 +506,16 @@ const UserInterface = (events) => {
     if (!data.player2.getIsAi() && data.activePlayer === data.player1) {
       continueButton.textContent = 'Confirm';
       continueButton.classList.add('place-player-2');
-      continueButton.addEventListener('click', () => {
+      continueButton.addEventListener('click', (e) => {
+        e.stopPropagation();
         events.emit('placingPlayer2');
+        renderPassTurnScreen(data);
       });
     } else {
       continueButton.textContent = 'Start Game';
       continueButton.classList.add('start-game');
-      continueButton.addEventListener('click', () => {
+      continueButton.addEventListener('click', (e) => {
+        e.stopPropagation();
         events.emit('startGame');
       });
     }
@@ -616,6 +619,7 @@ const UserInterface = (events) => {
           false
         );
         await delay(1000);
+        events.emit('primeShot');
         renderPassTurnScreen(data);
       } else {
         // This case covers if the shot was a hit - we just render the shot and
@@ -632,6 +636,7 @@ const UserInterface = (events) => {
       // This is the case when the game is started and the method is called
       // without any shot data. We show the pass screen in order to not reveal the
       // opponent ships.
+      events.emit('primeShot');
       renderPassTurnScreen(data);
     }
   };
