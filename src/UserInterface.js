@@ -12,10 +12,32 @@ const UserInterface = (events) => {
     // eslint-disable-next-line no-param-reassign
     gameboardDiv.innerHTML = '';
 
+    const letterRow = document.createElement('div');
+    letterRow.classList.add('gameboard-row');
+
+    const emptyCell = document.createElement('div');
+    emptyCell.classList.add('header-cell');
+    letterRow.appendChild(emptyCell);
+
+    for (let i = 1; i <= player.getShips().length; i++) {
+      const numberCell = document.createElement('div');
+      numberCell.classList.add('header-cell');
+      numberCell.textContent = String.fromCharCode(64 + i);
+      letterRow.appendChild(numberCell);
+    }
+    gameboardDiv.appendChild(letterRow);
+
     player.getShips().forEach((row, rowIndex) => {
+      const gameboardRow = document.createElement('div');
+      gameboardRow.classList.add('gameboard-row');
+
+      const numberCell = document.createElement('div');
+      numberCell.classList.add('header-cell');
+      numberCell.textContent = rowIndex + 1;
+      gameboardRow.appendChild(numberCell);
+
       row.forEach((ship, colIndex) => {
         const cellElement = document.createElement('div');
-        cellElement.classList.add('cell');
         cellElement.classList.add('gameboard-cell');
         cellElement.setAttribute('data-row', rowIndex);
         cellElement.setAttribute('data-col', colIndex);
@@ -48,8 +70,10 @@ const UserInterface = (events) => {
           cellElement.classList.add('adjacent');
         }
 
-        gameboardDiv.appendChild(cellElement);
+        gameboardRow.appendChild(cellElement);
       });
+
+      gameboardDiv.appendChild(gameboardRow);
     });
 
     const renderShipOnBoard = (status) => {

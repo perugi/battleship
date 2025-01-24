@@ -70,12 +70,27 @@ main {
 
 .player-gameboard,
 .opponent-gameboard {
-  display: grid;
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
   position: relative;
 
-  .cell {
+  .gameboard-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .header-cell {
+    height: var(--cell-size);
+    width: var(--cell-size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: -1px 0 0 -1px;
+  }
+
+  .gameboard-cell {
+    height: var(--cell-size);
+    width: var(--cell-size);
     border: 1px solid var(--text-color);
     display: flex;
     justify-content: center;
