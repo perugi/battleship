@@ -121,8 +121,8 @@ main {
   .placed-ship {
     position: absolute;
     border: 2px solid black;
-    height: calc(var(--cell-size) + 1px);
-    width: calc(var(--cell-size) + 1px);
+    height: calc(var(--cell-size));
+    width: calc(var(--cell-size));
 
     &.hidden {
       display: none;
@@ -132,8 +132,8 @@ main {
   .ship-placement-indicator {
     display: none;
     position: absolute;
-    height: calc(var(--cell-size) + 1px);
-    width: calc(var(--cell-size) + 1px);
+    height: calc(var(--cell-size));
+    width: calc(var(--cell-size));
     border: 2px solid lightgreen;
     background-color: rgba(144, 238, 144, 0.5);
 

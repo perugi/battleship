@@ -82,15 +82,15 @@ const UserInterface = (events) => {
       shipElement.setAttribute('data-length', status.ship.getLength());
       shipElement.setAttribute('data-index', status.index);
       if (status.dir === 'h') {
-        shipElement.style.height = `${CELL_SIZE_PX + 1}px`;
+        shipElement.style.height = `${CELL_SIZE_PX}px`;
         shipElement.style.width = `${
-          status.ship.getLength() * CELL_SIZE_PX + 1
+          status.ship.getLength() * CELL_SIZE_PX - 1
         }px`;
       } else {
         shipElement.style.height = `${
-          status.ship.getLength() * CELL_SIZE_PX + 1
+          status.ship.getLength() * CELL_SIZE_PX - 1
         }px`;
-        shipElement.style.width = `${CELL_SIZE_PX + 1}px`;
+        shipElement.style.width = `${CELL_SIZE_PX}px`;
       }
 
       // Find the cell that is the origin of the ship in order to position
@@ -222,7 +222,7 @@ const UserInterface = (events) => {
     shipPlacementIndicator.classList.add('ship-placement-indicator');
     playerGameboardDiv.appendChild(shipPlacementIndicator);
 
-    let gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
+    let gameboardCells = playerGameboardDiv.querySelectorAll('.gameboard-cell');
     const legalShipPlacementsHV = { h: null, v: null };
     const tempAdjacents = data.activePlayer
       .getAdjacents()
@@ -280,17 +280,17 @@ const UserInterface = (events) => {
       if (draggedShipRotation === 'h') {
         draggedShip.style.height = `${CELL_SIZE_PX}px`;
         draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
-        shipPlacementIndicator.style.height = `${CELL_SIZE_PX + 1}px`;
+        shipPlacementIndicator.style.height = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.width = `${
-          selectedShipLength * CELL_SIZE_PX + 1
+          selectedShipLength * CELL_SIZE_PX - 1
         }px`;
       } else {
         draggedShip.style.height = `${selectedShipLength * CELL_SIZE_PX}px`;
         draggedShip.style.width = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.height = `${
-          selectedShipLength * CELL_SIZE_PX + 1
+          selectedShipLength * CELL_SIZE_PX - 1
         }px`;
-        shipPlacementIndicator.style.width = `${CELL_SIZE_PX + 1}px`;
+        shipPlacementIndicator.style.width = `${CELL_SIZE_PX}px`;
       }
     };
 
@@ -410,7 +410,7 @@ const UserInterface = (events) => {
 
       draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
       shipPlacementIndicator.style.width = `${
-        selectedShipLength * CELL_SIZE_PX + 1
+        selectedShipLength * CELL_SIZE_PX - 1
       }px`;
 
       legalShipPlacementsHV.h = generateLegalShipPlacements(
@@ -495,7 +495,7 @@ const UserInterface = (events) => {
       shipPlacementIndicator = document.createElement('div');
       shipPlacementIndicator.classList.add('ship-placement-indicator');
       playerGameboardDiv.appendChild(shipPlacementIndicator);
-      gameboardCells = playerGameboardDiv.querySelectorAll('.cell');
+      gameboardCells = playerGameboardDiv.querySelectorAll('.gameboard-cell');
 
       startDragging(e);
     };
