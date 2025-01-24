@@ -81,6 +81,7 @@ const UserInterface = (events) => {
       shipElement.classList.add('placed-ship');
       shipElement.setAttribute('data-length', status.ship.getLength());
       shipElement.setAttribute('data-index', status.index);
+      shipElement.setAttribute('data-dir', status.dir);
       if (status.dir === 'h') {
         shipElement.style.height = `${CELL_SIZE_PX}px`;
         shipElement.style.width = `${
@@ -189,6 +190,7 @@ const UserInterface = (events) => {
       }
       unplacedShipElement.setAttribute('data-length', status.ship.getLength());
       unplacedShipElement.setAttribute('data-index', status.index);
+      unplacedShipElement.setAttribute('data-dir', 'h');
       unplacedShipElement.style.height = `${CELL_SIZE_PX}px`;
       unplacedShipElement.style.width = `${
         status.ship.getLength() * CELL_SIZE_PX
@@ -317,16 +319,16 @@ const UserInterface = (events) => {
         });
       } else {
         selectedShip.classList.remove('hidden');
+
+        if (draggedShipRotation === 'v') {
+          rotateShip();
+        }
       }
 
       document.removeEventListener('mousemove', continueDragging);
       document.removeEventListener('mouseup', endDragging);
       document.removeEventListener('keydown', rotateShipKey);
       document.removeEventListener('wheel', rotateShip);
-
-      if (draggedShipRotation === 'v') {
-        rotateShip();
-      }
 
       shipPlacementIndicator.classList.remove('active');
       draggedShip.classList.remove('dragging');
@@ -400,18 +402,32 @@ const UserInterface = (events) => {
     const startDragging = (e) => {
       e.preventDefault();
 
+      console.log(e.target);
+
       selectedShip = e.target;
       selectedShip.classList.add('hidden');
       draggedShip.classList.add('dragging');
       const selectedShipLength = parseInt(selectedShip.dataset.length, 10);
+      draggedShipRotation = selectedShip.dataset.dir;
 
       draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
       draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
 
-      draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
-      shipPlacementIndicator.style.width = `${
-        selectedShipLength * CELL_SIZE_PX - 1
-      }px`;
+      if (draggedShipRotation === 'h') {
+        draggedShip.style.height = `${CELL_SIZE_PX}px`;
+        draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
+        shipPlacementIndicator.style.height = `${CELL_SIZE_PX}px`;
+        shipPlacementIndicator.style.width = `${
+          selectedShipLength * CELL_SIZE_PX - 1
+        }px`;
+      } else {
+        draggedShip.style.height = `${selectedShipLength * CELL_SIZE_PX}px`;
+        draggedShip.style.width = `${CELL_SIZE_PX}px`;
+        shipPlacementIndicator.style.height = `${
+          selectedShipLength * CELL_SIZE_PX - 1
+        }px`;
+        shipPlacementIndicator.style.width = `${CELL_SIZE_PX}px`;
+      }
 
       legalShipPlacementsHV.h = generateLegalShipPlacements(
         selectedShipLength,
