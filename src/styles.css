@@ -44,27 +44,27 @@ main {
       background-color: rgba(0, 0, 0, 0.2);
       height: var(--cell-size);
       width: var(--cell-size);
-    }
 
-    .unplaced-ship.hidden {
-      /* We cannot just display: none these elements, because that causes the other
+      &.hidden {
+        /* We cannot just display: none these elements, because that causes the other
   unplaced ships to move, so we just make it transparent. */
-      border-color: transparent;
-      background-color: rgba(0, 0, 0, 0);
+        border-color: transparent;
+        background-color: rgba(0, 0, 0, 0);
+      }
     }
   }
+}
 
-  .dragged-ship {
-    display: none;
-    position: absolute;
-    border: 2px solid black;
-    background-color: rgba(0, 0, 0, 0.2);
-    height: var(--cell-size);
-    width: var(--cell-size);
+.dragged-ship {
+  display: none;
+  position: absolute;
+  border: 2px solid black;
+  background-color: rgba(0, 0, 0, 0.2);
+  height: var(--cell-size);
+  width: var(--cell-size);
 
-    &.dragging {
-      display: block;
-    }
+  &.dragging {
+    display: block;
   }
 }
 
