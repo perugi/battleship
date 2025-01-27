@@ -68,8 +68,27 @@ main {
   }
 }
 
-.player-gameboard,
-.opponent-gameboard {
+.ship-status {
+  .ship {
+    display: flex;
+    margin: 3px 0;
+
+    .cell {
+      height: calc(var(--cell-size) / 5);
+      width: calc(var(--cell-size) / 5);
+      background-color: gray;
+      margin: 1px;
+    }
+
+    &.sunk {
+      .cell {
+        background-color: rgb(219, 119, 119);
+      }
+    }
+  }
+}
+
+.gameboard {
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
   position: relative;

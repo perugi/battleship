@@ -204,7 +204,7 @@ const UserInterface = (events) => {
         <h1> Player Board [${data.activePlayer.getName()}] </h1>
         <div class="ship-placing-area">
           <div class="unplaced-ships"></div>
-          <div class="player-gameboard"></div>
+          <div class="gameboard"></div>
         </div>
         <div class="dragged-ship"></div>
         <button class="place-to-main-menu">Main Menu</button>
@@ -215,7 +215,7 @@ const UserInterface = (events) => {
     const unplacedShipsDiv = document.querySelector('.unplaced-ships');
     renderUnplacedShips(data.activePlayer, unplacedShipsDiv);
 
-    const playerGameboardDiv = document.querySelector('.player-gameboard');
+    const playerGameboardDiv = document.querySelector('.gameboard');
     renderGameboard(data.activePlayer, playerGameboardDiv, true);
 
     let shipPlacementIndicator = document.createElement('div');
@@ -515,7 +515,7 @@ const UserInterface = (events) => {
     };
 
     const placedShips = document.querySelectorAll(
-      '.player-gameboard>.placed-ship'
+      '.player-area>gameboard>.placed-ship'
     );
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
@@ -583,6 +583,24 @@ const UserInterface = (events) => {
     pauseModal.style.display = 'flex';
   };
 
+  const renderShipStatus = (player, shipStatusDiv) => {
+    player.getShipStatus().forEach((status) => {
+      const shipStatus = document.createElement('div');
+      shipStatus.classList.add('ship');
+      if (status.ship.isSunk()) {
+        shipStatus.classList.add('sunk');
+      }
+
+      for (let i = 0; i < status.ship.getLength(); i++) {
+        const shipCell = document.createElement('div');
+        shipCell.classList.add('cell');
+        shipStatus.appendChild(shipCell);
+      }
+
+      shipStatusDiv.appendChild(shipStatus);
+    });
+  };
+
   const renderGameboards = (
     player,
     opponent,
@@ -591,27 +609,37 @@ const UserInterface = (events) => {
   ) => {
     document.querySelector('.content').innerHTML = `
         <div><span class="active-player">${activePlayer.getName()}</span>'s turn</div>
-        <div>
+        <div class="player-area">
           <h1> Player Board [${player.getName()}] </h1>
-          <div class="player-gameboard"></div>
+          <div class="ship-status"></div>
+          <div class="gameboard"></div>
         </div>
-        <div>
+        <div class="opponent-area">
           <h1> Opponents Board [${opponent.getName()}] </h1>
-        <div class="opponent-gameboard"></div>
+          <div class="ship-status"></div>
+          <div class="gameboard"></div>
+        </div>
         <button class="pause-game">Pause Game</button>
     `;
 
-    const playerGameboard = document.querySelector('.player-gameboard');
-    const opponentGameboard = document.querySelector('.opponent-gameboard');
-
+    const playerGameboard = document.querySelector('.player-area>.gameboard');
     renderGameboard(player, playerGameboard, true);
 
+    const opponentGameboard = document.querySelector(
+      '.opponent-area>.gameboard'
+    );
     renderGameboard(opponent, opponentGameboard, false);
     if (allowShooting) {
       [...opponentGameboard.children].forEach((cell) => {
         cell.addEventListener('click', shoot);
       });
     }
+
+    const playerShips = document.querySelector('.player-area>.ship-status');
+    renderShipStatus(player, playerShips);
+
+    const opponentShips = document.querySelector('.opponent-area>.ship-status');
+    renderShipStatus(opponent, opponentShips);
 
     const pauseButton = document.querySelector('.pause-game');
     pauseButton.addEventListener('click', renderPauseScreen);
