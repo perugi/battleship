@@ -515,7 +515,7 @@ const UserInterface = (events) => {
     };
 
     const placedShips = document.querySelectorAll(
-      '.player-area>gameboard>.placed-ship'
+      '.player-area gameboard>.placed-ship'
     );
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
@@ -547,7 +547,6 @@ const UserInterface = (events) => {
       continueButton.addEventListener('click', (e) => {
         e.stopPropagation();
         events.emit('placingPlayer2');
-        renderPassTurnScreen(data);
       });
     } else {
       continueButton.textContent = 'Start Game';
@@ -622,7 +621,7 @@ const UserInterface = (events) => {
         <button class="pause-game">Pause Game</button>
     `;
 
-    const playerGameboard = document.querySelector('.player-area>.gameboard');
+    const playerGameboard = document.querySelector('.player-area .gameboard');
     renderGameboard(player, playerGameboard, true);
 
     const opponentGameboard = document.querySelector(
@@ -635,10 +634,10 @@ const UserInterface = (events) => {
       });
     }
 
-    const playerShips = document.querySelector('.player-area>.ship-status');
+    const playerShips = document.querySelector('.player-area .ship-status');
     renderShipStatus(player, playerShips);
 
-    const opponentShips = document.querySelector('.opponent-area>.ship-status');
+    const opponentShips = document.querySelector('.opponent-area .ship-status');
     renderShipStatus(opponent, opponentShips);
 
     const pauseButton = document.querySelector('.pause-game');
@@ -720,6 +719,9 @@ const UserInterface = (events) => {
       renderMainMenu();
     } else if (data.gameState === GameState.placingShips) {
       renderShipPlacing(data);
+      if (data.activePlayer === data.player2) {
+        renderPassTurnScreen(data);
+      }
     } else if (data.gameState === GameState.shotReceived) {
       if (data.player2.getIsAi()) {
         renderShot1Player(data);
