@@ -567,12 +567,6 @@ const UserInterface = (events) => {
   };
 
   const shoot = (event) => {
-    if (
-      event.target.classList.contains('miss') ||
-      event.target.classList.contains('hit')
-    )
-      return;
-
     events.emit('shoot', {
       x: event.target.getAttribute('data-col'),
       y: event.target.getAttribute('data-row'),
@@ -631,7 +625,10 @@ const UserInterface = (events) => {
     );
     renderGameboard(opponent, opponentGameboard, false);
     if (allowShooting) {
-      [...opponentGameboard.children].forEach((cell) => {
+      const targetCells = opponentGameboard.querySelectorAll(
+        '.gameboard-cell:not(.hit):not(.miss):not(.adjacent)'
+      );
+      targetCells.forEach((cell) => {
         cell.addEventListener('click', shoot);
       });
     }
