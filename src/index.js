@@ -1,4 +1,4 @@
-import './reset.css';
+import '@perugi/css-reset/reset.css';
 import './styles.css';
 
 import Utilities from '@perugi/web-utilities';
