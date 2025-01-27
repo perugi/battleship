@@ -45,6 +45,7 @@
   },
   "prettier": "@perugi/prettier-config",
   "dependencies": {
+    "@perugi/css-reset": "^1.0.0",
     "@perugi/events": "^1.0.1",
     "@perugi/web-utilities": "^1.0.0"
   }
