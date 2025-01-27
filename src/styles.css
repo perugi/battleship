@@ -85,7 +85,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: -1px 0 0 -1px;
   }
 
   .gameboard-cell {
@@ -95,7 +94,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: -1px 0 0 -1px;
 
     &.adjacent {
       background-color: lightgray;

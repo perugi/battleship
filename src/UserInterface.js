@@ -84,12 +84,10 @@ const UserInterface = (events) => {
       shipElement.setAttribute('data-dir', status.dir);
       if (status.dir === 'h') {
         shipElement.style.height = `${CELL_SIZE_PX}px`;
-        shipElement.style.width = `${
-          status.ship.getLength() * CELL_SIZE_PX - 1
-        }px`;
+        shipElement.style.width = `${status.ship.getLength() * CELL_SIZE_PX}px`;
       } else {
         shipElement.style.height = `${
-          status.ship.getLength() * CELL_SIZE_PX - 1
+          status.ship.getLength() * CELL_SIZE_PX
         }px`;
         shipElement.style.width = `${CELL_SIZE_PX}px`;
       }
@@ -284,13 +282,13 @@ const UserInterface = (events) => {
         draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.height = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.width = `${
-          selectedShipLength * CELL_SIZE_PX - 1
+          selectedShipLength * CELL_SIZE_PX
         }px`;
       } else {
         draggedShip.style.height = `${selectedShipLength * CELL_SIZE_PX}px`;
         draggedShip.style.width = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.height = `${
-          selectedShipLength * CELL_SIZE_PX - 1
+          selectedShipLength * CELL_SIZE_PX
         }px`;
         shipPlacementIndicator.style.width = `${CELL_SIZE_PX}px`;
       }
@@ -418,13 +416,13 @@ const UserInterface = (events) => {
         draggedShip.style.width = `${selectedShipLength * CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.height = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.width = `${
-          selectedShipLength * CELL_SIZE_PX - 1
+          selectedShipLength * CELL_SIZE_PX
         }px`;
       } else {
         draggedShip.style.height = `${selectedShipLength * CELL_SIZE_PX}px`;
         draggedShip.style.width = `${CELL_SIZE_PX}px`;
         shipPlacementIndicator.style.height = `${
-          selectedShipLength * CELL_SIZE_PX - 1
+          selectedShipLength * CELL_SIZE_PX
         }px`;
         shipPlacementIndicator.style.width = `${CELL_SIZE_PX}px`;
       }
