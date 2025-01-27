@@ -70,6 +70,13 @@ main {
   }
 }
 
+.player-area,
+.opponent-area {
+  &.inactive {
+    opacity: 0.5;
+  }
+}
+
 .ship-status {
   .ship {
     display: flex;
@@ -160,6 +167,18 @@ main {
 
     &.active {
       display: block;
+    }
+  }
+}
+
+.opponent-area {
+  .gameboard-cell {
+    &:not(.hit):not(.miss):not(.adjacent):hover::before {
+      content: 'X';
+    }
+
+    &:not(.hit):not(.miss):not(.adjacent):hover {
+      cursor: pointer;
     }
   }
 }

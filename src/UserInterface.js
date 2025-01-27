@@ -604,16 +604,18 @@ const UserInterface = (events) => {
   ) => {
     document.querySelector('.content').innerHTML = `
         <div><span class="active-player">${activePlayer.getName()}</span>'s turn</div>
-        <div class="player-area">
-          <h1> Player Board [${player.getName()}] </h1>
-          <div class="ship-status"></div>
-          <div class="gameboard"></div>
-        </div>
-        <div class="opponent-area">
-          <h1> Opponents Board [${opponent.getName()}] </h1>
-          <div class="ship-status"></div>
-          <div class="gameboard"></div>
-        </div>
+          <h1> ${player.getName()}'s Board </h1>
+          <div class="player-area ${activePlayer === player ? 'inactive' : ''}">
+            <div class="ship-status"></div>
+            <div class="gameboard"></div>
+          </div>
+          <h1> ${opponent.getName()}'s Board </h1>
+          <div class="opponent-area ${
+            activePlayer === opponent ? 'inactive' : ''
+          }">
+            <div class="ship-status"></div>
+            <div class="gameboard"></div>
+          </div>
         <button class="pause-game">Pause Game</button>
     `;
 
