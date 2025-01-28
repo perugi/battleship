@@ -203,7 +203,8 @@ const UserInterface = (events) => {
     const content = document.querySelector('.content');
 
     content.innerHTML = `
-        <h1> Player Board [${data.activePlayer.getName()}] </h1>
+        <div class="game-guidance">Place your ships on the board.</div>
+        <h1>${data.activePlayer.getName()}'s board</h1>
         <div class="ship-placing-area">
           <div class="unplaced-ships"></div>
           <div class="gameboard"></div>
@@ -603,7 +604,7 @@ const UserInterface = (events) => {
     allowShooting = false
   ) => {
     document.querySelector('.content').innerHTML = `
-        <div><span class="active-player">${activePlayer.getName()}</span>'s turn</div>
+        <div class=game-guidance><span class="active-player">${activePlayer.getName()}</span>'s turn to shoot</div>
           <h1> ${player.getName()}'s Board </h1>
           <div class="player-area ${activePlayer === player ? 'inactive' : ''}">
             <div class="ship-status"></div>
