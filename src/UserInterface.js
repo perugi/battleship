@@ -120,12 +120,14 @@ const UserInterface = (events) => {
 
   const renderMainMenu = () => {
     document.querySelector('.content').innerHTML = `
-        <div class="play-vs-ai-div">
-          <label for "player-ai">Play vs. Computer</label>
-          <input type="checkbox" id="play-vs-ai" class="play-vs-ai" checked/>
+        <div class="gamemode-select-div">
+          <button class="gamemode-select singleplayer active">Singleplayer</button>
+          <button class="gamemode-select multiplayer">Multiplayer</button>
         </div>
-        <label for="player-name">Player Name:</label>
-        <input type="text" id="player-name" class="player-name"/>
+        <div class="player-setup">
+          <label for="player-name">Player Name:</label>
+          <input type="text" id="player-name" class="player-name"/>
+        </div>
         <div class="opponent-setup">
           <label for="opponent-name">Opponent Name:</label>
           <input type="text" id="opponent-name" class="opponent-name"/>
@@ -133,28 +135,34 @@ const UserInterface = (events) => {
         <button class="create-players">Confirm</button>
     `;
 
+    let isSinglePlayer = true;
+
+    const gamemodeSelectButtons = document.querySelectorAll('.gamemode-select');
+    gamemodeSelectButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        gamemodeSelectButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+        isSinglePlayer = button.classList.contains('singleplayer');
+
+        if (!isSinglePlayer) {
+          document.querySelector('.opponent-setup').style.display = 'flex';
+        } else {
+          document.querySelector('.opponent-setup').style.display = 'none';
+        }
+      });
+    });
+
     const createPlayersButton = document.querySelector('.create-players');
     createPlayersButton.addEventListener('click', () => {
       const playerName = document.querySelector('.player-name').value;
       const opponentName = document.querySelector('.opponent-name').value;
-      const playVsAi = document.querySelector('.play-vs-ai').checked;
 
       events.emit('createPlayers', {
         player1Name: playerName,
         player1IsAi: false,
-        player2Name: playVsAi ? 'Computer' : opponentName,
-        player2IsAi: playVsAi,
+        player2Name: isSinglePlayer ? 'Computer' : opponentName,
+        player2IsAi: isSinglePlayer,
       });
-    });
-
-    const playVsAiCheckbox = document.querySelector('.play-vs-ai');
-    playVsAiCheckbox.addEventListener('change', () => {
-      const opponentSetup = document.querySelector('.opponent-setup');
-      if (playVsAiCheckbox.checked) {
-        opponentSetup.style.display = 'none';
-      } else {
-        opponentSetup.style.display = 'block';
-      }
     });
   };
 

@@ -1,14 +1,5 @@
 @import '../node_modules/@perugi/css-reset/reset.css';
-
-html {
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 :root {
   --text-color: #000000;
@@ -26,8 +17,93 @@ main {
   flex: auto;
 }
 
+header {
+  font-family: 'Bebas Neue', serif;
+  font-size: clamp(5rem, 20vw, 10rem);
+  margin: 0 auto;
+}
+
+main {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.gamemode-select-div {
+  display: flex;
+  margin: 20px;
+  justify-content: space-between;
+
+  .gamemode-select {
+    font-family: 'Bebas Neue', serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 10px;
+    /* font-size: 1.5rem; */
+    cursor: pointer;
+    background-color: transparent;
+    border: 3px solid transparent;
+
+    &.active {
+      border: 3px solid black;
+    }
+  }
+}
+
+.player-setup,
+.opponent-setup {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+
+  input[type='text'] {
+    font-size: 1rem;
+    text-align: center;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid black;
+    width: 80%;
+  }
+}
+
 .opponent-setup {
   display: none;
+}
+
+.create-players {
+  margin-top: 20px;
+}
+
+button {
+  padding: 0.8em 1.5em;
+  cursor: pointer;
+  border: 1px solid black;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:hover {
+  background-color: lightgray;
+}
+
+button:active {
+  background-color: darkgray;
 }
 
 .ship-placing-area {
@@ -216,13 +292,18 @@ footer {
 
 #gh-link {
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 1rem;
+  font-weight: 500;
   letter-spacing: 0;
   display: flex;
   align-items: center;
   margin: 10px 0;
   height: 38px;
+}
+
+#gh-link > div:first-child {
+  width: 120px;
+  text-align: end;
 }
 
 #gh-logo {
