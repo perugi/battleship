@@ -11,6 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   color: var(--text-color);
+  font-weight: 700;
 }
 
 main {
@@ -20,6 +21,7 @@ main {
 header {
   font-family: 'Bebas Neue', serif;
   font-size: clamp(5rem, 20vw, 10rem);
+  font-weight: 900;
   margin: 0 auto;
 }
 
@@ -45,18 +47,26 @@ main {
     font-family: 'Bebas Neue', serif;
     font-size: 2rem;
     text-transform: uppercase;
+    font-weight: 400;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 20px;
     padding: 10px;
-    /* font-size: 1.5rem; */
     cursor: pointer;
     background-color: transparent;
     border: 3px solid transparent;
 
     &.active {
       border: 3px solid black;
+    }
+
+    &:not(.active) {
+      box-shadow: none;
+    }
+
+    &:hover {
+      color: black;
     }
   }
 }
@@ -75,6 +85,8 @@ main {
     margin: 10px;
     padding: 10px;
     border: 2px solid black;
+    border-radius: 2px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 80%;
   }
 }
@@ -90,20 +102,34 @@ main {
 button {
   padding: 0.8em 1.5em;
   cursor: pointer;
-  border: 1px solid black;
-}
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  &:hover {
+    background-color: black;
+    color: white;
+  }
 
-button:hover {
-  background-color: lightgray;
-}
+  &:active {
+    transform: translateY(2px);
+  }
 
-button:active {
-  background-color: darkgray;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: white;
+      color: black;
+    }
+
+    &:active {
+      transform: none;
+    }
+  }
 }
 
 .ship-placing-area {
@@ -173,6 +199,19 @@ button:active {
   }
 }
 
+.game-guidance {
+  background-color: #f0f0f0;
+  padding: 0.5em 1em;
+  margin-bottom: 20px;
+}
+
+.placing-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  gap: 10px;
+}
+
 .gameboard {
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
@@ -183,7 +222,14 @@ button:active {
     flex-direction: row;
   }
 
+  .gameboard-row {
+    pointer-events: none;
+  }
+
   .header-cell {
+    font-family: 'Bebas Neue', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
     height: var(--cell-size);
     width: var(--cell-size);
     display: flex;
@@ -291,9 +337,11 @@ footer {
 }
 
 #gh-link {
+  font-family: 'Bebas Neue', serif;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 500;
+  color: black;
   letter-spacing: 0;
   display: flex;
   align-items: center;
@@ -302,7 +350,7 @@ footer {
 }
 
 #gh-link > div:first-child {
-  width: 120px;
+  width: 130.88px;
   text-align: end;
 }
 

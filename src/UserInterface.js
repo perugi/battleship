@@ -132,10 +132,21 @@ const UserInterface = (events) => {
           <label for="opponent-name">Opponent Name:</label>
           <input type="text" id="opponent-name" class="opponent-name"/>
         </div>
-        <button class="create-players">Confirm</button>
+        <button class="create-players" disabled>Confirm</button>
     `;
 
     let isSinglePlayer = true;
+
+    const toggleCreatePlayersButton = () => {
+      const nameInputs = document.querySelectorAll(
+        '.player-name, .opponent-name'
+      );
+      if (nameInputs[0].value && (isSinglePlayer || nameInputs[1].value)) {
+        document.querySelector('.create-players').disabled = false;
+      } else {
+        document.querySelector('.create-players').disabled = true;
+      }
+    };
 
     const gamemodeSelectButtons = document.querySelectorAll('.gamemode-select');
     gamemodeSelectButtons.forEach((button) => {
@@ -149,7 +160,16 @@ const UserInterface = (events) => {
         } else {
           document.querySelector('.opponent-setup').style.display = 'none';
         }
+
+        toggleCreatePlayersButton();
       });
+    });
+
+    const nameInputs = document.querySelectorAll(
+      '.player-name, .opponent-name'
+    );
+    nameInputs.forEach((input) => {
+      input.addEventListener('input', toggleCreatePlayersButton);
     });
 
     const createPlayersButton = document.querySelector('.create-players');
@@ -211,16 +231,17 @@ const UserInterface = (events) => {
     const content = document.querySelector('.content');
 
     content.innerHTML = `
-        <div class="game-guidance">Place your ships on the board.</div>
-        <h1>${data.activePlayer.getName()}'s board</h1>
+        <div class="game-guidance">Place ships on ${data.activePlayer.getName()}'s board.</div>
         <div class="ship-placing-area">
           <div class="unplaced-ships"></div>
           <div class="gameboard"></div>
         </div>
         <div class="dragged-ship"></div>
-        <button class="place-to-main-menu">Main Menu</button>
-        <button class="place-random">Place Ships Randomly</button>
-        <button class="clear-ships">Clear Ships</button>
+        <div class="placing-buttons">
+          <button class="place-to-main-menu">Main Menu</button>
+          <button class="place-random">Place Ships Randomly</button>
+          <button class="clear-ships">Clear Ships</button>
+        </div>
     `;
 
     const unplacedShipsDiv = document.querySelector('.unplaced-ships');
@@ -461,6 +482,7 @@ const UserInterface = (events) => {
     });
 
     const startMoveDragging = (e, ship) => {
+      console.log('move');
       isMove = true;
 
       // The adjacents and playerShips array are temporarily modified and gameboard
@@ -525,6 +547,7 @@ const UserInterface = (events) => {
       startDragging(e);
     };
 
+    // ! Bug here potentially (are placedShips being selected correctly?)
     const placedShips = document.querySelectorAll(
       '.player-area gameboard>.placed-ship'
     );
@@ -572,7 +595,7 @@ const UserInterface = (events) => {
     } else {
       continueButton.disabled = true;
     }
-    content.appendChild(continueButton);
+    document.querySelector('.placing-buttons').appendChild(continueButton);
   };
 
   const shoot = (event) => {
