@@ -119,6 +119,8 @@ const UserInterface = (events) => {
   };
 
   const renderMainMenu = () => {
+    document.querySelector('header').classList.remove('small');
+
     document.querySelector('.content').innerHTML = `
         <div class="gamemode-select-div">
           <button class="gamemode-select singleplayer active">Singleplayer</button>
@@ -228,8 +230,9 @@ const UserInterface = (events) => {
   };
 
   const renderShipPlacing = (data) => {
-    const content = document.querySelector('.content');
+    document.querySelector('header').classList.add('small');
 
+    const content = document.querySelector('.content');
     content.innerHTML = `
         <div class="game-guidance">Place ships on ${data.activePlayer.getName()}'s board.</div>
         <div class="ship-placing-area">
@@ -607,6 +610,7 @@ const UserInterface = (events) => {
   };
 
   const shoot = (event) => {
+    console.log('shoot');
     events.emit('shoot', {
       x: event.target.getAttribute('data-col'),
       y: event.target.getAttribute('data-row'),
@@ -644,18 +648,20 @@ const UserInterface = (events) => {
   ) => {
     document.querySelector('.content').innerHTML = `
         <div class=game-guidance><span class="active-player">${activePlayer.getName()}</span>'s turn to shoot</div>
-          <h1> ${player.getName()}'s Board </h1>
+        <div class="gameboards">
           <div class="player-area ${activePlayer === player ? 'inactive' : ''}">
+            <h1> ${player.getName()}'s Board </h1>
             <div class="ship-status"></div>
             <div class="gameboard"></div>
           </div>
-          <h1> ${opponent.getName()}'s Board </h1>
           <div class="opponent-area ${
             activePlayer === opponent ? 'inactive' : ''
           }">
+            <h1> ${opponent.getName()}'s Board </h1>
             <div class="ship-status"></div>
             <div class="gameboard"></div>
           </div>
+        </div>
         <button class="pause-game">Pause Game</button>
     `;
 
