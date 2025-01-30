@@ -236,6 +236,7 @@ button {
     justify-content: center;
     align-items: center;
     margin: -1px 0 0 -1px;
+    user-select: none;
   }
 
   .gameboard-cell {

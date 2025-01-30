@@ -267,8 +267,12 @@ const UserInterface = (events) => {
     let isMove = false;
 
     const continueDragging = (e) => {
-      draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
-      draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
+      draggedShip.style.top = `${
+        e.clientY + window.scrollY - CELL_SIZE_PX / 2
+      }px`;
+      draggedShip.style.left = `${
+        e.clientX + window.scrollX - CELL_SIZE_PX / 2
+      }px`;
 
       const draggedLegalShipPlacements =
         legalShipPlacementsHV[draggedShipRotation];
@@ -440,8 +444,12 @@ const UserInterface = (events) => {
       const selectedShipLength = parseInt(selectedShip.dataset.length, 10);
       draggedShipRotation = selectedShip.dataset.dir;
 
-      draggedShip.style.top = `${e.clientY - CELL_SIZE_PX / 2}px`;
-      draggedShip.style.left = `${e.clientX - CELL_SIZE_PX / 2}px`;
+      draggedShip.style.top = `${
+        e.clientY + window.scrollY - CELL_SIZE_PX / 2
+      }px`;
+      draggedShip.style.left = `${
+        e.clientX + window.scrollX - CELL_SIZE_PX / 2
+      }px`;
 
       if (draggedShipRotation === 'h') {
         draggedShip.style.height = `${CELL_SIZE_PX}px`;
@@ -547,10 +555,10 @@ const UserInterface = (events) => {
       startDragging(e);
     };
 
-    // ! Bug here potentially (are placedShips being selected correctly?)
     const placedShips = document.querySelectorAll(
-      '.player-area gameboard>.placed-ship'
+      '.ship-placing-area>.gameboard>.placed-ship'
     );
+    console.log({ placedShips });
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
     });
