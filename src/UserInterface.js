@@ -270,13 +270,11 @@ const UserInterface = (events) => {
     let isMove = false;
 
     const continueDragging = (e) => {
-      console.log('continue');
-      const event = e.touches ? e.touches[0] : e;
       draggedShip.style.top = `${
-        event.clientY + window.scrollY - CELL_SIZE_PX / 2
+        e.clientY + window.scrollY - CELL_SIZE_PX / 2
       }px`;
       draggedShip.style.left = `${
-        event.clientX + window.scrollX - CELL_SIZE_PX / 2
+        e.clientX + window.scrollX - CELL_SIZE_PX / 2
       }px`;
 
       const draggedLegalShipPlacements =
@@ -284,10 +282,10 @@ const UserInterface = (events) => {
       legalPlacementCoords = null;
       draggedLegalShipPlacements.forEach((legalShipPlacement) => {
         if (
-          event.clientX > legalShipPlacement.left &&
-          event.clientX < legalShipPlacement.right &&
-          event.clientY > legalShipPlacement.top &&
-          event.clientY < legalShipPlacement.bottom
+          e.clientX > legalShipPlacement.left &&
+          e.clientX < legalShipPlacement.right &&
+          e.clientY > legalShipPlacement.top &&
+          e.clientY < legalShipPlacement.bottom
         ) {
           shipPlacementIndicator.classList.add('active');
           draggedShip.classList.remove('dragging');
@@ -366,8 +364,6 @@ const UserInterface = (events) => {
 
       document.removeEventListener('mousemove', continueDragging);
       document.removeEventListener('mouseup', endDragging);
-      document.removeEventListener('touchmove', continueDragging);
-      document.removeEventListener('touchend', endDragging);
       document.removeEventListener('keydown', rotateShipKey);
       document.removeEventListener('wheel', rotateShip);
 
@@ -441,9 +437,7 @@ const UserInterface = (events) => {
     };
 
     const startDragging = (e) => {
-      console.log('start');
       e.preventDefault();
-      const event = e.touches ? e.touches[0] : e;
 
       selectedShip = e.target;
       selectedShip.classList.add('hidden');
@@ -452,10 +446,10 @@ const UserInterface = (events) => {
       draggedShipRotation = selectedShip.dataset.dir;
 
       draggedShip.style.top = `${
-        event.clientY + window.scrollY - CELL_SIZE_PX / 2
+        e.clientY + window.scrollY - CELL_SIZE_PX / 2
       }px`;
       draggedShip.style.left = `${
-        event.clientX + window.scrollX - CELL_SIZE_PX / 2
+        e.clientX + window.scrollX - CELL_SIZE_PX / 2
       }px`;
 
       if (draggedShipRotation === 'h') {
@@ -485,12 +479,16 @@ const UserInterface = (events) => {
 
       document.addEventListener('mousemove', continueDragging);
       document.addEventListener('mouseup', endDragging);
-      document.addEventListener('touchmove', continueDragging);
-      document.addEventListener('touchend', endDragging);
       document.addEventListener('keydown', rotateShipKey);
       document.addEventListener('wheel', rotateShip);
-      console.log('here');
     };
+
+    const unplacedShips = document.querySelectorAll(
+      '.unplaced-ship:not(.hidden)'
+    );
+    unplacedShips.forEach((ship) => {
+      ship.addEventListener('mousedown', startDragging);
+    });
 
     const startMoveDragging = (e, ship) => {
       isMove = true;
@@ -557,20 +555,11 @@ const UserInterface = (events) => {
       startDragging(e);
     };
 
-    const unplacedShips = document.querySelectorAll(
-      '.unplaced-ship:not(.hidden)'
-    );
-    unplacedShips.forEach((ship) => {
-      ship.addEventListener('mousedown', startDragging);
-      ship.addEventListener('touchstart', startDragging);
-    });
-
     const placedShips = document.querySelectorAll(
       '.ship-placing-area>.gameboard>.placed-ship'
     );
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
-      ship.addEventListener('touchstart', (e) => startMoveDragging(e, ship));
     });
 
     const placeToMainMenuButton = document.querySelector(
@@ -617,10 +606,9 @@ const UserInterface = (events) => {
   };
 
   const shoot = (event) => {
-    const { target } = event;
     events.emit('shoot', {
-      x: target.getAttribute('data-col'),
-      y: target.getAttribute('data-row'),
+      x: event.target.getAttribute('data-col'),
+      y: event.target.getAttribute('data-row'),
     });
   };
 
@@ -685,7 +673,6 @@ const UserInterface = (events) => {
       );
       targetCells.forEach((cell) => {
         cell.addEventListener('click', shoot);
-        cell.addEventListener('touchend', shoot);
       });
     }
 
