@@ -234,7 +234,7 @@ const UserInterface = (events) => {
 
     const content = document.querySelector('.content');
     content.innerHTML = `
-        <div class="game-guidance">Place ships on ${data.activePlayer.getName()}'s board.</div>
+        <div class="game-guidance">Place ships on ${data.activePlayer.getName()}'s board.<br>Use mousewheel or 'R' to rotate.</div>
         <div class="ship-placing-area">
           <div class="unplaced-ships"></div>
           <div class="gameboard"></div>
@@ -439,8 +439,6 @@ const UserInterface = (events) => {
     const startDragging = (e) => {
       e.preventDefault();
 
-      console.log(e.target);
-
       selectedShip = e.target;
       selectedShip.classList.add('hidden');
       draggedShip.classList.add('dragging');
@@ -493,7 +491,6 @@ const UserInterface = (events) => {
     });
 
     const startMoveDragging = (e, ship) => {
-      console.log('move');
       isMove = true;
 
       // The adjacents and playerShips array are temporarily modified and gameboard
@@ -561,7 +558,6 @@ const UserInterface = (events) => {
     const placedShips = document.querySelectorAll(
       '.ship-placing-area>.gameboard>.placed-ship'
     );
-    console.log({ placedShips });
     placedShips.forEach((ship) => {
       ship.addEventListener('mousedown', (e) => startMoveDragging(e, ship));
     });
@@ -610,7 +606,6 @@ const UserInterface = (events) => {
   };
 
   const shoot = (event) => {
-    console.log('shoot');
     events.emit('shoot', {
       x: event.target.getAttribute('data-col'),
       y: event.target.getAttribute('data-row'),
