@@ -15,7 +15,7 @@ module.exports = {
       inject: 'body',
     }),
     new FaviconsWebpackPlugin({
-      logo: './src/img/logo.png',
+      logo: './src/img/logo.svg',
       mode: 'auto',
     }),
   ],
@@ -37,12 +37,12 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
     ],
   },
 };
