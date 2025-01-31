@@ -8,10 +8,10 @@ An implementation of the classic Battleship game in Vanilla HTML, CSS and JavaSc
 ## 💡 Features
 - Single and Local Multiplayer modes.
 - Ship placing using drag&drop and random placement.
-- AI shooting automatically (randomly), when its turn.
+- AI shooting automatically (randomly), when it's turn.
 - Gameboard status showing active/sunken ships, hits and misses.
 - Pass device screen in multi-player mode.
-- Responsive design 
+- Responsive design.
 
 ## 🛠️ Technologies, Tools, Design Approaches
 - HTML, vanilla CSS and JS.
